@@ -12,3 +12,4 @@ dist-newstyle
 # Stack-related
 .stack-work
 stack.yaml.lock
+stack-ghc-*.yaml.lock

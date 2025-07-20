@@ -1,0 +1,61 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+    - main
+  workflow_dispatch:
+
+# As of 2025-07-21, ubuntu-latest and windows-latest come with Stack 3.7.1.
+# However, macos-13 and macos-latest do not come with Haskell tools.
+
+jobs:
+  build:
+    name: CI
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - ubuntu-latest
+        - windows-latest
+        config:
+        - stack-ghc-8.8.4.yaml # The oldest GHC supported
+        - stack-ghc-9.6.7.yaml
+        - stack-ghc-9.8.4.yaml
+        - stack-ghc-9.10.2.yaml
+        - stack-ghc-9.12.2.yaml
+        include:
+        # macos-latest provides macOS/AArch64 (M1)
+        - os: macos-latest
+          config: stack-ghc-9.8.4.yaml
+    steps:
+    - name: Clone project
+      uses: actions/checkout@v4
+    - name: Cache dependencies on Unix-like OS
+      if: startsWith(runner.os, 'Linux') || startsWith(runner.os, 'macOS')
+      uses: actions/cache@v4
+      with:
+        path: ~/.stack
+        key: ${{ runner.os }}-${{ runner.arch }}-${{ matrix.config }}
+    - name: Cache dependencies on Windows
+      if: startsWith(runner.os, 'Windows')
+      uses: actions/cache@v4
+      with:
+        path: |
+           ~\AppData\Roaming\stack
+           ~\AppData\Local\Programs\stack
+        key: ${{ runner.os }}-${{ runner.arch }}-${{ matrix.config }}
+    - name: Build
+      shell: bash
+      run: |
+        set -ex
+
+        if [[ "${{ matrix.os }}" == "macos-13" || "${{ matrix.os }}" == "macos-latest" ]]
+        then
+          # macos-13 and macos-latest do not include Haskell tools as at 2025-07-21.
+          curl -sSL https://get.haskellstack.org/ | sh
+        fi
+
+        stack --stack-yaml ${{ matrix.config }} test --haddock --no-haddock-deps
