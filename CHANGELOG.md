@@ -1,3 +1,8 @@
+## Version 0.2.12 (2018-08-24)
+
+- Fix bug in `ElapsedP` instance of `Real` when field for `NanoSeconds` is
+  non-zero.
+
 ## Version 0.2.11 (2018-02-04)
 
 - Add Zero UTC
