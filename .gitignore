@@ -1,7 +1,14 @@
+# Build artefacts
 *.o
 *.hi
 *.tix
 *.mix
 test-time-db
+
+# Cabal (the tool)-related
 dist
+dist-newstyle
+
+# Stack-related
 .stack-work
+stack.yaml.lock
