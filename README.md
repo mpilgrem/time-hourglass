@@ -1,13 +1,16 @@
-hourglass
-=========
+time-hourglass
+==============
 
 [![Build Status](https://travis-ci.org/vincenthz/hs-hourglass.png?branch=master)](https://travis-ci.org/vincenthz/hs-hourglass)
 [![BSD](http://b.repl.ca/v1/license-BSD-blue.png)](http://en.wikipedia.org/wiki/BSD_licenses)
 [![Haskell](http://b.repl.ca/v1/language-haskell-lightgrey.png)](http://haskell.org)
 
+Originally forked from
+[`hourglass-0.2.12`](https://hackage.haskell.org/package/hourglass-0.2.12).
+
 Hourglass is a simple time library.
 
-Documentation: [hourglass on hackage](http://hackage.haskell.org/package/hourglass)
+Documentation: [time-hourglass on hackage](http://hackage.haskell.org/package/time-hourglass)
 
 Design
 ------
@@ -83,3 +86,11 @@ import Date.Time
 
 DateTime (Date 1970 May 4) (TimeOfDay 15 12 24 0)
 ```
+
+History
+-------
+
+The [`hourglass`](https://hackage.haskell.org/package/hourglass) package was
+originated and then maintained by Vincent Hanquez. For published reasons, he
+does not intend to develop the package further after version 0.2.12 but he also
+does not want to introduce other maintainers.
