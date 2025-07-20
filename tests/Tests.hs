@@ -146,7 +146,7 @@ arithmeticTestSubRef = map testRefToElapsedP
   where ms v = v * 1000000
 
 testRefToElapsedP :: ((Int64, Int64), (Int64, Int64), (Int64, Int64)) -> (ElapsedP, ElapsedP, ElapsedP)
-testRefToElapsedP (a, b, c) = (tupleToElapsedP a, tupleToElapsedP b, tupleToElapsedP c) 
+testRefToElapsedP (a, b, c) = (tupleToElapsedP a, tupleToElapsedP b, tupleToElapsedP c)
   where
     tupleToElapsedP :: (Int64, Int64) -> ElapsedP
     tupleToElapsedP (s, n) = ElapsedP (Elapsed $ Seconds s) (NanoSeconds n)
@@ -210,7 +210,7 @@ tests knowns = testGroup "hourglass"
         [ testProperty "iso8601 date" $ \(e :: Elapsed) ->
             let fmt = calTimeFormatTimeISO8601 (elapsedToPosixTime e)
                 ed1  = localTimeParseE ISO8601_Date fmt
-                md2  = T.parseTime T.defaultTimeLocale fmt "%F"
+                md2  = T.parseTimeM True T.defaultTimeLocale fmt "%F"
              in case (ed1,md2) of
                     (Left err, Nothing)       -> error ("both cannot parse: " ++ show fmt ++ " hourglass-err=" ++ show err)
                     (Left err, Just _)        -> error ("error parsing string: " ++ show err)

@@ -11,3 +11,5 @@ and this project adheres to the
 * Rename `hourglass-0.2.12` package as `time-hourglass-0.2.12`.
 * Change maintainer field to `Mike Pilgrem <public@pilgrem.com>`.
 * Reset `CHANGELOG.md`.
+* In test-suite `test-hourglass` replace use of `parseTime` (removed from
+  package `time-1.10`) with `parseTimeM True`.
