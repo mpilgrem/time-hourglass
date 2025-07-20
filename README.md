@@ -1,9 +1,9 @@
 time-hourglass
 ==============
 
-[![Build Status](https://travis-ci.org/vincenthz/hs-hourglass.png?branch=master)](https://travis-ci.org/vincenthz/hs-hourglass)
-[![BSD](http://b.repl.ca/v1/license-BSD-blue.png)](http://en.wikipedia.org/wiki/BSD_licenses)
-[![Haskell](http://b.repl.ca/v1/language-haskell-lightgrey.png)](http://haskell.org)
+![Build Status](https://github.com/mpilgrem/time-hourglass/actions/workflows/tests.yml/badge.svg)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Haskell](https://img.shields.io/badge/Haskell-5e5086?logo=haskell&logoColor=white)](http://haskell.org)
 
 Originally forked from
 [`hourglass-0.2.12`](https://hackage.haskell.org/package/hourglass-0.2.12).
