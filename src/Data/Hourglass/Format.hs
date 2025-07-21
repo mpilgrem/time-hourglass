@@ -32,12 +32,18 @@ module Data.Hourglass.Format
   ) where
 
 import           Data.Char ( isDigit, ord )
-import           Data.Hourglass.Calendar
+import           Data.Hourglass.Internal ( dateTimeFromUnixEpochP )
 import           Data.Hourglass.Local
-import           Data.Hourglass.Time
-import           Data.Hourglass.Types
-import           Data.Hourglass.Utils
-import           Data.Int
+                   ( LocalTime (..), localTime, localTimeToGlobal )
+import           Data.Hourglass.Time ( Timeable (..), timeGetDateTimeOfDay )
+import           Data.Hourglass.Utils ( pad2, pad4, padN )
+import           Data.Int ( Int64 )
+import           Time.Types
+                   ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
+                   , Hours (..), Minutes (..), Month (..), NanoSeconds (..)
+                   , Seconds (..), TimeOfDay (..), TimezoneOffset (..)
+                   , timezone_UTC
+                   )
 
 -- | All the various formatters that can be part of a time format string.
 data TimeFormatElem =

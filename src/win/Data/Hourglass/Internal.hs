@@ -18,10 +18,19 @@ module Data.Hourglass.Internal
   , systemGetElapsedP
   ) where
 
-import           Data.Hourglass.Types
 import           Data.Int ( Int64 )
-import           System.IO.Unsafe
+import           System.IO.Unsafe ( unsafePerformIO )
 import           System.Win32.Time
+                   ( FILETIME (..), SYSTEMTIME (..), TimeZoneId (..)
+                   , fileTimeToSystemTime, getSystemTimeAsFileTime
+                   , getTimeZoneInformation, tziBias, tziDaylightBias
+                   , tziStandardBias
+                   )
+import           Time.Types
+                   ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
+                   , NanoSeconds (..), Seconds (..), TimeOfDay (..)
+                   , TimezoneOffset (..)
+                   )
 
 unixDiff :: Int64
 unixDiff = 11644473600

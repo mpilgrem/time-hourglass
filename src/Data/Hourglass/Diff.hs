@@ -20,10 +20,14 @@ module Data.Hourglass.Diff
   , dateAddPeriod
   ) where
 
-import           Control.DeepSeq
-import           Data.Data
-import           Data.Hourglass.Calendar
-import           Data.Hourglass.Types
+import           Control.DeepSeq ( NFData (..) )
+import           Data.Data ( Data )
+import           Data.Hourglass.Calendar ( daysInMonth )
+import           Time.Types
+                   ( Date (..), Elapsed (..), ElapsedP (..), Hours (..)
+                   , Minutes (..), NanoSeconds (..), Seconds (..)
+                   , TimeInterval (..)
+                   )
 
 -- | An amount of conceptual calendar time in terms of years, months and days.
 --

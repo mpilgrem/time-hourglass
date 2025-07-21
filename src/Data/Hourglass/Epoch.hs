@@ -22,10 +22,13 @@ module Data.Hourglass.Epoch
   , WindowsEpoch (..)
   ) where
 
-import           Control.DeepSeq
-import           Data.Data
-import           Data.Hourglass.Time
-import           Data.Hourglass.Types
+import           Control.DeepSeq ( NFData (..) )
+import           Data.Data ( Data )
+import           Data.Hourglass.Time ( Time (..), Timeable (..) )
+import           Time.Types
+                   ( Elapsed (..), ElapsedP (..), NanoSeconds (..)
+                   , Seconds (..)
+                   )
 
 -- | A number of seconds elapsed since an epoch.
 newtype ElapsedSince epoch = ElapsedSince Seconds

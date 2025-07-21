@@ -10,6 +10,8 @@ module TimeRange
   ) where
 
 import           Data.Int ( Int64 )
+import           Foreign.C.Types ( CTime )
+import           Foreign.Storable ( sizeOf )
 
 isCTime64 :: Bool
 isCTime64 = sizeOf (undefined :: CTime) == 8

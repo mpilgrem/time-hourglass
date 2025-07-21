@@ -34,11 +34,19 @@ module Data.Hourglass.Time
   , dateAddPeriod
   ) where
 
-import           Data.Data ()
-import           Data.Hourglass.Calendar
+import           Data.Hourglass.Calendar ( dateTimeToUnixEpoch )
 import           Data.Hourglass.Diff
-import           Data.Hourglass.Types
+                   ( Duration (..), Period (..), dateAddPeriod
+                   , elapsedTimeAddSecondsP
+                   )
+import           Data.Hourglass.Internal
+                   ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
 import           Foreign.C.Types ( CTime (..) )
+import           Time.Types
+                   ( Date, DateTime (..), Elapsed (..), ElapsedP (..)
+                   , NanoSeconds (..), Seconds (..), TimeInterval (..)
+                   , TimeOfDay (..)
+                   )
 
 -- | Timeable represent every type that can be made to look like time types.
 --

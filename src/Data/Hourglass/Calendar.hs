@@ -22,7 +22,11 @@ module Data.Hourglass.Calendar
   ) where
 
 import           Data.Hourglass.Internal
-import           Data.Hourglass.Types
+                   ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
+import           Time.Types
+                   ( Date (..), DateTime (..), Elapsed (..), Month (..)
+                   , Seconds (..), TimeInterval (..), TimeOfDay (..), WeekDay
+                   )
 
 -- | Return if this year is a leap year (366 days) or not (365 days in a year).
 isLeapYear :: Int -> Bool

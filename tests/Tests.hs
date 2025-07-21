@@ -1,34 +1,37 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-module Main where
 
-import Control.Monad ( when )
+module Main
+  ( main
+  ) where
 
-import Test.Tasty
-import Test.Tasty.QuickCheck
-import Test.Tasty.HUnit
-
-import Data.Ratio
-import Data.Word
-import Data.Int
-import Data.Hourglass
-import Data.Hourglass.Epoch
-
+import qualified Control.Exception as E
+import           Control.Monad ( when )
+import           Data.Hourglass
+                   ( Date (..), DateTime (..), Duration (..), Elapsed (..)
+                   , ElapsedP (..), Hours (..), ISO8601_Date (..)
+                   , ISO8601_DateAndTime (..), LocalTime, Minutes (..)
+                   , Month (..), NanoSeconds (..), Period (..), Seconds (..)
+                   , Time, TimeFormat (..), TimeOfDay (..), TimezoneOffset (..)
+                   , dateAddPeriod, daysInMonth, getWeekDay, localTime
+                   , localTimeFromGlobal, localTimeGetTimezone, localTimeParseE
+                   , localTimeSetTimezone, localTimeToGlobal, timeConvert
+                   , timeGetDateTimeOfDay, timeGetElapsed, timeParseE, timePrint
+                   )
+import           Data.Hourglass.Epoch ( ElapsedSince, WindowsEpoch )
+import           Data.Int ( Int64 )
+import           Data.Ratio ( (%) )
 import qualified Data.Time.Calendar as T
 import qualified Data.Time.Clock as T
 import qualified Data.Time.Clock.POSIX as T
 import qualified Data.Time.Format as T
-
-import qualified Control.Exception as E
-
-import TimeDB
-import TimeRange ( dateRange, hiElapsed, loElapsed )
-
-tmPosix0 :: Elapsed
-tmPosix0 = fromIntegral (0 :: Word64)
-
-timePosix0 :: T.POSIXTime
-timePosix0 = fromIntegral (0 :: Word64)
+import           Test.Tasty ( TestTree, defaultMain, testGroup )
+import           Test.Tasty.HUnit
+                   ( Assertion, (@=?), assertEqual, assertFailure, testCase )
+import           Test.Tasty.QuickCheck
+                   ( Arbitrary (..), choose, elements, testProperty )
+import           TimeDB ( parseTimeConv )
+import           TimeRange ( dateRange, hiElapsed, loElapsed )
 
 elapsedToPosixTime :: Elapsed -> T.POSIXTime
 elapsedToPosixTime (Elapsed (Seconds s)) = fromIntegral s

@@ -24,9 +24,9 @@ module Data.Hourglass.Local
   , localTimeConvert
   ) where
 
-import           Data.Hourglass.Diff
-import           Data.Hourglass.Time
-import           Data.Hourglass.Types
+import           Data.Hourglass.Diff ( elapsedTimeAddSecondsP )
+import           Data.Hourglass.Time ( Time, Timeable (..), timeConvert )
+import           Time.Types ( TimezoneOffset (..), timezoneOffsetToSeconds )
 
 -- | Local time representation.
 --

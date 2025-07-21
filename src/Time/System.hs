@@ -24,8 +24,9 @@ module Time.System
 import           Data.Hourglass.Internal
                    ( systemGetElapsed, systemGetElapsedP, systemGetTimezone )
 import           Data.Hourglass.Local
-import           Data.Hourglass.Time
-import           Time.Types
+                   ( LocalTime, localTimeFromGlobal, localTimeSetTimezone )
+import           Data.Hourglass.Time ( timeGetDateTimeOfDay )
+import           Time.Types ( DateTime, Elapsed, ElapsedP, TimezoneOffset )
 
 -- | Get the current elapsed seconds since epoch.
 timeCurrent :: IO Elapsed

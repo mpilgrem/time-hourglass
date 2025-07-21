@@ -24,13 +24,16 @@ module Data.Hourglass.Internal
   , systemGetElapsedP
   ) where
 
-import           Control.Applicative
-import           Data.Hourglass.Types
-import           Foreign.C.Types
-import           Foreign.Marshal.Alloc
-import           Foreign.Ptr
-import           Foreign.Storable
-import           System.IO.Unsafe
+import           Foreign.C.Types ( CInt, CLong, CTime (..) )
+import           Foreign.Marshal.Alloc ( alloca, allocaBytesAligned )
+import           Foreign.Ptr ( Ptr, castPtr, nullPtr )
+import           Foreign.Storable ( Storable (..) )
+import           System.IO.Unsafe ( unsafePerformIO )
+import           Time.Types
+                   ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
+                   , NanoSeconds (..), Seconds (..), TimeOfDay (..)
+                   , TimezoneOffset (..)
+                   )
 
 -- | Convert a Unix epoch precise to 'DateTime'.
 dateTimeFromUnixEpochP :: ElapsedP -> DateTime

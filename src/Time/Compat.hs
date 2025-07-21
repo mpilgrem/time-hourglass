@@ -40,7 +40,8 @@ module Time.Compat
   , diffTimeToTimeOfDay
   ) where
 
-import           Data.Hourglass
+import           Data.Hourglass.Time ( timeConvert )
+import           Time.Types ( Date, Elapsed (..), TimeOfDay (..) )
 
 -- | Convert an integer which represent the Number of days (To/From) POSIX Epoch
 -- to a Date (POSIX Epoch is 1970-01-01).
