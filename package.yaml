@@ -20,6 +20,7 @@ github: mpilgrem/time-hourglass
 extra-source-files:
 - CHANGELOG.md
 - README.md
+- examples/Example/Time/Compat.hs
 - tests/TimeDB.hs
 
 library:

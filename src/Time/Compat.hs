@@ -8,7 +8,7 @@
 -- This module aims to help conversion between the types from the package
 -- time to the package hourglass.
 --
--- Example of use (extracted from file Example/Time/Compat.hs):
+-- Example of use (extracted from file examples/Example/Time/Compat.hs):
 --
 -- > import Data.Hourglass        as H
 -- > import Data.Hourglass.Compat as C
@@ -53,7 +53,7 @@ daysTAItoPOSIX = 40587
 -- | Convert an integer which represents the Number of days (To/From) TAI Epoch
 -- This function allows use of the package time to easily convert the Day into
 -- the Hourglass Date representation (TAI Epoch is 1858-11-17).
--- 
+--
 -- This function allows user to easily convert a Data.Time.Calendar.Day into Date
 --
 -- > import qualified Data.Time.Calendar as T

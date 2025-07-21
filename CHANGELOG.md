@@ -9,6 +9,7 @@ and this project adheres to the
 ## UNRELEASED
 
 * Move library modules to directory `src`.
+* Move module `Example.Time.Compat` to directory `examples`.
 
 ## 0.2.12
 

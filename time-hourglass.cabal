@@ -26,6 +26,7 @@ build-type:     Simple
 extra-source-files:
     CHANGELOG.md
     README.md
+    examples/Example/Time/Compat.hs
     tests/TimeDB.hs
 
 source-repository head
