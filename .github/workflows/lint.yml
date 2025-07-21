@@ -17,11 +17,11 @@ jobs:
       uses: ibiqlik/action-yamllint@v3
       with:
         format: github
-#   - name: Set up HLint
-#     uses: haskell-actions/hlint-setup@v2
-#     with:
-#       version: "3.10"
-#   - name: Apply HLint
-#     run: |
-#       set -ex
-#       hlint src
+    - name: Set up HLint
+      uses: haskell-actions/hlint-setup@v2
+      with:
+        version: "3.10"
+    - name: Apply HLint
+      run: |
+        set -ex
+        hlint src

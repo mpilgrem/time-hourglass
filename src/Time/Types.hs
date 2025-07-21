@@ -134,7 +134,7 @@ addElapsedP :: ElapsedP -> ElapsedP -> ElapsedP
 addElapsedP (ElapsedP e1 (NanoSeconds ns1)) (ElapsedP e2 (NanoSeconds ns2)) =
     let notNormalizedNS = ns1 + ns2
         (retainedNS, ns) = notNormalizedNS `divMod` 1000000000
-    in  ElapsedP (e1 + e2 + (Elapsed $ Seconds retainedNS)) (NanoSeconds ns)
+    in  ElapsedP (e1 + e2 + Elapsed (Seconds retainedNS)) (NanoSeconds ns)
 
 subElapsedP :: ElapsedP -> ElapsedP -> ElapsedP
 subElapsedP (ElapsedP e1 (NanoSeconds ns1)) (ElapsedP e2 (NanoSeconds ns2)) =
@@ -242,4 +242,4 @@ data DateTime = DateTime
     } deriving (Show,Read,Eq,Ord,Data,Typeable)
 
 instance NFData DateTime where
-    rnf (DateTime d t) = rnf d `seq` rnf t `seq` ()
+    rnf (DateTime d t) = rnf d `seq` rnf t

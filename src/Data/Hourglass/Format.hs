@@ -10,7 +10,6 @@
 -- Built-in format strings
 --
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE TypeSynonymInstances #-}
 module Data.Hourglass.Format
     (
     -- * Parsing and Printing
@@ -236,7 +235,7 @@ timePrint :: (TimeFormat format, Timeable t)
           => format -- ^ the format to use for printing
           -> t      -- ^ the global time to print
           -> String -- ^ the resulting string
-timePrint fmt t = printWith fmt timezone_UTC t
+timePrint fmt = printWith fmt timezone_UTC
 
 -- | Try parsing a string as time using the format explicitely specified
 --
@@ -246,7 +245,7 @@ localTimeParseE :: TimeFormat format
                 => format -- ^ the format to use for parsing
                 -> String -- ^ the string to parse
                 -> Either (TimeFormatElem, String) (LocalTime DateTime, String)
-localTimeParseE fmt timeString = loop ini fmtElems timeString
+localTimeParseE fmt = loop ini fmtElems
   where (TimeFormatString fmtElems) = toFormat fmt
 
         toLocal (dt, tz) = localTime tz dt
@@ -355,7 +354,7 @@ localTimeParseE fmt timeString = loop ini fmtElems timeString
         toInt :: Num a => String -> a
         toInt = foldl (\acc w -> acc * 10 + fromIntegral (ord w - ord '0')) 0
 
-        allDigits = and . map isDigit
+        allDigits = all isDigit
 
         ini = (DateTime (Date 0 (toEnum 0) 0) (TimeOfDay 0 0 0 0), TimezoneOffset 0)
 
@@ -395,8 +394,8 @@ localTimeParse fmt s = either (const Nothing) (Just . fst) $ localTimeParseE fmt
 -- | like 'localTimeParseE' but the time value is automatically converted to global time.
 timeParseE :: TimeFormat format => format -> String
            -> Either (TimeFormatElem, String) (DateTime, String)
-timeParseE fmt timeString = either Left (\(d,s) -> Right (localTimeToGlobal d, s))
-                          $ localTimeParseE fmt timeString
+timeParseE fmt timeString =
+  (\(d, s) -> Right (localTimeToGlobal d, s)) =<< localTimeParseE fmt timeString
 
 -- | Just like 'localTimeParse' but the time is automatically converted to global time.
 timeParse :: TimeFormat format => format -> String -> Maybe DateTime

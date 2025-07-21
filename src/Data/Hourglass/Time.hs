@@ -9,9 +9,7 @@
 -- arbitrary conversion between different time representation
 --
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Data.Hourglass.Time
     (
     -- * Generic time classes
@@ -59,7 +57,7 @@ class Timeable t where
     timeGetElapsedP :: t -> ElapsedP
 
     -- | convert a time representation to the number of elapsed seconds to a specific epoch.
-    -- 
+    --
     -- defaults to timeGetElapsedP unless defined explicitely by an instance
     timeGetElapsed :: t -> Elapsed
     timeGetElapsed t = e where ElapsedP e _ = timeGetElapsedP t
@@ -120,13 +118,13 @@ instance Time Date where
 
 instance Timeable DateTime where
     timeGetElapsedP d = ElapsedP (dateTimeToUnixEpoch d) (timeGetNanoSeconds d)
-    timeGetElapsed d  = dateTimeToUnixEpoch d
+    timeGetElapsed = dateTimeToUnixEpoch
     timeGetNanoSeconds (DateTime _ (TimeOfDay _ _ _ ns)) = ns
 instance Time DateTime where
-    timeFromElapsedP elapsed = dateTimeFromUnixEpochP elapsed
+    timeFromElapsedP = dateTimeFromUnixEpochP
 
 -- | Convert one time representation into another one
--- 
+--
 -- The return type need to be infer by the context.
 --
 -- If the context cannot be infer through this, some specialized functions

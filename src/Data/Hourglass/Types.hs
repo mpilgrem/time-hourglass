@@ -1,5 +1,3 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE DeriveDataTypeable #-}
 -- |
 -- Module      : Data.Hourglass.Types
 -- License     : BSD-style

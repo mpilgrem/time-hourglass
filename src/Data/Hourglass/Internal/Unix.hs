@@ -12,7 +12,6 @@
 --
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE EmptyDataDecls #-}
 module Data.Hourglass.Internal.Unix
     ( dateTimeFromUnixEpochP
     , dateTimeFromUnixEpoch
@@ -46,7 +45,7 @@ systemGetTimezone = TimezoneOffset . fromIntegral . flip div 60 <$> localTime 0
 systemGetElapsedP :: IO ElapsedP
 systemGetElapsedP = allocaBytesAligned sofTimespec 8 $ \ptr -> do
     c_clock_get ptr
-    toElapsedP <$> peek (castPtr ptr) <*> peekByteOff (castPtr ptr) sofCTime
+    toElapsedP <$> peek (castPtr ptr) <*> peekByteOff ptr sofCTime
   where sofTimespec = sofCTime + sofCLong
         sofCTime = sizeOf (0 :: CTime)
         sofCLong = sizeOf (0 :: CLong)

@@ -7,7 +7,6 @@
 --
 -- Time lowlevel helpers binding to Windows
 --
-{-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE CPP #-}
 module Data.Hourglass.Internal.Win
     ( dateTimeFromUnixEpochP
