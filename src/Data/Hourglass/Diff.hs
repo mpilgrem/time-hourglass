@@ -1,27 +1,29 @@
 {-# LANGUAGE DeriveDataTypeable #-}
--- |
--- Module      : Data.Hourglass.Diff
--- License     : BSD-style
--- Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
--- Stability   : experimental
--- Portability : unknown
---
--- time arithmetic methods
---
-module Data.Hourglass.Diff
-    ( Duration(..)
-    , Period(..)
-    , durationNormalize
-    , durationFlatten
-    , elapsedTimeAddSeconds
-    , elapsedTimeAddSecondsP
-    , dateAddPeriod
-    ) where
 
-import Data.Data
-import Data.Hourglass.Types
-import Data.Hourglass.Calendar
-import Control.DeepSeq
+{- |
+Module      : Data.Hourglass.Diff
+License     : BSD-style
+Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
+Stability   : experimental
+Portability : unknown
+
+Time arithmetic methods.
+-}
+
+module Data.Hourglass.Diff
+  ( Duration (..)
+  , Period (..)
+  , durationNormalize
+  , durationFlatten
+  , elapsedTimeAddSeconds
+  , elapsedTimeAddSecondsP
+  , dateAddPeriod
+  ) where
+
+import           Control.DeepSeq
+import           Data.Data
+import           Data.Hourglass.Calendar
+import           Data.Hourglass.Types
 
 -- | An amount of conceptual calendar time in terms of years, months and days.
 --
@@ -30,86 +32,95 @@ import Control.DeepSeq
 --
 -- See 'Duration' for the time-based equivalent to this class.
 data Period = Period
-    { periodYears  :: !Int
-    , periodMonths :: !Int
-    , periodDays   :: !Int
-    } deriving (Show,Read,Eq,Ord,Data)
+  { periodYears  :: !Int
+  , periodMonths :: !Int
+  , periodDays   :: !Int
+  }
+  deriving (Data, Eq, Ord, Read, Show)
 
 instance NFData Period where
-    rnf (Period y m d) = y `seq` m `seq` d `seq` ()
+  rnf (Period y m d) = y `seq` m `seq` d `seq` ()
+
 instance Semigroup Period where
-    (<>) (Period y1 m1 d1) (Period y2 m2 d2) =
-        Period (y1+y2) (m1+m2) (d1+d2)
+  (<>) (Period y1 m1 d1) (Period y2 m2 d2) =
+    Period (y1 + y2) (m1 + m2) (d1 + d2)
+
 instance Monoid Period where
-    mempty = Period 0 0 0
+  mempty = Period 0 0 0
 
 -- | An amount of time in terms of constant value like hours (3600 seconds),
 -- minutes (60 seconds), seconds and nanoseconds.
 data Duration = Duration
-    { durationHours   :: !Hours       -- ^ number of hours
-    , durationMinutes :: !Minutes     -- ^ number of minutes
-    , durationSeconds :: !Seconds     -- ^ number of seconds
-    , durationNs      :: !NanoSeconds -- ^ number of nanoseconds
-    } deriving (Show,Read,Eq,Ord,Data)
+  { durationHours   :: !Hours       -- ^ number of hours
+  , durationMinutes :: !Minutes     -- ^ number of minutes
+  , durationSeconds :: !Seconds     -- ^ number of seconds
+  , durationNs      :: !NanoSeconds -- ^ number of nanoseconds
+  }
+  deriving (Data, Eq, Ord, Read, Show)
 
 instance NFData Duration where
-    rnf (Duration h m s ns) = h `seq` m `seq` s `seq` ns `seq` ()
+  rnf (Duration h m s ns) = h `seq` m `seq` s `seq` ns `seq` ()
+
 instance Semigroup Duration where
-    (<>) (Duration h1 m1 s1 ns1) (Duration h2 m2 s2 ns2) =
-        Duration (h1+h2) (m1+m2) (s1+s2) (ns1+ns2)
+  (<>) (Duration h1 m1 s1 ns1) (Duration h2 m2 s2 ns2) =
+    Duration (h1 + h2) (m1 + m2) (s1 + s2) (ns1 + ns2)
+
 instance Monoid Duration where
-    mempty = Duration 0 0 0 0
+  mempty = Duration 0 0 0 0
 
 instance TimeInterval Duration where
-    fromSeconds s = (durationNormalize (Duration 0 0 s 0), 0)
-    toSeconds d   = fst $ durationFlatten d
+  fromSeconds s = (durationNormalize (Duration 0 0 s 0), 0)
 
--- | Flatten a duration to a number of seconds, nanoseconds
+  toSeconds d   = fst $ durationFlatten d
+
+-- | Flatten a duration to a number of seconds, nanoseconds.
 durationFlatten :: Duration -> (Seconds, NanoSeconds)
 durationFlatten (Duration h m s (NanoSeconds ns)) =
-    (toSeconds h + toSeconds m + s + Seconds sacc, NanoSeconds ns')
-  where (sacc, ns') = ns `divMod` 1000000000
+  (toSeconds h + toSeconds m + s + Seconds sacc, NanoSeconds ns')
+ where
+  (sacc, ns') = ns `divMod` 1000000000
 
--- | Normalize all fields to represent the same value
--- with the biggest units possible.
+-- | Normalize all fields to represent the same value with the biggest units
+-- possible.
 --
--- For example, 62 minutes is normalized as 1h 2minutes
+-- For example, 62 minutes is normalized as 1h 2 minutes.
 durationNormalize :: Duration -> Duration
 durationNormalize (Duration (Hours h) (Minutes mi) (Seconds s) (NanoSeconds ns)) =
-    Duration (Hours (h+hacc)) (Minutes mi') (Seconds s') (NanoSeconds ns')
-  where (hacc, mi') = (mi+miacc) `divMod` 60
-        (miacc, s') = (s+sacc) `divMod` 60
-        (sacc, ns') = ns `divMod` 1000000000
+  Duration (Hours (h+hacc)) (Minutes mi') (Seconds s') (NanoSeconds ns')
+ where
+  (hacc, mi') = (mi+miacc) `divMod` 60
+  (miacc, s') = (s+sacc) `divMod` 60
+  (sacc, ns') = ns `divMod` 1000000000
 
--- | add a period of time to a date
+-- | Add a period of time to a date.
 dateAddPeriod :: Date -> Period -> Date
 dateAddPeriod (Date yOrig mOrig dOrig) (Period yDiff mDiff dDiff) =
-    loop (yOrig + yDiff + yDiffAcc) mStartPos (dOrig+dDiff)
-  where
-    (yDiffAcc,mStartPos) = (fromEnum mOrig + mDiff) `divMod` 12
-    loop y m d
-        | d <= 0 =
-            let (m', y') = if m == 0
-                then (11, y - 1)
-                else (m - 1, y)
-            in
-            loop y' m' (daysInMonth y' (toEnum m') + d)
-        | d <= dMonth = Date y (toEnum m) d
-        | otherwise  =
-            let newDiff = d - dMonth
-             in if m == 11
-                    then loop (y+1) 0 newDiff
-                    else loop y (m+1) newDiff
-      where dMonth = daysInMonth y (toEnum m)
+  loop (yOrig + yDiff + yDiffAcc) mStartPos (dOrig + dDiff)
+ where
+  (yDiffAcc,mStartPos) = (fromEnum mOrig + mDiff) `divMod` 12
+  loop y m d
+    | d <= 0 =
+        let (m', y') = if m == 0
+              then (11, y - 1)
+              else (m - 1, y)
+        in  loop y' m' (daysInMonth y' (toEnum m') + d)
+    | d <= dMonth = Date y (toEnum m) d
+    | otherwise =
+        let newDiff = d - dMonth
+        in  if m == 11
+              then loop (y + 1) 0 newDiff
+              else loop y (m + 1) newDiff
+   where
+    dMonth = daysInMonth y (toEnum m)
 
--- | Add a number of seconds to an Elapsed type
+-- | Add a number of seconds to an 'Elapsed' type.
 elapsedTimeAddSeconds :: Elapsed -> Seconds -> Elapsed
-elapsedTimeAddSeconds (Elapsed s1) s2 = Elapsed (s1+s2)
+elapsedTimeAddSeconds (Elapsed s1) s2 = Elapsed (s1 + s2)
 
--- | Add a number of seconds to an ElapsedP type
+-- | Add a number of seconds to an 'ElapsedP' type.
 elapsedTimeAddSecondsP :: ElapsedP -> Seconds -> ElapsedP
 elapsedTimeAddSecondsP (ElapsedP (Elapsed s1) ns1) s2 =
-    ElapsedP (Elapsed (s1+s2)) ns1
+  ElapsedP (Elapsed (s1 + s2)) ns1
 
 {- disabled for warning purpose. to be implemented
 
