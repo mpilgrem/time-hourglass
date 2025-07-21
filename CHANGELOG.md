@@ -8,6 +8,7 @@ and this project adheres to the
 
 ## UNRELEASED
 
+* Drop support for GHC < 8.4.
 * Move library modules to directory `src`.
 * Move module `Example.Time.Compat` to directory `examples`.
 

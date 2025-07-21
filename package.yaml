@@ -35,7 +35,7 @@ library:
   - Data.Hourglass.Compat
   - System.Hourglass
   dependencies:
-  - base >= 4 && < 5
+  - base >= 4.11 && < 5
   - deepseq
   ghc-options:
   - -Wall
@@ -59,7 +59,7 @@ tests:
     other-modules:
     - TimeDB
     dependencies:
-    - base >= 3 && < 5
+    - base >= 4.11 && < 5
     - mtl
     - tasty
     - tasty-quickcheck
@@ -82,7 +82,7 @@ benchmarks:
     source-dirs: tests
     main: Bench.hs
     dependencies:
-    - base >= 4 && < 5
+    - base >= 4.11 && < 5
     - bytestring
     - gauge
     - mtl
