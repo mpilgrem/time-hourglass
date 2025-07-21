@@ -1,5 +1,5 @@
 -- |
--- Module      : Data.Hourglass.Internal.Win
+-- Module      : Data.Hourglass.Internal
 -- License     : BSD-style
 -- Maintainer  : Vincent Hanquez <vincent@snarc.org>
 -- Stability   : experimental
@@ -7,7 +7,7 @@
 --
 -- Time lowlevel helpers binding to Windows
 --
-module Data.Hourglass.Internal.Win
+module Data.Hourglass.Internal
     ( dateTimeFromUnixEpochP
     , dateTimeFromUnixEpoch
     , systemGetTimezone

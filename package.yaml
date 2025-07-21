@@ -43,13 +43,10 @@ library:
   when:
   - condition: os(windows)
     then:
-      cpp-options: -DWINDOWS
+      source-dirs: src/win
       dependencies: Win32
-      other-modules:
-      - Data.Hourglass.Internal.Win
     else:
-      other-modules:
-      - Data.Hourglass.Internal.Unix
+      source-dirs: src/unix
       c-sources: cbits/unix.c
 
 tests:
@@ -69,13 +66,16 @@ tests:
     # to test against some other reference
     - time
     - old-locale
+    when:
+    - condition: os(windows)
+      then:
+        source-dirs: tests/win
+      else:
+        source-dirs: tests/unix
     ghc-options:
     - -Wall
     - -fno-warn-orphans
     - -fno-warn-missing-signatures
-    when:
-    - condition: os(windows)
-      cpp-options: -DWINDOWS
 
 benchmarks:
   bench-hourglass:

@@ -11,6 +11,7 @@ and this project adheres to the
 * Drop support for GHC < 8.4.
 * Move library modules to directory `src`.
 * Move module `Example.Time.Compat` to directory `examples`.
+* Eliminate the use of CPP to vary source code for different operating systems.
 
 ## 0.2.12
 

@@ -1,6 +1,5 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE CPP #-}
 module Main where
 
 import Control.Monad ( when )
@@ -23,6 +22,7 @@ import qualified Data.Time.Format as T
 import qualified Control.Exception as E
 
 import TimeDB
+import TimeRange ( dateRange, hiElapsed, loElapsed )
 
 tmPosix0 :: Elapsed
 tmPosix0 = fromIntegral (0 :: Word64)
@@ -49,26 +49,6 @@ dateEqual localtime utcTime =
 isValidDate :: Date -> Bool
 isValidDate (Date y m d) = d > 0 && d <= daysInMonth y m
 
--- windows native functions to convert time cannot handle time before year 1601
-#ifdef WINDOWS
-loElapsed = -11644473600 -- ~ year 1601
-hiElapsed =  32503680000
-dateRange = (1800, 2202)
-#else
-isCTime64 = sizeOf (undefined :: CTime) == 8
-loElapsed =
-  if isCTime64
-     then -62135596800 -- ~ year 0
-     else -(2^(28 :: Int))
-hiElapsed =
-  if isCTime64
-     then 2^(55 :: Int) -- in a future far far away
-     else 2^(29 :: Int) -- before the 2038 bug.
-dateRange =
-  if isCTime64
-     then (1800, 2202)
-     else (1960, 2036)
-#endif
 instance Arbitrary Seconds where
     arbitrary = Seconds . toHiLo <$> arbitrary
       where toHiLo v | v > loElapsed && v < hiElapsed = v

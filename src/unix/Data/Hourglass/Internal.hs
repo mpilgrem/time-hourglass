@@ -1,5 +1,5 @@
 -- |
--- Module      : Data.Hourglass.Internal.Unix
+-- Module      : Data.Hourglass.Internal
 -- License     : BSD-style
 -- Maintainer  : Vincent Hanquez <vincent@snarc.org>
 -- Stability   : experimental
@@ -11,7 +11,7 @@
 -- Some obscure unix system might not support them.
 --
 {-# LANGUAGE ForeignFunctionInterface #-}
-module Data.Hourglass.Internal.Unix
+module Data.Hourglass.Internal
     ( dateTimeFromUnixEpochP
     , dateTimeFromUnixEpoch
     , systemGetTimezone
