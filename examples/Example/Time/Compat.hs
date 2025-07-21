@@ -1,7 +1,7 @@
 -- |
 -- Module      : Example.Time.Compat
 -- License     : BSD-style
--- Maintainer  : Nicolas DI PRIMA <nicolas@di-prima.fr>
+-- Copyright   : (c) 2015 Nicolas DI PRIMA <nicolas@di-prima.fr>
 --
 -- This file is an example on how to use the Data.Hourglass.Compat
 -- module to transpose a ZonedTime (from time) into a LocalTime of DateTime

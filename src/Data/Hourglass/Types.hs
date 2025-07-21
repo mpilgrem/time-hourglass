@@ -1,7 +1,7 @@
 -- |
 -- Module      : Data.Hourglass.Types
 -- License     : BSD-style
--- Maintainer  : Vincent Hanquez <vincent@snarc.org>
+-- Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 --
 -- Basic times units and types.
 --

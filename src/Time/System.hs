@@ -1,7 +1,7 @@
 -- |
 -- Module      : Time.System
 -- License     : BSD-style
--- Maintainer  : Vincent Hanquez <vincent@snarc.org>
+-- Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 -- Stability   : experimental
 -- Portability : unknown
 --

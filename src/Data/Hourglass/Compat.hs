@@ -1,7 +1,7 @@
 -- |
 -- Module      : Data.Hourglass.Compat
 -- License     : BSD-style
--- Maintainer  : Nicolas DI PRIMA <nicolas@di-prima.fr>
+-- Copyright   : (c) 2015 Nicolas DI PRIMA <nicolas@di-prima.fr>
 --
 -- Basic Time conversion compatibility.
 --
