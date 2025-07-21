@@ -23,6 +23,7 @@ extra-source-files:
 - tests/TimeDB.hs
 
 library:
+  source-dirs: src
   exposed-modules:
   - Time.Types
   - Time.System
@@ -32,15 +33,6 @@ library:
   - Data.Hourglass.Epoch
   - Data.Hourglass.Compat
   - System.Hourglass
-  other-modules:
-  - Data.Hourglass.Time
-  - Data.Hourglass.Format
-  - Data.Hourglass.Diff
-  - Data.Hourglass.Local
-  - Data.Hourglass.Calendar
-  - Data.Hourglass.Zone
-  - Data.Hourglass.Internal
-  - Data.Hourglass.Utils
   dependencies:
   - base >= 4 && < 5
   - deepseq

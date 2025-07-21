@@ -8,6 +8,8 @@ and this project adheres to the
 
 ## UNRELEASED
 
+* Move library modules to directory `src`.
+
 ## 0.2.12
 
 * Rename `hourglass-0.2.12` package as `time-hourglass-0.2.12`.

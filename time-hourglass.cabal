@@ -43,14 +43,16 @@ library
       Data.Hourglass.Compat
       System.Hourglass
   other-modules:
-      Data.Hourglass.Time
-      Data.Hourglass.Format
-      Data.Hourglass.Diff
-      Data.Hourglass.Local
       Data.Hourglass.Calendar
-      Data.Hourglass.Zone
+      Data.Hourglass.Diff
+      Data.Hourglass.Format
       Data.Hourglass.Internal
+      Data.Hourglass.Local
+      Data.Hourglass.Time
       Data.Hourglass.Utils
+      Data.Hourglass.Zone
+  hs-source-dirs:
+      src
   ghc-options: -Wall -fwarn-tabs
   build-depends:
       base ==4.*
