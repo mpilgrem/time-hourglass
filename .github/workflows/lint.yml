@@ -25,4 +25,5 @@ jobs:
       run: |
         set -ex
         hlint src
+        hlint tests
         hlint examples

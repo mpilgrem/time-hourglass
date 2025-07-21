@@ -1,10 +1,10 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE CPP #-}
 module Main where
 
 import Control.Applicative
+import Control.Monad ( when )
 
 import Test.Tasty
 import Test.Tasty.QuickCheck
@@ -56,7 +56,7 @@ dateEqual localtime utcTime =
 -- specifically dates with a day field outside of the range of dates in the
 -- month. This function validates a @Date@.
 isValidDate :: Date -> Bool
-isValidDate (Date y m d) = d > 0 && d <= (daysInMonth y m)
+isValidDate (Date y m d) = d > 0 && d <= daysInMonth y m
 
 -- windows native functions to convert time cannot handle time before year 1601
 #ifdef WINDOWS
@@ -93,7 +93,7 @@ instance Arbitrary NanoSeconds where
 instance Arbitrary Elapsed where
     arbitrary = Elapsed <$> arbitrary
 instance Arbitrary TimezoneOffset where
-    arbitrary = TimezoneOffset <$> choose (-11*60,11*60)
+    arbitrary = TimezoneOffset <$> choose (-(11*60), 11*60)
 instance Arbitrary Duration where
     arbitrary = Duration <$> arbitrary <*> arbitrary <*> arbitrary <*> arbitrary
 instance Arbitrary Period where
@@ -108,7 +108,7 @@ instance Arbitrary Date where
         month <- arbitrary
         Date year month <$> choose (1, daysInMonth year month)
 instance Arbitrary TimeOfDay where
-    arbitrary = TimeOfDay <$> (Hours <$> choose (0,23))
+    arbitrary = (TimeOfDay . Hours <$> choose (0, 23))
                           <*> (Minutes <$> choose (0,59))
                           <*> (Seconds <$> choose (0,59))
                           <*> arbitrary
@@ -121,13 +121,12 @@ eq expected got
 
 testCaseWith :: (Num a, Eq a, Show a) => String -> (a -> a -> a) -> (a, a, a) -> TestTree
 testCaseWith what fun (x, y, ref) =
-    testCase ((show x) ++ " " ++ what ++ " " ++ (show y) ++ " ?= " ++ (show ref)) checkAdd
+    testCase (show x ++ " " ++ what ++ " " ++ show y ++ " ?= " ++ show ref) checkAdd
   where
     checkAdd :: Assertion
     checkAdd =
-        if fun x y /= ref
-            then assertFailure $ (show $ fun x y) ++ " /= " ++ (show ref)
-            else return ()
+      when (fun x y /= ref) $
+        assertFailure $ show (fun x y) ++ " /= " ++ show ref
 
 arithmeticTestAddRef :: [(ElapsedP, ElapsedP, ElapsedP)]
 arithmeticTestAddRef = map testRefToElapsedP
@@ -153,9 +152,9 @@ testRefToElapsedP (a, b, c) = (tupleToElapsedP a, tupleToElapsedP b, tupleToElap
 
 tests knowns = testGroup "hourglass"
     [ testGroup "known"
-        [ testGroup "calendar conv" (map toCalendarTest $ zip eint (map tuple12 knowns))
-        , testGroup "seconds conv" (map toSecondTest $ zip eint (map tuple12 knowns))
-        , testGroup "weekday" (map toWeekDayTest $ zip eint (map tuple13 knowns))
+        [ testGroup "calendar conv" (zipWith (curry toCalendarTest) eint (map tuple12 knowns))
+        , testGroup "seconds conv" (zipWith (curry toSecondTest) eint (map tuple12 knowns))
+        , testGroup "weekday" (zipWith (curry toWeekDayTest) eint (map tuple13 knowns))
         ]
     , testGroup "conversion"
         [ testProperty "calendar" $ \(e :: Elapsed) ->
@@ -195,12 +194,12 @@ tests knowns = testGroup "hourglass"
         -- Make sure our Arbitrary instance only generates valid dates:
         , testProperty "Arbitrary-isValidDate" isValidDate
 
-        , testProperty "dateAddPeriod" $ (\date period ->
+        , testProperty "dateAddPeriod" (\date period ->
             isValidDate (date `dateAddPeriod` period))
         ]
     , testGroup "formating"
         [ testProperty "iso8601 date" $ \(e :: Elapsed) ->
-            (calTimeFormatTimeISO8601 (elapsedToPosixTime e) `eq` timePrint ISO8601_Date e)
+            calTimeFormatTimeISO8601 (elapsedToPosixTime e) `eq` timePrint ISO8601_Date e
         , testProperty "unix seconds" $ \(e :: Elapsed) ->
             let sTime = T.formatTime T.defaultTimeLocale "%s" (T.posixSecondsToUTCTime $ elapsedToPosixTime e)
                 sHg = timePrint "EPOCH" e
