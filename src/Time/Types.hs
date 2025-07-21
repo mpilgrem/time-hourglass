@@ -54,7 +54,7 @@ class TimeInterval i where
 
 -- | Nanoseconds
 newtype NanoSeconds = NanoSeconds Int64
-    deriving (Read,Eq,Ord,Num,Data,Typeable,NFData)
+    deriving (Read,Eq,Ord,Num,Data,NFData)
 
 instance Show NanoSeconds where
     show (NanoSeconds v) = shows v "ns"
@@ -72,7 +72,7 @@ instance TimeInterval NanoSeconds where
 -- currently used, seconds should be in the range [-2^55,2^55-1],
 -- which is good for only 1 billion of year.
 newtype Seconds = Seconds Int64
-    deriving (Read,Eq,Ord,Enum,Num,Real,Integral,Data,Typeable,NFData)
+    deriving (Read,Eq,Ord,Enum,Num,Real,Integral,Data,NFData)
 
 instance Show Seconds where
     show (Seconds s) = shows s "s"
@@ -83,7 +83,7 @@ instance TimeInterval Seconds where
 
 -- | Number of minutes without a referential.
 newtype Minutes = Minutes Int64
-    deriving (Read,Eq,Ord,Enum,Num,Real,Integral,Data,Typeable,NFData)
+    deriving (Read,Eq,Ord,Enum,Num,Real,Integral,Data,NFData)
 
 instance Show Minutes where
     show (Minutes s) = shows s "m"
@@ -95,7 +95,7 @@ instance TimeInterval Minutes where
 
 -- | Number of hours without a referential.
 newtype Hours = Hours Int64
-    deriving (Read,Eq,Ord,Enum,Num,Real,Integral,Data,Typeable,NFData)
+    deriving (Read,Eq,Ord,Enum,Num,Real,Integral,Data,NFData)
 
 instance Show Hours where
     show (Hours s) = shows s "h"
@@ -107,14 +107,14 @@ instance TimeInterval Hours where
 
 -- | A number of seconds elapsed since the unix epoch.
 newtype Elapsed = Elapsed Seconds
-    deriving (Read,Eq,Ord,Num,Data,Typeable,NFData)
+    deriving (Read,Eq,Ord,Num,Data,NFData)
 
 instance Show Elapsed where
     show (Elapsed s) = show s
 
 -- | A number of seconds and nanoseconds elapsed since the unix epoch.
 data ElapsedP = ElapsedP {-# UNPACK #-} !Elapsed {-# UNPACK #-} !NanoSeconds
-    deriving (Read,Eq,Ord,Data,Typeable)
+    deriving (Read,Eq,Ord,Data)
 
 instance Show ElapsedP where
     show (ElapsedP e ns) = shows e ('.' : show ns)
@@ -167,7 +167,7 @@ data Month =
     | October
     | November
     | December
-    deriving (Show,Read,Eq,Ord,Enum,Data,Typeable,Bounded)
+    deriving (Show,Read,Eq,Ord,Enum,Data,Bounded)
 
 -- | Day of the week
 --
@@ -180,7 +180,7 @@ data WeekDay =
     | Thursday
     | Friday
     | Saturday
-    deriving (Show,Read,Eq,Ord,Enum,Data,Typeable,Bounded)
+    deriving (Show,Read,Eq,Ord,Enum,Data,Bounded)
 
 -- | Offset against UTC in minutes to obtain from UTC time, local time.
 --
@@ -199,7 +199,7 @@ data WeekDay =
 --
 newtype TimezoneOffset = TimezoneOffset
     { timezoneOffsetToMinutes :: Int -- ^ return the number of minutes
-    } deriving (Eq,Ord,Data,Typeable,NFData)
+    } deriving (Eq,Ord,Data,NFData)
 
 -- | Return the number of seconds associated with a timezone
 timezoneOffsetToSeconds :: TimezoneOffset -> Seconds
@@ -219,7 +219,7 @@ data Date = Date
     { dateYear  :: {-# UNPACK #-} !Int   -- ^ year (Common Era)
     , dateMonth :: !Month                -- ^ month of the year
     , dateDay   :: {-# UNPACK #-} !Int   -- ^ day of the month, between 1 to 31
-    } deriving (Show,Read,Eq,Ord,Data,Typeable)
+    } deriving (Show,Read,Eq,Ord,Data)
 
 instance NFData Date where
     rnf (Date y m d) = y `seq` m `seq` d `seq` ()
@@ -230,7 +230,7 @@ data TimeOfDay = TimeOfDay
     , todMin  :: {-# UNPACK #-} !Minutes -- ^ minutes, between 0 and 59
     , todSec  :: {-# UNPACK #-} !Seconds -- ^ seconds, between 0 and 59. 60 when having leap second */
     , todNSec :: {-# UNPACK #-} !NanoSeconds -- ^ nanoseconds, between 0 and 999999999 */
-    } deriving (Show,Read,Eq,Ord,Data,Typeable)
+    } deriving (Show,Read,Eq,Ord,Data)
 
 instance NFData TimeOfDay where
     rnf (TimeOfDay h m s ns) = h `seq` m `seq` s `seq` ns `seq` ()
@@ -239,7 +239,7 @@ instance NFData TimeOfDay where
 data DateTime = DateTime
     { dtDate :: Date
     , dtTime :: TimeOfDay
-    } deriving (Show,Read,Eq,Ord,Data,Typeable)
+    } deriving (Show,Read,Eq,Ord,Data)
 
 instance NFData DateTime where
     rnf (DateTime d t) = rnf d `seq` rnf t

@@ -28,12 +28,12 @@ import Data.Hourglass.Time
 
 -- | A number of seconds elapsed since an epoch.
 newtype ElapsedSince epoch = ElapsedSince Seconds
-    deriving (Show,Read,Eq,Ord,Num,Data,Typeable,NFData)
+    deriving (Show,Read,Eq,Ord,Num,Data,NFData)
 
 -- | A number of seconds and nanoseconds elapsed since an epoch.
 data ElapsedSinceP epoch = ElapsedSinceP {-# UNPACK #-} !(ElapsedSince epoch)
                                          {-# UNPACK #-} !NanoSeconds
-    deriving (Show,Read,Eq,Ord,Data,Typeable)
+    deriving (Show,Read,Eq,Ord,Data)
 
 instance NFData (ElapsedSinceP e) where rnf e = e `seq` ()
 

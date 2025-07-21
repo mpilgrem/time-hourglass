@@ -58,4 +58,4 @@ jobs:
           curl -sSL https://get.haskellstack.org/ | sh
         fi
 
-        stack --stack-yaml ${{ matrix.config }} test --haddock --no-haddock-deps
+        stack --stack-yaml ${{ matrix.config }} test --pedantic --haddock --no-haddock-deps

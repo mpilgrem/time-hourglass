@@ -20,7 +20,6 @@ module Time.System
     , timezoneCurrent
     ) where
 
-import Control.Applicative
 import Time.Types
 import Data.Hourglass.Time
 import Data.Hourglass.Local

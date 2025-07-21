@@ -3,7 +3,6 @@
 {-# LANGUAGE CPP #-}
 module Main where
 
-import Control.Applicative
 import Control.Monad ( when )
 
 import Test.Tasty
@@ -16,18 +15,10 @@ import Data.Int
 import Data.Hourglass
 import Data.Hourglass.Epoch
 
-import Foreign.Storable
-import Foreign.C.Types (CTime)
-
 import qualified Data.Time.Calendar as T
 import qualified Data.Time.Clock as T
 import qualified Data.Time.Clock.POSIX as T
 import qualified Data.Time.Format as T
-#if MIN_VERSION_time(1,5,0)
-import qualified System.Locale as T hiding (defaultTimeLocale)
-#else
-import qualified System.Locale as T
-#endif
 
 import qualified Control.Exception as E
 
@@ -227,11 +218,11 @@ tests knowns = testGroup "hourglass"
     , testGroup "Regression Tests"
         [ testCase  "Real instance of ElapsedP (#33)" $
             let res = toRational (ElapsedP (Elapsed $ Seconds 0) (NanoSeconds 0))
-                ref = toRational 0 :: Rational
+                ref = toRational (0 :: Int) :: Rational
              in assertEqual "failed equality" ref res
         , testCase  "Real instance of ElapsedP (#33) (2)" $
             let res = toRational (ElapsedP (Elapsed $ Seconds 100) (NanoSeconds 1000000))
-                ref = toRational 100 + (1 % 1000) :: Rational
+                ref = toRational (100 :: Int) + (1 % 1000) :: Rational
              in assertEqual "failed equality" ref res
         ]
     ]
