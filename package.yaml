@@ -1,0 +1,100 @@
+spec-version: 0.36.0 # Avoid legacy Hpack behaviour.
+
+name: time-hourglass
+version: 0.2.12
+synopsis: simple performant time related library
+description: |
+  Simple time library focusing on simple but powerful and performant API
+
+  The backbone of the library are the Timeable and Time type classes.
+
+  Each Timeable instances can be converted to type that has a Time instances,
+  and thus are different representations of current time.
+copyright: Vincent Hanquez <vincent@snarc.org>
+author: Vincent Hanquez <vincent@snarc.org>
+maintainer: Mike Pilgrem <public@pilgrem.com>
+category: Time
+stability: experimental
+homepage: https://github.com/mpilgrem/time-hourglass
+github: mpilgrem/time-hourglass
+extra-source-files:
+- CHANGELOG.md
+- README.md
+- tests/TimeDB.hs
+
+library:
+  exposed-modules:
+  - Time.Types
+  - Time.System
+  - Time.Compat
+  - Data.Hourglass
+  - Data.Hourglass.Types
+  - Data.Hourglass.Epoch
+  - Data.Hourglass.Compat
+  - System.Hourglass
+  other-modules:
+  - Data.Hourglass.Time
+  - Data.Hourglass.Format
+  - Data.Hourglass.Diff
+  - Data.Hourglass.Local
+  - Data.Hourglass.Calendar
+  - Data.Hourglass.Zone
+  - Data.Hourglass.Internal
+  - Data.Hourglass.Utils
+  dependencies:
+  - base >= 4 && < 5
+  - deepseq
+  ghc-options:
+  - -Wall
+  - -fwarn-tabs
+  when:
+  - condition: os(windows)
+    then:
+      cpp-options: -DWINDOWS
+      dependencies: Win32
+      other-modules:
+      - Data.Hourglass.Internal.Win
+    else:
+      other-modules:
+      - Data.Hourglass.Internal.Unix
+      c-sources: cbits/unix.c
+
+tests:
+  test-hourglass:
+    source-dirs: tests
+    main: Tests.hs
+    other-modules:
+    - TimeDB
+    dependencies:
+    - base >= 3 && < 5
+    - mtl
+    - tasty
+    - tasty-quickcheck
+    - tasty-hunit
+    - hourglass
+    - deepseq
+    # to test against some other reference
+    - time
+    - old-locale
+    ghc-options:
+    - -Wall
+    - -fno-warn-orphans
+    - -fno-warn-missing-signatures
+    when:
+    - condition: os(windows)
+      cpp-options: -DWINDOWS
+
+benchmarks:
+  bench-hourglass:
+    source-dirs: tests
+    main: Bench.hs
+    dependencies:
+    - base >= 4 && < 5
+    - bytestring
+    - gauge
+    - mtl
+    - deepseq
+    - hourglass
+    # to benchmark against other reference
+    - time
+    - old-locale

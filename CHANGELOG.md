@@ -9,7 +9,9 @@ and this project adheres to the
 ## 0.2.12
 
 * Rename `hourglass-0.2.12` package as `time-hourglass-0.2.12`.
+* Cabal file specifies `cabal-version: 1.12` (not `>= 1.10`).
 * Change maintainer field to `Mike Pilgrem <public@pilgrem.com>`.
+* Add `bug-reports` field to Cabal file.
 * Reset `CHANGELOG.md`.
 * Update `README.md` badges.
 * In test-suite `test-hourglass` replace use of `parseTime` (removed from
