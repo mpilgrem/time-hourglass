@@ -12,6 +12,8 @@ and this project adheres to the
 * Move library modules to directory `src` and benchmark module to directory
   `benchmarks`.
 * Move module `Example.Time.Compat` to directory `examples`.
+* Use `LANGUAGE PackageImports` in module `Example.Time.Compat`, allowing
+  `stack ghci examples/Example/Time/Compat.hs`.
 * Eliminate the use of CPP to vary source code for different operating systems.
 * Fix `other-modules` of `bench-hourglass` benchmark.
 * `bench-hourglass` benchmark depends on `tasty-bench`, drop dependency on

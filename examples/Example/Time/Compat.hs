@@ -1,3 +1,5 @@
+{-# LANGUAGE PackageImports #-}
+
 {- |
 Module      : Example.Time.Compat
 License     : BSD-style
@@ -12,8 +14,8 @@ module Example.Time.Compat
   ( transpose
   ) where
 
-import           Data.Hourglass as H
-import           Data.Hourglass.Compat as C
+import           "time-hourglass" Data.Hourglass as H
+import           "time-hourglass" Data.Hourglass.Compat as C
 import           Data.Time as T
 
 transpose ::
@@ -24,7 +26,7 @@ transpose oldTime =
     offsetTime
     (H.DateTime newDate timeofday)
  where
-  (T.ZonedTime (T.LocalTime day tod) (T.TimeZone tzmin _ _)) = oldTime
+  T.ZonedTime (T.LocalTime day tod) (T.TimeZone tzmin _ _) = oldTime
 
   newDate :: H.Date
   newDate = C.dateFromTAIEpoch $ T.toModifiedJulianDay day
