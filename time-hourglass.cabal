@@ -107,7 +107,7 @@ benchmark bench-hourglass
   type: exitcode-stdio-1.0
   main-is: Bench.hs
   hs-source-dirs:
-      tests
+      benchmarks
   build-depends:
       base >=4.11 && <5
     , bytestring

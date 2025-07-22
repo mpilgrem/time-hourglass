@@ -77,9 +77,8 @@ tests:
 
 benchmarks:
   bench-hourglass:
-    source-dirs: tests
+    source-dirs: benchmarks
     main: Bench.hs
-    other-modules: []
     dependencies:
     - base >= 4.11 && < 5
     - bytestring

@@ -9,7 +9,8 @@ and this project adheres to the
 ## UNRELEASED
 
 * Drop support for GHC < 8.4.
-* Move library modules to directory `src`.
+* Move library modules to directory `src` and benchmark module to directory
+  `benchmarks`.
 * Move module `Example.Time.Compat` to directory `examples`.
 * Eliminate the use of CPP to vary source code for different operating systems.
 * Fix `other-modules` of `bench-hourglass` benchmark.
