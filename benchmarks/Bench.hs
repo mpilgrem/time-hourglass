@@ -5,12 +5,15 @@ module Main
   ) where
 
 import           Data.Hourglass
+                   ( Date (..), DateTime (..), Elapsed (..), TimeOfDay (..)
+                   , timeGetDate, timeGetDateTimeOfDay, timeGetElapsed
+                   )
 import           Data.List ( intercalate )
 import qualified Data.Time.Calendar as T
 import qualified Data.Time.Clock as T
 import qualified Data.Time.Clock.POSIX as T
-import           Gauge.Main
-import           System.Hourglass
+import           Gauge.Main ( bench, bgroup, defaultMain, nf, nfIO )
+import           System.Hourglass ( timeCurrent, timeCurrentP )
 
 timeToTuple :: T.UTCTime -> (Int, Int, Int, Int, Int, Int)
 timeToTuple utcTime = (fromIntegral y, m, d, h, mi, sec)
