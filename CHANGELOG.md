@@ -14,6 +14,8 @@ and this project adheres to the
 * Move module `Example.Time.Compat` to directory `examples`.
 * Eliminate the use of CPP to vary source code for different operating systems.
 * Fix `other-modules` of `bench-hourglass` benchmark.
+* `bench-hourglass` benchmark depends on `tasty-bench`, drop dependency on
+  `gauge`.
 
 ## 0.2.12
 

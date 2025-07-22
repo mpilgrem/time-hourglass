@@ -112,9 +112,9 @@ benchmark bench-hourglass
       base >=4.11 && <5
     , bytestring
     , deepseq
-    , gauge
     , hourglass
     , mtl
     , old-locale
+    , tasty-bench
     , time
   default-language: Haskell2010

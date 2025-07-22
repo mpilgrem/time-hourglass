@@ -82,10 +82,10 @@ benchmarks:
     dependencies:
     - base >= 4.11 && < 5
     - bytestring
-    - gauge
-    - mtl
     - deepseq
     - hourglass
+    - tasty-bench
+    - mtl
     # To benchmark against other references:
     - time
     - old-locale
