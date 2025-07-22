@@ -27,3 +27,4 @@ jobs:
         hlint src
         hlint tests
         hlint examples
+        hlint benchmarks
