@@ -23,6 +23,13 @@ extra-source-files:
 - examples/Example/Time/Compat.hs
 - tests/TimeDB.hs
 
+dependencies:
+- base >= 4.11 && < 5
+- deepseq
+
+ghc-options:
+- -Wall
+
 library:
   source-dirs: src
   exposed-modules:
@@ -34,12 +41,6 @@ library:
   - Data.Hourglass.Epoch
   - Data.Hourglass.Compat
   - System.Hourglass
-  dependencies:
-  - base >= 4.11 && < 5
-  - deepseq
-  ghc-options:
-  - -Wall
-  - -fwarn-tabs
   when:
   - condition: os(windows)
     then:
@@ -56,36 +57,25 @@ tests:
     other-modules:
     - TimeDB
     dependencies:
-    - base >= 4.11 && < 5
-    - mtl
     - tasty
     - tasty-quickcheck
     - tasty-hunit
     - hourglass
-    - deepseq
     # To test against some other references:
     - time
-    - old-locale
     when:
     - condition: os(windows)
       then:
         source-dirs: tests/win
       else:
         source-dirs: tests/unix
-    ghc-options:
-    - -Wall
 
 benchmarks:
   bench-hourglass:
     source-dirs: benchmarks
     main: Bench.hs
     dependencies:
-    - base >= 4.11 && < 5
-    - bytestring
-    - deepseq
     - hourglass
     - tasty-bench
-    - mtl
     # To benchmark against other references:
     - time
-    - old-locale
