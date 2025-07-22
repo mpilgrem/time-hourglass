@@ -79,6 +79,8 @@ benchmarks:
   bench-hourglass:
     source-dirs: tests
     main: Bench.hs
+    other-modules:
+    - TimeDB
     dependencies:
     - base >= 4.11 && < 5
     - bytestring

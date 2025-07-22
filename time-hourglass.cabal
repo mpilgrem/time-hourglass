@@ -107,7 +107,6 @@ benchmark bench-hourglass
   type: exitcode-stdio-1.0
   main-is: Bench.hs
   other-modules:
-      Tests
       TimeDB
   hs-source-dirs:
       tests

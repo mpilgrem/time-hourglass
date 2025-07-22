@@ -12,6 +12,7 @@ and this project adheres to the
 * Move library modules to directory `src`.
 * Move module `Example.Time.Compat` to directory `examples`.
 * Eliminate the use of CPP to vary source code for different operating systems.
+* Fix `other-modules` of `bench-hourglass` benchmark.
 
 ## 0.2.12
 
