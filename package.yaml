@@ -63,7 +63,7 @@ tests:
     - tasty-hunit
     - hourglass
     - deepseq
-    # to test against some other reference
+    # To test against some other references:
     - time
     - old-locale
     when:
@@ -79,8 +79,7 @@ benchmarks:
   bench-hourglass:
     source-dirs: tests
     main: Bench.hs
-    other-modules:
-    - TimeDB
+    other-modules: []
     dependencies:
     - base >= 4.11 && < 5
     - bytestring
@@ -88,6 +87,6 @@ benchmarks:
     - mtl
     - deepseq
     - hourglass
-    # to benchmark against other reference
+    # To benchmark against other references:
     - time
     - old-locale

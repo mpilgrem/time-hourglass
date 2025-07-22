@@ -11,8 +11,6 @@ import qualified Data.Time.Clock as T
 import qualified Data.Time.Clock.POSIX as T
 import           Gauge.Main
 import           System.Hourglass
-import qualified System.Locale as T
-import           TimeDB
 
 timeToTuple :: T.UTCTime -> (Int, Int, Int, Int, Int, Int)
 timeToTuple utcTime = (fromIntegral y, m, d, h, mi, sec)
@@ -26,9 +24,6 @@ timeToTupleDate :: T.UTCTime -> (Int, Int, Int)
 timeToTupleDate utcTime = (fromIntegral y, m, d)
  where
   (!y, !m, !d) = T.toGregorian (T.utctDay utcTime)
-
-elapsedToPosixTime :: Elapsed -> T.POSIXTime
-elapsedToPosixTime (Elapsed (Seconds s)) = fromIntegral s
 
 timePosixDict :: [ (Elapsed, T.POSIXTime) ]
 timePosixDict =
