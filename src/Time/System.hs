@@ -28,11 +28,13 @@ import           Data.Hourglass.Local
 import           Data.Hourglass.Time ( timeGetDateTimeOfDay )
 import           Time.Types ( DateTime, Elapsed, ElapsedP, TimezoneOffset )
 
--- | Get the current elapsed seconds since epoch.
+-- | Get the current number of seconds elapsed since the start of the Unix
+-- epoch.
 timeCurrent :: IO Elapsed
 timeCurrent = systemGetElapsed
 
--- | Get the current elapsed seconds (precise to the nanosecond) since epoch.
+-- | Get the current number of seconds and nanoseconds since the start of the
+-- Unix epoch.
 timeCurrentP :: IO ElapsedP
 timeCurrentP = systemGetElapsedP
 
@@ -57,6 +59,6 @@ localDateCurrentAt tz =
 
 -- | Get the current timezone offset.
 --
--- This include daylight saving time when in operation.
+-- This includes daylight saving time when it is in operation.
 timezoneCurrent :: IO TimezoneOffset
 timezoneCurrent = systemGetTimezone

@@ -7,8 +7,7 @@ Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
 Portability : unknown
 
-Generic time representation interface to allow arbitrary conversion between
-different time representations.
+Types representing time.
 -}
 
 module Data.Hourglass.Time
@@ -48,50 +47,48 @@ import           Time.Types
                    , TimeOfDay (..)
                    )
 
--- | Timeable represent every type that can be made to look like time types.
+-- | A type class promising functionality for types that represent time values:
 --
--- * can be converted to ElapsedP and Elapsed
+-- * conversion to t'ElapsedP' and t'Elapsed'; and
 --
--- * optionally have a timezone associated
---
--- * have nanoseconds accessor (which can return 0 when the type is not more
---   precise than seconds)
+-- * return nanoseconds (@0@ when the type is not more precise than seconds).
 --
 class Timeable t where
   -- | Convert a time representation to the number of elapsed seconds and
-  -- nanoseconds to a specific epoch.
+  -- nanoseconds since the start of the Unix epoch.
   timeGetElapsedP :: t -> ElapsedP
 
-  -- | Convert a time representation to the number of elapsed seconds to a
-  -- specific epoch.
+  -- | Convert a time representation to the number of elapsed seconds since the
+  -- start of the Unix epoch.
   --
-  -- Defaults to timeGetElapsedP unless defined explicitely by an instance.
+  -- Defaults to 'timeGetElapsedP'.
   timeGetElapsed :: t -> Elapsed
-  timeGetElapsed t = e where ElapsedP e _ = timeGetElapsedP t
+  timeGetElapsed t = e
+   where
+    ElapsedP e _ = timeGetElapsedP t
 
-  -- | Return the number of optional nanoseconds.
+  -- | Optionally, return the number of nanoseconds.
   --
-  -- If the underlaying type is not precise enough to record nanoseconds
-  -- (or any variant between seconds and nanoseconds), 0 should be returned.
+  -- If the underlaying type does not provide sub-second precision, @0@ should be
+  -- returned.
   --
-  -- Defaults to 'timeGetElapsedP' unless defined explicitely by an instance,
-  -- for efficiency reason, it's a good idea to override this methods if
-  -- you know the type is not more precise than Seconds.
+  -- Defaults to 'timeGetElapsedP'. For efficiency, if the underlaying type does
+  -- not provide sub-second precision, it is a good idea to override this
+  -- method.
   timeGetNanoSeconds :: t -> NanoSeconds
   timeGetNanoSeconds t = ns where ElapsedP _ ns = timeGetElapsedP t
 
--- | Represent time types that can be created from other time types.
---
--- Every conversion happens throught ElapsedP or Elapsed types.
+-- | A type class for types that represent time values promising conversion
+-- from t'ElapsedP' values and t'Elapsed' values.
 class Timeable t => Time t where
-  -- | Convert from a number of elapsed seconds and nanoseconds to another time
-  -- representation.
+  -- | Convert from a number of elapsed seconds and nanoseconds since the start
+  -- of the Unix epoch.
   timeFromElapsedP :: ElapsedP -> t
 
-  -- | Convert from a number of elapsed seconds and nanoseconds to another time
-  -- representation.
+  -- | Convert from a number of elapsed seconds since the start of the Unix
+  -- epoch.
   --
-  -- Defaults to 'timeFromElapsedP' unless defined explicitely by an instance.
+  -- Defaults to 'timeFromElapsedP'.
   timeFromElapsed :: Elapsed -> t
   timeFromElapsed e = timeFromElapsedP (ElapsedP e 0)
 
@@ -142,18 +139,18 @@ instance Timeable DateTime where
 instance Time DateTime where
   timeFromElapsedP = dateTimeFromUnixEpochP
 
--- | Convert one time representation into another one.
+-- | Convert from one time representation to another. This will not compile
+-- unless the compiler can infer the types.
 --
--- The return type need to be infer by the context.
---
--- If the context cannot be infer through this, some specialized functions
--- are available for built-in types:
+-- Specialized functions are available for built-in types:
 --
 -- * 'timeGetDate'
 --
 -- * 'timeGetDateTimeOfDay'
 --
--- * 'timeGetElapsed', 'timeGetElapsedP'
+-- * 'timeGetElapsed'
+--
+-- * 'timeGetElapsedP'
 timeConvert :: (Timeable t1, Time t2) => t1 -> t2
 timeConvert t1 = timeFromElapsedP (timeGetElapsedP t1)
 {-# INLINE[2] timeConvert #-}
@@ -161,27 +158,24 @@ timeConvert t1 = timeFromElapsedP (timeGetElapsedP t1)
 {-# RULES "timeConvert/ElapsedP" timeConvert = timeGetElapsedP #-}
 {-# RULES "timeConvert/Elapsed" timeConvert = timeGetElapsed #-}
 
--- | Get the calendar Date (year-month-day) from a time representation.
---
--- Specialization of 'timeConvert'.
+-- | Get the date (year-month-day) from a time representation (a
+-- specialization of 'timeConvert').
 timeGetDate :: Timeable t => t -> Date
 timeGetDate t = d where (DateTime d _) = timeGetDateTimeOfDay t
 {-# INLINE[2] timeGetDate #-}
 {-# RULES "timeGetDate/ID" timeGetDate = id #-}
 {-# RULES "timeGetDate/DateTime" timeGetDate = dtDate #-}
 
--- | Get the day time (hours:minutes:seconds) from a time representation.
---
--- Specialization of 'timeConvert'.
+-- | Get the time (hours:minutes:seconds) from a time representation (a
+-- specialization of 'timeConvert').
 timeGetTimeOfDay :: Timeable t => t -> TimeOfDay
 timeGetTimeOfDay t = tod where (DateTime _ tod) = timeGetDateTimeOfDay t
 {-# INLINE[2] timeGetTimeOfDay #-}
 {-# RULES "timeGetTimeOfDay/Date" timeGetTimeOfDay = const (TimeOfDay 0 0 0 0) #-}
 {-# RULES "timeGetTimeOfDay/DateTime" timeGetTimeOfDay = dtTime #-}
 
--- | Get the date and time of day from a time representation.
---
--- Specialization of 'timeConvert'.
+-- | Get the date and time from a time representation (a specialization of
+-- 'timeConvert').
 timeGetDateTimeOfDay :: Timeable t => t -> DateTime
 timeGetDateTimeOfDay t = dateTimeFromUnixEpochP $ timeGetElapsedP t
 {-# INLINE[2] timeGetDateTimeOfDay #-}
@@ -198,7 +192,7 @@ timeAdd :: (Time t, TimeInterval ti) => t -> ti -> t
 timeAdd t ti =
   timeFromElapsedP $ elapsedTimeAddSecondsP (timeGetElapsedP t) (toSeconds ti)
 
--- | Get the difference in seconds between two time representation.
+-- | Get the difference in seconds between two time representations.
 --
 -- Effectively:
 --
@@ -207,7 +201,7 @@ timeDiff :: (Timeable t1, Timeable t2) => t1 -> t2 -> Seconds
 timeDiff t1 t2 = sec where (Elapsed sec) = timeGetElapsed t1 - timeGetElapsed t2
 
 -- | Get the difference in seconds and nanoseconds between two time
--- representation.
+-- representations.
 --
 -- Effectively:
 --

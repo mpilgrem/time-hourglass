@@ -3,35 +3,31 @@ Module      : Time.Compat
 License     : BSD-style
 Copyright   : (c) 2015 Nicolas DI PRIMA <nicolas@di-prima.fr>
 
-Basic Time conversion compatibility.
+Basic time conversion compatibility.
 
-This module aims to help conversion between the types from the package time to
-the package hourglass.
+This module aims to help conversion between types from @time@ package and types
+from the @time-hourglass@ package.
 
-Example of use (extracted from file examples/Example/Time/Compat.hs):
+An example of use (taken from file examples/Example/Time/Compat.hs):
 
 > import Data.Hourglass as H
 > import Data.Hourglass.Compat as C
 > import Data.Time as T
 >
-> transpose ::
->      T.ZonedTime
->   -> H.LocalTime H.DateTime
-> transpose oldTime =
->   H.localTime
->     offsetTime
->     (H.DateTime newDate timeofday)
+> transpose :: T.ZonedTime -> H.LocalTime H.DateTime
+> transpose oldTime = H.localTime
+>   offsetTime
+>   (H.DateTime newDate timeofday)
 >  where
+>   T.ZonedTime (T.LocalTime day tod) (T.TimeZone tzmin _ _) = oldTime
+>
 >   newDate :: H.Date
->   newDate =
->     C.dateFromTAIEpoch $ T.toModifiedJulianDay $ T.localDay $ T.zonedTimeToLocalTime oldTime
+>   newDate = C.dateFromTAIEpoch $ T.toModifiedJulianDay day
 >
 >   timeofday :: H.TimeOfDay
->   timeofday =
->     C.diffTimeToTimeOfDay $ T.timeOfDayToTime $ T.localTimeOfDay $ T.zonedTimeToLocalTime oldTime
+>   timeofday = C.diffTimeToTimeOfDay $ toRational $ T.timeOfDayToTime tod
 >
->   offsetTime =
->     H.TimezoneOffset $ fromIntegral $ T.timeZoneMinutes $ T.zonedTimeZone oldTime
+>   offsetTime = H.TimezoneOffset $ fromIntegral tzmin
 -}
 
 module Time.Compat
@@ -43,26 +39,36 @@ module Time.Compat
 import           Data.Hourglass.Time ( timeConvert )
 import           Time.Types ( Date, Elapsed (..), TimeOfDay (..) )
 
--- | Convert an integer which represent the Number of days (To/From) POSIX Epoch
--- to a Date (POSIX Epoch is 1970-01-01).
+-- | Given an integer which represents the number of days since the start of
+-- the Unix epoch, yield the corresponding date in the proleptic Gregorian
+-- calendar. Assumes that each day is 24 hours long.
 dateFromPOSIXEpoch ::
-     Integer -- ^ number of days since POSIX Epoch
+     Integer
+     -- ^ Number of days since the start of the Unix epoch.
   -> Date
 dateFromPOSIXEpoch day = do
   let sec = Elapsed $ fromIntegral $ day * 86400
   timeConvert sec
 
--- | Number of days between POSIX Epoch and TAI Epoch (between 1858-11-17 and
--- 1970-01-01).
+-- | The number of days between 1858-11-17 00:00:00 UTC, the start of the
+-- Modified Julian Date (MJD) epoch, and the Unix epoch
+-- (1970-01-01 00:00:00 UTC).
+--
+-- The name of this function is a misnomer, as the International Atomic Time
+-- (TAI) epoch starts on 1958-01-01 00:00:00 UTC.
 daysTAItoPOSIX :: Integer
 daysTAItoPOSIX = 40587
 
--- | Convert an integer which represents the Number of days (To/From) TAI Epoch.
--- This function allows use of the package time to easily convert the Day into
--- the Hourglass Date representation (TAI Epoch is 1858-11-17).
+-- | Given an integer which represents the number of days since
+-- 1858-11-17 00:00:00 UTC, the start of the Modified
+-- Julian Date (MJD) epoch, yields the corresponding date in the proleptic
+-- Gregorian calendar. Assumes that each day is 24 hours long.
 --
--- This function allows user to easily convert a 'Data.Time.Calendar.Day' into
--- Date.
+-- The name of this function is a misnomer, as the International Atomic Time
+-- (TAI) epoch starts on 1958-01-01 00:00:00 UTC.
+--
+-- This function allows a user to convert a t'Data.Time.Calendar.Day'
+-- into t'Date'.
 --
 -- > import qualified Data.Time.Calendar as T
 -- >
@@ -70,15 +76,16 @@ daysTAItoPOSIX = 40587
 -- >
 -- > dateFromTAIEpoch $ T.toModifiedJulianDay timeDay
 dateFromTAIEpoch ::
-     Integer -- ^ Number of days since TAI Epoch.
+     Integer
+     -- ^ Number of days since 1858-11-17 00:00:00 UTC.
   -> Date
 dateFromTAIEpoch dtai =
   dateFromPOSIXEpoch (dtai - daysTAItoPOSIX)
 
--- | Convert of differential of time of a day.
--- (it convers a Data.Time.Clock.DiffTime into a TimeOfDay)
+-- | Given a real number representing the number of seconds since the start of
+-- the day, yield a t'TimeOfDay' value.
 --
--- Example with DiffTime type from time:
+-- Example with t'Data.Time.Clock.DiffTime' type from package @time@:
 --
 -- > import qualified Data.Time.Clock as T
 -- >
@@ -86,7 +93,7 @@ dateFromTAIEpoch dtai =
 -- >
 -- > diffTimeToTimeOfDay difftime
 --
--- Example with the TimeOfDay type from time:
+-- Example with the 'Data.Time.LocalTime.TimeOfDay' type from package @time@:
 --
 -- > import qualified Data.Time.Clock as T
 -- >
@@ -95,7 +102,8 @@ dateFromTAIEpoch dtai =
 -- > diffTimeToTimeOfDay $ T.timeOfDayToTime timeofday
 diffTimeToTimeOfDay ::
     Real t
-  => t         -- ^ number of seconds of the time of the day
+  => t
+     -- ^ Number of seconds of the time of the day.
   -> TimeOfDay
 diffTimeToTimeOfDay dt = do
   TimeOfDay

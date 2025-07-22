@@ -6,14 +6,10 @@ Module      : Time.Types
 License     : BSD-style
 Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 
-Basic times units and types.
+Time-related types.
 
-While pratically some units could hold infinite values, for practical and
-efficient purpose they are limited to int64 types for seconds and int types for
-years.
-
-Most units use the Unix epoch referential, but by no means reduce portability.
-The Unix referential works under the Windows platform or any other platforms.
+In principle, some units could hold infinite values. In practice, 'Int64' for
+seconds (about @+/- 9e18@) and 'Int' for years is sufficient.
 -}
 
 module Time.Types
@@ -23,19 +19,18 @@ module Time.Types
   , Minutes (..)
   , Hours (..)
   , TimeInterval (..)
-    -- * Time enumeration
+    -- * Calendar enumerations
   , Month (..)
   , WeekDay (..)
     -- * Timezone
   , TimezoneOffset (..)
   , timezoneOffsetToSeconds
   , timezone_UTC
-    -- * Computer friendly format
-    -- ** Unix elapsed
+    -- * Elapsed time from start of an epoch
+    -- ** The Unix epoch
   , Elapsed (..)
   , ElapsedP (..)
-    -- * Human friendly format
-    -- ** Calendar time
+    -- * Date, time, and date and time
   , Date (..)
   , TimeOfDay (..)
   , DateTime (..)
@@ -53,7 +48,7 @@ class TimeInterval i where
   toSeconds   :: i -> Seconds
   fromSeconds :: Seconds -> (i, Seconds)
 
--- | Nanoseconds.
+-- | Type representing numbers of nanoseconds.
 newtype NanoSeconds = NanoSeconds Int64
   deriving (Data, Eq, NFData, Num, Ord, Read)
 
@@ -64,14 +59,7 @@ instance TimeInterval NanoSeconds where
   toSeconds (NanoSeconds ns) = Seconds (ns `div` 1000000000)
   fromSeconds (Seconds s) = (NanoSeconds (s * 1000000000), 0)
 
--- | Number of seconds without a referential.
---
--- Can hold a number between [-2^63,2^63-1], which should
--- be good for some billions of years.
---
--- However, because of limitation in the calendar conversion
--- currently used, seconds should be in the range [-2^55,2^55-1],
--- which is good for only 1 billion of year.
+-- | Type representing numbers of seconds.
 newtype Seconds = Seconds Int64
   deriving (Data, Eq, Enum, Integral, NFData, Num, Ord, Read, Real)
 
@@ -82,7 +70,7 @@ instance TimeInterval Seconds where
   toSeconds   = id
   fromSeconds s = (s,0)
 
--- | Number of minutes without a referential.
+-- | Type representing numbers of minutes.
 newtype Minutes = Minutes Int64
   deriving (Data, Eq, Enum, Integral, NFData, Num, Ord, Read, Real)
 
@@ -95,7 +83,7 @@ instance TimeInterval Minutes where
    where
     (m, s') = s `divMod` 60
 
--- | Number of hours without a referential.
+-- | Type representing numbers of hours.
 newtype Hours = Hours Int64
   deriving (Data, Eq, Enum, Integral, NFData, Num, Ord, Read, Real)
 
@@ -108,14 +96,16 @@ instance TimeInterval Hours where
    where
     (h, s') = s `divMod` 3600
 
--- | A number of seconds elapsed since the unix epoch.
+-- | Type representing numbers of seconds elapsed since the start of the Unix
+-- epoch.
 newtype Elapsed = Elapsed Seconds
   deriving (Data, Eq, NFData, Num, Ord, Read)
 
 instance Show Elapsed where
   show (Elapsed s) = show s
 
--- | A number of seconds and nanoseconds elapsed since the unix epoch.
+-- | Type representing numbers of seconds and nanoseconds elapsed since the
+-- start of the Unix epoch.
 data ElapsedP = ElapsedP {-# UNPACK #-} !Elapsed {-# UNPACK #-} !NanoSeconds
   deriving (Data, Eq, Ord, Read)
 
@@ -168,7 +158,7 @@ instance Real ElapsedP where
   toRational (ElapsedP (Elapsed (Seconds s)) (NanoSeconds ns)) =
     fromIntegral s + (fromIntegral ns % 1000000000)
 
--- | Month of the year.
+-- | Type representing months of the Julian or Gregorian year.
 data Month =
     January
   | February
@@ -184,9 +174,7 @@ data Month =
   | December
   deriving (Bounded, Data, Eq, Enum, Ord, Read, Show)
 
--- | Day of the week.
---
--- The enumeration starts on Sunday.
+-- | Type representing days of the week. The enumeration starts on Sunday.
 data WeekDay =
     Sunday
   | Monday
@@ -197,23 +185,23 @@ data WeekDay =
   | Saturday
   deriving (Bounded, Data, Eq, Enum, Ord, Read, Show)
 
--- | Offset against UTC in minutes to obtain from UTC time, local time.
---
--- * a positive number represent a location East of UTC.
---
--- * a negative number represent a location West of UTC.
+-- | Type representing offsets in minutes against UTC in minutes to obtain local
+-- time from UTC. A positive number represents a location east of where UTC is
+-- local time and a negative number represents a location west of where UTC is
+-- local time.
 --
 -- LocalTime t (-300) = t represent a time at UTC-5
+--
 -- LocalTime t (+480) = t represent a time at UTC+8
 --
--- should be between -11H and +14H
+-- Should be between -11H and +14H
 --
 -- Example:
---    in AUSEDT (UTC+1000 with daylight = UTC+1100), local time is 15:47;
---    Thus, UTC time is 04:47, and TimezoneOffset is +660 (minutes)
 --
+--    In AUSEDT (UTC+1000 with daylight = UTC+1100), local time is 15:47;
+--    Thus, UTC time is 04:47, and TimezoneOffset is +660 (minutes)
 newtype TimezoneOffset = TimezoneOffset
-  { timezoneOffsetToMinutes :: Int -- ^ return the number of minutes
+  { timezoneOffsetToMinutes :: Int -- ^ Return the number of minutes.
   }
   deriving (Data, Eq, NFData, Ord)
 
@@ -227,38 +215,39 @@ instance Show TimezoneOffset where
    where
     (tzH, tzM) = abs tz `divMod` 60
 
--- | The UTC timezone. offset of 0.
+-- | The UTC timezone. Offset of 0.
 timezone_UTC :: TimezoneOffset
 timezone_UTC = TimezoneOffset 0
 
--- | Human date representation using common calendar.
+-- | Type representing dates in the proleptic Gregorian calendar (the common
+-- calendar).
 data Date = Date
-  { dateYear  :: {-# UNPACK #-} !Int   -- ^ year (Common Era)
-  , dateMonth :: !Month                -- ^ month of the year
-  , dateDay   :: {-# UNPACK #-} !Int   -- ^ day of the month, between 1 to 31
+  { dateYear  :: {-# UNPACK #-} !Int   -- ^ Year of the Common Era.
+  , dateMonth :: !Month                -- ^ Month of the year.
+  , dateDay   :: {-# UNPACK #-} !Int   -- ^ Day of the month, between 1 to 31.
   }
   deriving (Data, Eq, Ord, Read, Show)
 
 instance NFData Date where
   rnf (Date y m d) = y `seq` m `seq` d `seq` ()
 
--- | human time representation of hour, minutes, seconds in a day.
+-- | Type representing times as hour, minutes, seconds and nanoseconds.
 data TimeOfDay = TimeOfDay
   { todHour :: {-# UNPACK #-} !Hours
-    -- ^ Hours, between 0 and 23
+    -- ^ Hours, between 0 and 23.
   , todMin  :: {-# UNPACK #-} !Minutes
-    -- ^ Minutes, between 0 and 59
+    -- ^ Minutes, between 0 and 59.
   , todSec  :: {-# UNPACK #-} !Seconds
-    -- ^ Seconds, between 0 and 59. 60 when having leap second
+    -- ^ Seconds, between 0 and 59. 60 when having leap second.
   , todNSec :: {-# UNPACK #-} !NanoSeconds
-    -- ^ Nanoseconds, between 0 and 999999999
+    -- ^ Nanoseconds, between 0 and 999999999.
   }
   deriving (Data, Eq, Ord, Read, Show)
 
 instance NFData TimeOfDay where
   rnf (TimeOfDay h m s ns) = h `seq` m `seq` s `seq` ns `seq` ()
 
--- | Date and Time.
+-- | Type representing date and time.
 data DateTime = DateTime
   { dtDate :: Date
   , dtTime :: TimeOfDay

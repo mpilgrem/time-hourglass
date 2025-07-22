@@ -8,16 +8,16 @@ Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
 Portability : unknown
 
-Epoch tracking.
+Types and functions related to epochs.
 -}
 
 module Data.Hourglass.Epoch
-  ( -- * Computer time tracking with various epoch
+  ( -- * Elapsed time from the start of epochs
     ElapsedSince (..)
   , ElapsedSinceP (..)
     -- * Epoch
   , Epoch (..)
-    -- ** standard and usual epochs
+    -- ** Commonly-encountered epochs
   , UnixEpoch (..)
   , WindowsEpoch (..)
   ) where
@@ -30,13 +30,16 @@ import           Time.Types
                    , Seconds (..)
                    )
 
--- | A number of seconds elapsed since an epoch.
+-- | A type representing the number of seconds that have elapsed since the start
+-- of a specified epoch.
 newtype ElapsedSince epoch = ElapsedSince Seconds
   deriving (Data, Eq, NFData, Num, Ord,  Read, Show)
 
--- | A number of seconds and nanoseconds elapsed since an epoch.
-data ElapsedSinceP epoch = ElapsedSinceP {-# UNPACK #-} !(ElapsedSince epoch)
-                                         {-# UNPACK #-} !NanoSeconds
+-- | A type representing the number of seconds and nanoseconds that have elapsed
+-- since the start of a specified epoch. The \'P\' is short for \'precise\'.
+data ElapsedSinceP epoch = ElapsedSinceP
+  {-# UNPACK #-} !(ElapsedSince epoch)
+  {-# UNPACK #-} !NanoSeconds
   deriving (Data, Eq, Ord, Read, Show)
 
 instance NFData (ElapsedSinceP e) where
@@ -62,23 +65,18 @@ instance Num (ElapsedSinceP e) where
 
 -- FIXME instance Real (ElapsedSinceP e)
 
--- | Epoch related.
+-- | A type class promising epoch-related functionality.
 --
--- We use the well known Unix epoch as the reference timezone for converting
--- between epochs.
---
--- Each of the methods of this typeclass should not use the actual value,
--- but only get the information needed from the type itself.
 class Epoch epoch where
-  -- | The name of this epoch.
+  -- | The name of the epoch.
   epochName :: epoch -> String
 
-  -- | Number of seconds of difference with 1st January 1970.
-  --
-  -- A negative number means that this epoch starts before the Unix epoch.
+  -- | The start of the epoch relative to the start of the Unix epoch
+  -- (1970-01-01 00:00 UTC), in seconds. A negative number means the epoch
+  -- starts before the starts of the Unix epoch.
   epochDiffToUnix :: epoch -> Seconds
 
--- | Unix epoch, starting 1st January 1970.
+-- | A type representing the Unix epoch, which started on 1970-01-01 00:00 UTC.
 data UnixEpoch = UnixEpoch
   deriving (Eq, Show)
 
@@ -86,7 +84,9 @@ instance Epoch UnixEpoch where
   epochName _ = "unix"
   epochDiffToUnix _ = 0
 
--- | Windows epoch, starting 1st January 1601.
+-- | A type representing the
+-- [Windows epoch](https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times),
+-- which started on 1601-01-01 00:00 UTC.
 data WindowsEpoch = WindowsEpoch
   deriving (Eq, Show)
 
@@ -121,7 +121,8 @@ instance Epoch epoch => Time (ElapsedSinceP epoch) where
   timeFromElapsedP (ElapsedP (Elapsed e) ns) =
     convertEpochP (ElapsedSinceP (ElapsedSince e) ns :: ElapsedSinceP UnixEpoch)
 
--- | Convert Elapsed seconds to another epoch with explicit epochs specified.
+-- | For the given pair of epochs, convert a t'ElapsedSince' value for the first
+-- epoch to the corresponding value for the second epoch.
 convertEpochWith ::
      (Epoch e1, Epoch e2)
   => (e1, e2)
@@ -133,17 +134,13 @@ convertEpochWith (e1, e2) (ElapsedSince s1) = ElapsedSince (s1 + diff)
   d1 = epochDiffToUnix e1
   d2 = epochDiffToUnix e2
 
--- | Convert Elapsed seconds to another epoch.
---
--- The actual epochs need to be known somehow by the context, otherwise this
--- function will yield a compilation error as the epoch are not chosen.
---
--- If you want to force specific epoch conversion, use 'convertEpochWith'.
+-- | Convert the given t'ElapsedSince' value to another t'ElapsedSince' value.
+-- This will not compile unless the compiler can infer the types of the epochs.
 convertEpoch :: (Epoch e1, Epoch e2) => ElapsedSince e1 -> ElapsedSince e2
 convertEpoch = convertEpochWith (undefined, undefined)
 
--- | Convert Precise Elapsed seconds to another epoch with explicit epochs
--- specified.
+-- | For the given pair of epochs, convert a t'ElapsedSinceP' value for the
+-- first epoch to the corresponding value for the second epoch.
 convertEpochPWith ::
      (Epoch e1, Epoch e2)
   => (e1, e2)
@@ -152,11 +149,7 @@ convertEpochPWith ::
 convertEpochPWith es (ElapsedSinceP e1 n1) =
   ElapsedSinceP (convertEpochWith es e1) n1
 
--- | Convert Elapsed seconds to another epoch.
---
--- The actual epochs need to be known somehow by the context, otherwise this
--- function will yield a compilation error as the epoch are not chosen.
---
--- If you want to force specific epoch conversion, use 'convertEpochWith'.
+-- | Convert the given t'ElapsedSinceP' value to another t'ElapsedSinceP' value.
+-- This will not compile unless the compiler can infer the types of the epochs.
 convertEpochP :: (Epoch e1, Epoch e2) => ElapsedSinceP e1 -> ElapsedSinceP e2
 convertEpochP = convertEpochPWith (undefined, undefined)

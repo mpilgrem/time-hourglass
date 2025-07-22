@@ -7,7 +7,7 @@ Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
 Portability : unknown
 
-Local time = global time + timezone.
+A local time is a global time together with a timezone.
 -}
 
 module Data.Hourglass.Local
@@ -28,15 +28,12 @@ import           Data.Hourglass.Diff ( elapsedTimeAddSecondsP )
 import           Data.Hourglass.Time ( Time, Timeable (..), timeConvert )
 import           Time.Types ( TimezoneOffset (..), timezoneOffsetToSeconds )
 
--- | Local time representation.
---
--- This is a time representation augmented by a timezone. To get back to a
--- global time, the timezoneOffset needs to be added to the local time.
+-- | Type representing local times.
 data LocalTime t = LocalTime
   { localTimeUnwrap      :: t
-    -- ^ unwrap the LocalTime value. the time value is local.
+    -- ^ The local time.
   , localTimeGetTimezone :: TimezoneOffset
-    -- ^ get the timezone associated with LocalTime
+    -- ^ The timezone offset.
   }
 
 -- FIXME add instance Read too.
@@ -58,14 +55,17 @@ instance (Ord t, Time t) => Ord (LocalTime t) where
 instance Functor LocalTime where
   fmap f (LocalTime t tz) = LocalTime (f t) tz
 
--- | Create a local time type from a timezone and a time type.
---
--- The time value is assumed to be local to the timezone offset set, so no
--- transformation is done.
-localTime :: Time t => TimezoneOffset -> t -> LocalTime t
+-- | For the given timezone offset and time value (assumed to be the local
+-- time), yield the corresponding local time.
+localTime ::
+     Time t
+  => TimezoneOffset
+  -> t
+     -- ^ The local time.
+  -> LocalTime t
 localTime tz t = LocalTime t tz
 
--- | Get back a global time value.
+-- | For the given t'LocalTime' value, yield the corresponding global time.
 localTimeToGlobal :: Time t => LocalTime t -> t
 localTimeToGlobal (LocalTime local tz)
   | tz == TimezoneOffset 0 = local
@@ -74,12 +74,13 @@ localTimeToGlobal (LocalTime local tz)
  where
   tzSecs = negate $ timezoneOffsetToSeconds tz
 
--- | Create a local time value from a global one.
+-- | For the given time value, yield the corresponding t'LocalTime' value
+-- assuming that there is no timezone offset.
 localTimeFromGlobal :: Time t => t -> LocalTime t
 localTimeFromGlobal = localTime (TimezoneOffset 0)
 
--- | Change the timezone, and adjust the local value to represent the new local
--- value.
+-- | For the given timezone offset and local time, yield the corresponding
+-- local tiem.
 localTimeSetTimezone :: Time t => TimezoneOffset -> LocalTime t -> LocalTime t
 localTimeSetTimezone tz currentLocal@(LocalTime t currentTz)
   | diffTz == 0 = currentLocal
@@ -88,7 +89,8 @@ localTimeSetTimezone tz currentLocal@(LocalTime t currentTz)
   t'        = elapsedTimeAddSecondsP (timeGetElapsedP t) diffTz
   diffTz    = timezoneOffsetToSeconds tz - timezoneOffsetToSeconds currentTz
 
--- | Convert the local time representation to another time representation
--- determined by context.
+-- | For the given local time of one type, yield the corresponding local time of
+-- a different type. This will not compile unless the compiler can infer the
+-- types of the two local times.
 localTimeConvert :: (Time t1, Time t2) => LocalTime t1 -> LocalTime t2
 localTimeConvert = fmap timeConvert

@@ -6,13 +6,13 @@ cabal-version: 1.12
 
 name:           time-hourglass
 version:        0.2.13
-synopsis:       simple performant time related library
-description:    Simple time library focusing on simple but powerful and performant API
+synopsis:       A simple and efficient time library
+description:    A simple and efficient time library.
                 .
-                The backbone of the library are the Timeable and Time type classes.
+                A key part of the library is the `Timeable` and `Time` type classes.
                 .
-                Each Timeable instances can be converted to type that has a Time instances,
-                and thus are different representations of current time.
+                Types representing time values that are instances of the classes allow easy
+                conversion between values of one time type and another.
 category:       Time
 stability:      experimental
 homepage:       https://github.com/mpilgrem/time-hourglass

@@ -18,6 +18,7 @@ and this project adheres to the
 * Fix `other-modules` of `bench-hourglass` benchmark.
 * `bench-hourglass` benchmark depends on `tasty-bench`, drop dependency on
   `gauge`.
+* Improve Haddock and other documentation.
 
 ## 0.2.12
 

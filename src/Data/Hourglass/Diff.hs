@@ -29,12 +29,8 @@ import           Time.Types
                    , TimeInterval (..)
                    )
 
--- | An amount of conceptual calendar time in terms of years, months and days.
---
--- This allow calendar manipulation, representing things like days and months
--- irrespective on how long those are related to timezone and daylight changes.
---
--- See 'Duration' for the time-based equivalent to this class.
+-- | Type representing periods of time in years, months and days.
+-- See t'Duration' for periods of time hours, minutes, seconds and nanoseconds.
 data Period = Period
   { periodYears  :: !Int
   , periodMonths :: !Int
@@ -52,8 +48,8 @@ instance Semigroup Period where
 instance Monoid Period where
   mempty = Period 0 0 0
 
--- | An amount of time in terms of constant value like hours (3600 seconds),
--- minutes (60 seconds), seconds and nanoseconds.
+-- | Type represeting periods of time in hours, minutes, seconds and
+-- nanoseconds. See t'Period' for periods of time in years, months and days.
 data Duration = Duration
   { durationHours   :: !Hours       -- ^ number of hours
   , durationMinutes :: !Minutes     -- ^ number of minutes
@@ -77,17 +73,16 @@ instance TimeInterval Duration where
 
   toSeconds d   = fst $ durationFlatten d
 
--- | Flatten a duration to a number of seconds, nanoseconds.
+-- | Convert a t'Duration' to an equivalent number of seconds and nanoseconds.
 durationFlatten :: Duration -> (Seconds, NanoSeconds)
 durationFlatten (Duration h m s (NanoSeconds ns)) =
   (toSeconds h + toSeconds m + s + Seconds sacc, NanoSeconds ns')
  where
   (sacc, ns') = ns `divMod` 1000000000
 
--- | Normalize all fields to represent the same value with the biggest units
--- possible.
---
--- For example, 62 minutes is normalized as 1h 2 minutes.
+-- | Normalize a t'Duration' to represent the same period of time with the
+-- biggest units possible. For example, 62 minutes is normalized as
+-- 1 hour and 2 minutes.
 durationNormalize :: Duration -> Duration
 durationNormalize (Duration (Hours h) (Minutes mi) (Seconds s) (NanoSeconds ns)) =
   Duration (Hours (h+hacc)) (Minutes mi') (Seconds s') (NanoSeconds ns')
@@ -96,7 +91,7 @@ durationNormalize (Duration (Hours h) (Minutes mi) (Seconds s) (NanoSeconds ns))
   (miacc, s') = (s+sacc) `divMod` 60
   (sacc, ns') = ns `divMod` 1000000000
 
--- | Add a period of time to a date.
+-- | Add the give period of time to the given date.
 dateAddPeriod :: Date -> Period -> Date
 dateAddPeriod (Date yOrig mOrig dOrig) (Period yDiff mDiff dDiff) =
   loop (yOrig + yDiff + yDiffAcc) mStartPos (dOrig + dDiff)
@@ -117,11 +112,11 @@ dateAddPeriod (Date yOrig mOrig dOrig) (Period yDiff mDiff dDiff) =
    where
     dMonth = daysInMonth y (toEnum m)
 
--- | Add a number of seconds to an 'Elapsed' type.
+-- | Add the given number of seconds to the given t'Elapsed' value.
 elapsedTimeAddSeconds :: Elapsed -> Seconds -> Elapsed
 elapsedTimeAddSeconds (Elapsed s1) s2 = Elapsed (s1 + s2)
 
--- | Add a number of seconds to an 'ElapsedP' type.
+-- | Add the given number of seconds to the given t'ElapsedP' value.
 elapsedTimeAddSecondsP :: ElapsedP -> Seconds -> ElapsedP
 elapsedTimeAddSecondsP (ElapsedP (Elapsed s1) ns1) s2 =
   ElapsedP (Elapsed (s1 + s2)) ns1

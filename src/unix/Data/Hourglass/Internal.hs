@@ -35,11 +35,11 @@ import           Time.Types
                    , TimezoneOffset (..)
                    )
 
--- | Convert a Unix epoch precise to 'DateTime'.
+-- | Convert a Unix epoch precise to t'DateTime'.
 dateTimeFromUnixEpochP :: ElapsedP -> DateTime
 dateTimeFromUnixEpochP (ElapsedP e ns) = fromCP ns $ rawGmTime e
 
--- | Convert a Unix epoch to 'DateTime'.
+-- | Convert a Unix epoch to t'DateTime'.
 dateTimeFromUnixEpoch :: Elapsed -> DateTime
 dateTimeFromUnixEpoch e = fromC $ rawGmTime e
 

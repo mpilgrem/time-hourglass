@@ -45,37 +45,64 @@ import           Time.Types
                    , timezone_UTC
                    )
 
--- | All the various formatters that can be part of a time format string.
+-- | Type representing formatters that can be part of a time format string.
 data TimeFormatElem =
-    Format_Year2      -- ^ 2 digit years (70 is 1970, 69 is 2069)
-  | Format_Year4      -- ^ 4 digits years
-  | Format_Year       -- ^ any digits years
-  | Format_Month      -- ^ months (1 to 12)
-  | Format_Month2     -- ^ months padded to 2 chars (01 to 12)
-  | Format_MonthName_Short -- ^ name of the month short ('Jan', 'Feb' ..)
-  | Format_DayYear    -- ^ day of the year (1 to 365, 366 for leap years)
-  | Format_Day        -- ^ day of the month (1 to 31)
-  | Format_Day2       -- ^ day of the month (01 to 31)
-  | Format_Hour       -- ^ hours (0 to 23)
-  | Format_Minute     -- ^ minutes (0 to 59)
-  | Format_Second     -- ^ seconds (0 to 59, 60 for leap seconds)
-  | Format_UnixSecond -- ^ number of seconds since 1 jan 1970. unix epoch.
-  | Format_MilliSecond -- ^ Milliseconds (000 to 999)
-  | Format_MicroSecond -- ^ MicroSeconds (000000 to 999999)
-  | Format_NanoSecond  -- ^ NanoSeconds (000000000 to 999999999)
-  | Format_Precision Int -- ^ sub seconds display with a precision of N digits. with N between 1 and 9
-  | Format_TimezoneName   -- ^ timezone name (e.g. GMT, PST). not implemented yet
-  -- | Format_TimezoneOffset -- ^ timeoffset offset (+02:00)
-  | Format_TzHM_Colon_Z -- ^ zero UTC offset (Z) or timeoffset with colon (+02:00)
-  | Format_TzHM_Colon -- ^ timeoffset offset with colon (+02:00)
-  | Format_TzHM       -- ^ timeoffset offset (+0200)
-  | Format_Tz_Offset  -- ^ timeoffset in minutes
-  | Format_Spaces     -- ^ one or many space-like chars
-  | Format_Text Char  -- ^ a verbatim char
+    Format_Year2
+    -- ^ 2 digit years (70 is 1970, 69 is 2069).
+  | Format_Year4
+    -- ^ 4 digits years.
+  | Format_Year
+    -- ^ Any digits years.
+  | Format_Month
+    -- ^ Months (1 to 12).
+  | Format_Month2
+    -- ^ Months padded to 2 characters (01 to 12).
+  | Format_MonthName_Short
+    -- ^ Short name of nthe month (\'Jan\', \'Feb\' ..).
+  | Format_DayYear
+    -- ^ Day of the year (1 to 365, 366 for leap years).
+  | Format_Day
+    -- ^ Day of the month (1 to 31).
+  | Format_Day2
+    -- ^ Day of the month padded to 2 characters (01 to 31).
+  | Format_Hour
+    -- ^ Hours (0 to 23).
+  | Format_Minute
+    -- ^ Minutes (0 to 59).
+  | Format_Second
+    -- ^ sSeconds (0 to 59, 60 for leap seconds).
+  | Format_UnixSecond
+    -- ^ Number of seconds since the start of the Unix epoch.
+  | Format_MilliSecond
+    -- ^ Milliseconds padded to 3 characters (000 to 999).
+  | Format_MicroSecond
+    -- ^ MicroSeconds padded to 6 characters (000000 to 999999).
+  | Format_NanoSecond
+    -- ^ NanoSeconds padded to 9 characters (000000000 to 999999999).
+  | Format_Precision Int
+    -- ^ Sub seconds display with a precision of n digits, with n between @1@
+    -- and @9@.
+  | Format_TimezoneName
+    -- ^ Timezone name (e.g. GMT, PST). Not yet implemented.
+--  Format_TimezoneOffset
+    -- ^ Timezone offset offset (+02:00).
+  | Format_TzHM_Colon_Z
+    -- ^ Zero UTC offset (Z) or timezone offset with colon (+02:00).
+  | Format_TzHM_Colon
+    -- ^ Timezone offset with colon (+02:00).
+  | Format_TzHM
+    -- ^ Timezone offset without colon (+0200).
+  | Format_Tz_Offset
+    -- ^ Timezone offset in minutes.
+  | Format_Spaces
+    -- ^ One or more space-like chars.
+  | Format_Text Char
+    -- ^ A verbatim character.
   | Format_Fct TimeFormatFct
   deriving (Eq, Show)
 
--- | A generic format function composed of a parser and a printer.
+-- | Type representing generic format functions, composed of a parser and a
+-- printer.
 data TimeFormatFct = TimeFormatFct
   { timeFormatFctName :: String
   , timeFormatParse   :: DateTime -> String -> Either String (DateTime, String)
@@ -88,24 +115,25 @@ instance Show TimeFormatFct where
 instance Eq TimeFormatFct where
   t1 == t2 = timeFormatFctName t1 == timeFormatFctName t2
 
--- | A time format string, composed of list of 'TimeFormatElem'.
+-- | Type representing time format strings, composed of list
+-- of t'TimeFormatElem'.
 newtype TimeFormatString = TimeFormatString [TimeFormatElem]
   deriving (Eq, Show)
 
--- | A generic class for anything that can be considered a Time Format string.
+-- | A type class promising the ability to convert values to
+-- a t'TimeFormatString'.
 class TimeFormat format where
   toFormat :: format -> TimeFormatString
 
--- | ISO8601 Date format string.
+-- | A type representing a ISO8601 date format string.
 --
 -- e.g. 2014-04-05
 data ISO8601_Date = ISO8601_Date
   deriving (Eq, Show)
 
--- | ISO8601 Date and Time format string.
+-- | A type representing a ISO8601 date and time format string.
 --
--- e.g. 2014-04-05T17:25:04+00:00
---      2014-04-05T17:25:04Z
+-- e.g. 2014-04-05T17:25:04+00:00 or 2014-04-05T17:25:04Z.
 data ISO8601_DateAndTime = ISO8601_DateAndTime
   deriving (Eq, Show)
 
@@ -232,36 +260,32 @@ printWith fmt tzOfs@(TimezoneOffset tz) t = concatMap fmtToString fmtElems
   (DateTime date tm) = timeGetDateTimeOfDay t
   (NanoSeconds ns) = timeGetNanoSeconds t
 
--- | Pretty print local time to a string.
---
--- The actual output is determined by the format used.
+-- | Given the specified format, pretty print the given local time.
 localTimePrint ::
      (TimeFormat format, Timeable t)
-  => format      -- ^ the format to use for printing
-  -> LocalTime t -- ^ the local time to print
-  -> String      -- ^ the resulting local time string
+  => format      -- ^ The format to use for printing.
+  -> LocalTime t -- ^ The local time to print.
+  -> String
 localTimePrint fmt lt =
   localTimeUnwrap $ fmap (printWith fmt (localTimeGetTimezone lt)) lt
 
--- | Pretty print time to a string
---
--- The actual output is determined by the format used.
+-- | Given the specified format, pretty print the given time.
 timePrint ::
      (TimeFormat format, Timeable t)
-  => format -- ^ the format to use for printing
-  -> t      -- ^ the global time to print
-  -> String -- ^ the resulting string
+  => format -- ^ The format to use for printing.
+  -> t      -- ^ The time to print.
+  -> String
 timePrint fmt = printWith fmt timezone_UTC
 
--- | Try parsing a string as time using the format explicitely specified.
+-- | Given the specified format, try to parse the given string as time value.
 --
--- On failure, the parsing function returns the reason of the failure. If
--- parsing is successful, return the date parsed with the remaining unparsed
--- string.
+-- On failure, the parsing function returns the reason of the failure.
+--
+-- If successful, yield the parsed value and the remaining unparsed string.
 localTimeParseE ::
      TimeFormat format
-  => format -- ^ the format to use for parsing
-  -> String -- ^ the string to parse
+  => format -- ^ The format to use for parsing.
+  -> String -- ^ The string to parse.
   -> Either (TimeFormatElem, String) (LocalTime DateTime, String)
 localTimeParseE fmt = loop ini fmtElems
  where
@@ -409,15 +433,17 @@ localTimeParseE fmt = loop ini fmtElems
     s = 10 ^ shift
     m = 10 ^ mask
 
--- | Try parsing a string as time using the format explicitely specified.
+-- | Given the specified format, try to parse the given string as time value.
 --
--- Unparsed characters are ignored and the error handling is simplified.
+-- On failure, returns 'Nothing'.
+--
+-- If successful, yields 'Just' the parsed value.
 --
 -- For more elaborate needs use 'localTimeParseE'.
-localTimeParse
-     :: TimeFormat format
-  => format -- ^ the format to use for parsing
-  -> String -- ^ the string to parse
+localTimeParse ::
+     TimeFormat format
+  => format -- ^ The format to use for parsing.
+  -> String -- ^ The string to parse.
   -> Maybe (LocalTime DateTime)
 localTimeParse fmt s =
   either (const Nothing) (Just . fst) $ localTimeParseE fmt s
@@ -432,7 +458,7 @@ timeParseE ::
 timeParseE fmt timeString =
   (\(d, s) -> Right (localTimeToGlobal d, s)) =<< localTimeParseE fmt timeString
 
--- | Just like 'localTimeParse' but the time is automatically converted to
+-- | Like 'localTimeParse' but the time value is automatically converted to
 -- global time.
 timeParse :: TimeFormat format => format -> String -> Maybe DateTime
 timeParse fmt s = localTimeToGlobal `fmap` localTimeParse fmt s

@@ -8,22 +8,38 @@ time-hourglass
 Originally forked from
 [`hourglass-0.2.12`](https://hackage.haskell.org/package/hourglass-0.2.12).
 
-Hourglass is a simple time library.
+`time-hourglass` (originally `hourglass`) is a simple and efficient time
+library.
 
-Documentation: [time-hourglass on hackage](http://hackage.haskell.org/package/time-hourglass)
+Documentation
+-------------
+
+See the Haddock documentation on [Hackage](http://hackage.haskell.org/package/time-hourglass).
 
 Design
 ------
-Key parts of the design are the Timeable and Time typeclasses.
-Time representations of the same time values are interchangeable and easy to convert
-between each other. This also allows the user to define new time types that
-interact with the same functions as the built-in types.
+
+A key part of the design is the `Timeable` and `Time` type classes. Types
+representing time values that are instances of these classes allow easy
+conversion between values of one time type and another.
 
 For example:
-```haskell
+
+~~~haskell
 let dateTime0 =
-      DateTime { dtDate = Date { dateYear = 1970, dateMonth = January, dateDay = 1 }
-               , dtTime = TimeOfDay {todHour = 0, todMin = 0, todSec = 0, todNSec = 0 }}
+      DateTime
+        { dtDate = Date
+            { dateYear = 1970
+            , dateMonth = January
+            , dateDay = 1
+            }
+        , dtTime = TimeOfDay
+            { todHour = 0
+            , todMin = 0
+            , todSec = 0
+            , todNSec = 0
+            }
+        }
     elapsed0 = Elasped 0
 
 > timeGetElapsed elapsed0 == timeGetElapsed dateTime0
@@ -34,58 +50,64 @@ True
 "1970-01"
 > timePrint "YYYY-MM" dateTime0
 "1970-01"
-```
+~~~
 
-Hourglass has the same limitations as your system:
+The library has the same limitations as your operating system, namely:
 
-* On 32 bit linux, you can't get a date after the year 2038.
-* In Windows 7, you can't get the date before the year 1601.
+* on 32-bit Linux, you can't get a date after the year 2038; and
+* on Windows, you can't get a date before the year 1601.
 
-Comparaison with time
----------------------
-* Getting posix time:
-```haskell
--- With time
-import Data.Time.Clock.POSIX
+Comparaison with the `time` package
+-----------------------------------
 
-ptime <- getPOSIXTime
+*   Getting the elapsed time since 1970-01-01 00:00 UTC (POSIX time) from the
+    system clock:
 
--- With hourglass
-import System.Hourglass
+    ~~~haskell
+    -- With time:
+    import Data.Time.Clock.POSIX ( getPOSIXTime )
 
-ptime <- timeCurrent
-```
+    ptime <- getPOSIXTime
 
-* Getting the current year:
-```haskell
--- With time
-import Data.Time.Clock
-import Data.Time.Calendar
+    -- With time-hourglass:
+    import System.Hourglass ( timeCurrent )
 
-currentYear <- (\(y,_,_) -> y) . toGregorian . utcDay <$> getCurrentTime
+    ptime <- timeCurrent
+    ~~~
 
--- With hourglass
-import System.Hourglass
-import Data.Time
+*   Getting the current year:
 
-currentYear <- dateYear . timeGetDate <$> timeCurrent
-```
+    ~~~haskell
+    -- With time:
+    import Data.Time.Clock ( UTCTime (..) )
+    import Data.Time.Clock.POSIX ( getCurrentTime )
+    import Data.Time.Calendar ( toGregorian )
 
-* Representating "4th May 1970 15:12:24"
-```haskell
--- With time
-import Data.Time.Clock
-import Date.Time.Calendar
+    currentYear <- (\(y, _, _) -> y) . toGregorian . utcDay <$> getCurrentTime
 
-let day = fromGregorian 1970 5 4
-    diffTime = secondsToDiffTime (15 * 3600 + 12 * 60 + 24)
-in UTCTime day diffTime
+    -- With time-hourglass:
+    import System.Hourglass ( timeCurrent )
+    import Data.Hourglass ( Date (..), timeGetDate )
 
--- With hourglass
-import Date.Time
+    currentYear <- dateYear . timeGetDate <$> timeCurrent
+    ~~~
 
-DateTime (Date 1970 May 4) (TimeOfDay 15 12 24 0)
-```
+*   Representating "4th May 1970 15:12:24"
+
+    ~~~haskell
+    -- With time:
+    import Data.Time.Clock ( UTCTime (..), secondsToDiffTime )
+    import Date.Time.Calendar ( fromGregorian )
+
+    let day = fromGregorian 1970 5 4
+        diffTime = secondsToDiffTime (15 * 3600 + 12 * 60 + 24)
+    in  UTCTime day diffTime
+
+    -- With time-hourglass:
+    import Date.Time ( Date (..), DateTime (..), TimeOfDay (..) )
+
+    DateTime (Date 1970 May 4) (TimeOfDay 15 12 24 0)
+    ~~~
 
 History
 -------
