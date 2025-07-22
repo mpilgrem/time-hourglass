@@ -22,7 +22,7 @@ Example of use (extracted from file Example/Time/Compat.hs):
 >   T.ZonedTime (T.LocalTime day tod) (T.TimeZone tzmin _ _) = oldTime
 >
 >   newDate :: H.Date
->   newDate = C.dateFromTAIEpoch $ T.toModifiedJulianDay day
+>   newDate = C.dateFromMJDEpoch $ T.toModifiedJulianDay day
 >
 >   timeofday :: H.TimeOfDay
 >   timeofday = C.diffTimeToTimeOfDay $ toRational $ T.timeOfDayToTime tod

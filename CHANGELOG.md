@@ -19,6 +19,10 @@ and this project adheres to the
 * `bench-hourglass` benchmark depends on `tasty-bench`, drop dependency on
   `gauge`.
 * Improve Haddock and other documentation.
+* Export new `dateFromUnixEpoch` and deprecate identical `dateFromPOSIXEpoch` to
+  name epoch consistently.
+* Export new `dateFromMJDEpoch` and deprecate identical `dateFromTAIEpoch` to
+  fix the latter being a misnomer.
 
 ## 0.2.12
 

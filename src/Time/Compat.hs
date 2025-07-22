@@ -22,7 +22,7 @@ An example of use (taken from file examples/Example/Time/Compat.hs):
 >   T.ZonedTime (T.LocalTime day tod) (T.TimeZone tzmin _ _) = oldTime
 >
 >   newDate :: H.Date
->   newDate = C.dateFromTAIEpoch $ T.toModifiedJulianDay day
+>   newDate = C.dateFromMJDEpoch $ T.toModifiedJulianDay day
 >
 >   timeofday :: H.TimeOfDay
 >   timeofday = C.diffTimeToTimeOfDay $ toRational $ T.timeOfDayToTime tod
@@ -31,41 +31,44 @@ An example of use (taken from file examples/Example/Time/Compat.hs):
 -}
 
 module Time.Compat
-  ( dateFromPOSIXEpoch
-  , dateFromTAIEpoch
+  ( dateFromUnixEpoch
+  , dateFromMJDEpoch
   , diffTimeToTimeOfDay
+    -- * Deprecated
+  , dateFromPOSIXEpoch
+  , dateFromTAIEpoch
   ) where
 
 import           Data.Hourglass.Time ( timeConvert )
 import           Time.Types ( Date, Elapsed (..), TimeOfDay (..) )
 
--- | Given an integer which represents the number of days since the start of
--- the Unix epoch, yield the corresponding date in the proleptic Gregorian
--- calendar. Assumes that each day is 24 hours long.
+-- | Given an integer which represents the number of days since the start of the
+-- Unix epoch, yield the corresponding date in the proleptic Gregorian calendar.
+dateFromUnixEpoch ::
+     Integer
+     -- ^ Number of days since the start of the Unix epoch.
+  -> Date
+dateFromUnixEpoch day = do
+  let sec = Elapsed $ fromIntegral $ day * 86400
+  timeConvert sec
+
+-- | Same as 'dateFromUnixEpoch'.
 dateFromPOSIXEpoch ::
      Integer
      -- ^ Number of days since the start of the Unix epoch.
   -> Date
-dateFromPOSIXEpoch day = do
-  let sec = Elapsed $ fromIntegral $ day * 86400
-  timeConvert sec
+dateFromPOSIXEpoch = dateFromUnixEpoch
+{-# DEPRECATED dateFromPOSIXEpoch "Will be removed from future versions of this package. Use dateFromUnixEpoch" #-}
 
--- | The number of days between 1858-11-17 00:00:00 UTC, the start of the
--- Modified Julian Date (MJD) epoch, and the Unix epoch
+-- | The number of days between the start of the Modified Julian Date (MJD)
+-- epoch (1858-11-17 00:00:00 UTC) and the start of the Unix epoch
 -- (1970-01-01 00:00:00 UTC).
---
--- The name of this function is a misnomer, as the International Atomic Time
--- (TAI) epoch starts on 1958-01-01 00:00:00 UTC.
-daysTAItoPOSIX :: Integer
-daysTAItoPOSIX = 40587
+daysMJDtoUnix :: Integer
+daysMJDtoUnix = 40587
 
--- | Given an integer which represents the number of days since
--- 1858-11-17 00:00:00 UTC, the start of the Modified
--- Julian Date (MJD) epoch, yields the corresponding date in the proleptic
--- Gregorian calendar. Assumes that each day is 24 hours long.
---
--- The name of this function is a misnomer, as the International Atomic Time
--- (TAI) epoch starts on 1958-01-01 00:00:00 UTC.
+-- | Given an integer which represents the number of days since the start of the
+-- Modified Julian Date (MJD) epoch (1858-11-17 00:00:00 UTC), yields the
+-- corresponding date in the proleptic Gregorian calendar.
 --
 -- This function allows a user to convert a t'Data.Time.Calendar.Day'
 -- into t'Date'.
@@ -74,13 +77,24 @@ daysTAItoPOSIX = 40587
 -- >
 -- > timeDay :: T.Day
 -- >
--- > dateFromTAIEpoch $ T.toModifiedJulianDay timeDay
+-- > dateFromMJDEpoch $ T.toModifiedJulianDay timeDay
+dateFromMJDEpoch ::
+     Integer
+     -- ^ Number of days since 1858-11-17 00:00:00 UTC.
+  -> Date
+dateFromMJDEpoch dtai =
+  dateFromUnixEpoch (dtai - daysMJDtoUnix)
+
+-- | Same as 'dateFromMJDEpoch'.
+--
+-- The name of this function is a misnomer, as the International Atomic Time
+-- (TAI) epoch starts on 1958-01-01 00:00:00 UTC.
 dateFromTAIEpoch ::
      Integer
      -- ^ Number of days since 1858-11-17 00:00:00 UTC.
   -> Date
-dateFromTAIEpoch dtai =
-  dateFromPOSIXEpoch (dtai - daysTAItoPOSIX)
+dateFromTAIEpoch = dateFromMJDEpoch
+{-# DEPRECATED dateFromTAIEpoch "Will be removed from future versions of this package. Use dateFromMJDEpoch" #-}
 
 -- | Given a real number representing the number of seconds since the start of
 -- the day, yield a t'TimeOfDay' value.
