@@ -1,3 +1,6 @@
+{-# OPTIONS_GHC -Wno-orphans            #-}
+{-# OPTIONS_GHC -Wno-missing-signatures #-}
+
 {-# LANGUAGE FlexibleInstances   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 

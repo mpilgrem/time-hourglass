@@ -74,8 +74,6 @@ tests:
         source-dirs: tests/unix
     ghc-options:
     - -Wall
-    - -fno-warn-orphans
-    - -fno-warn-missing-signatures
 
 benchmarks:
   bench-hourglass:

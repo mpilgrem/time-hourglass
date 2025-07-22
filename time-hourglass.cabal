@@ -80,7 +80,7 @@ test-suite test-hourglass
       TimeDB
   hs-source-dirs:
       tests
-  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  ghc-options: -Wall
   build-depends:
       base >=4.11 && <5
     , deepseq
