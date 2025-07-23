@@ -36,10 +36,6 @@ source-repository head
 library
   exposed-modules:
       Data.Hourglass
-      Data.Hourglass.Compat
-      Data.Hourglass.Epoch
-      Data.Hourglass.Types
-      System.Hourglass
       Time.Compat
       Time.Epoch
       Time.System

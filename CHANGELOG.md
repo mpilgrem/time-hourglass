@@ -8,6 +8,9 @@ and this project adheres to the
 
 ## UNRELEASED
 
+* Drop deprecated modules `Data.Hourglass.Compat`, `Data.Hourglass.Epoch`,
+  `Data.Hourglass.Types` and `System.Hourglass`.
+
 ## 0.2.14
 
 * In test-suite and benchmark, depend on main library, drop dependency on
