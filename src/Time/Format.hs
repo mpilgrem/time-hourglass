@@ -100,14 +100,17 @@ data TimeFormatElem =
   | Format_Text Char
     -- ^ A verbatim character.
   | Format_Fct TimeFormatFct
+    -- ^ Not implemented.
   deriving (Eq, Show)
 
--- | Type representing generic format functions, composed of a parser and a
--- printer.
+-- | Type representing format functions.
 data TimeFormatFct = TimeFormatFct
   { timeFormatFctName :: String
+    -- ^ The name of the format function.
   , timeFormatParse   :: DateTime -> String -> Either String (DateTime, String)
+    -- ^ A parser.
   , timeFormatPrint   :: DateTime -> String
+    -- A printer.
   }
 
 instance Show TimeFormatFct where
@@ -253,7 +256,7 @@ printWith fmt tzOfs@(TimezoneOffset tz) t = concatMap fmtToString fmtElems
        in sign ++ pad2 tzH ++ ":" ++ pad2 tzM
   fmtToString Format_Spaces   = " "
   fmtToString (Format_Text c) = [c]
-  fmtToString f = error ("implemented printing format: " ++ show f)
+  fmtToString f = error ("unimplemented printing format: " ++ show f)
 
   (TimeFormatString fmtElems) = toFormat fmt
 
@@ -352,7 +355,7 @@ localTimeParseE fmt = loop ini fmtElems
 
   processOne acc Format_Spaces (' ':s) = Right (acc, s)
   -- catch all for unimplemented format.
-  processOne _ f _ = error ("unimplemened parsing format: " ++ show f)
+  processOne _ f _ = error ("unimplemented parsing format: " ++ show f)
 
   parseHMSign expectColon acc signChar afterSign =
     case signChar of

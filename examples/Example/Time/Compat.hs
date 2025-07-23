@@ -18,9 +18,7 @@ import           "time-hourglass" Data.Hourglass as H
 import           "time-hourglass" Data.Hourglass.Compat as C
 import           Data.Time as T
 
-transpose ::
-     T.ZonedTime
-  -> H.LocalTime H.DateTime
+transpose :: T.ZonedTime -> H.LocalTime H.DateTime
 transpose oldTime =
   H.localTime
     offsetTime

@@ -79,8 +79,8 @@ localTimeToGlobal (LocalTime local tz)
 localTimeFromGlobal :: Time t => t -> LocalTime t
 localTimeFromGlobal = localTime (TimezoneOffset 0)
 
--- | For the given timezone offset and local time, yield the corresponding
--- local tiem.
+-- | For the given timezone offset and local time, yield the corresponding local
+-- time.
 localTimeSetTimezone :: Time t => TimezoneOffset -> LocalTime t -> LocalTime t
 localTimeSetTimezone tz currentLocal@(LocalTime t currentTz)
   | diffTz == 0 = currentLocal

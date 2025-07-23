@@ -43,10 +43,18 @@ import           Data.Int ( Int64 )
 import           Data.Ratio ( (%) )
 import           Time.Utils ( pad2 )
 
--- | Represent any time interval that has an equivalent value to a number of
--- seconds.
+-- | Type class promising functionality for:
+--
+-- * converting a value of the type in question to a number of seconds; and
+--
+-- * converting a t'Seconds' value to a pair of a value of the type in question
+--   and a remaining number of seconds.
 class TimeInterval i where
+  -- | For the given value, yield a corresponding number of seconds.
   toSeconds   :: i -> Seconds
+
+  -- | For the given number of seconds, yield a pair of the corresponding value
+  -- of the type in queston and a remaining number of seconds.
   fromSeconds :: Seconds -> (i, Seconds)
 
 -- | Type representing numbers of nanoseconds.
@@ -69,7 +77,7 @@ instance Show Seconds where
 
 instance TimeInterval Seconds where
   toSeconds   = id
-  fromSeconds s = (s,0)
+  fromSeconds s = (s, 0)
 
 -- | Type representing numbers of minutes.
 newtype Minutes = Minutes Int64
@@ -186,27 +194,25 @@ data WeekDay =
   | Saturday
   deriving (Bounded, Data, Eq, Enum, Ord, Read, Show)
 
--- | Type representing offsets in minutes against UTC in minutes to obtain local
--- time from UTC. A positive number represents a location east of where UTC is
--- local time and a negative number represents a location west of where UTC is
--- local time.
+-- | Type representing offsets in minutes against UTC to obtain local time from
+-- UTC. A positive number represents a location east of where UTC is local time
+-- and a negative number represents a location west of where UTC is local time.
 --
--- LocalTime t (-300) = t represent a time at UTC-5
+-- LocalTime t (-300) -- t represents a time at UTC-5
 --
--- LocalTime t (+480) = t represent a time at UTC+8
+-- LocalTime t (+480) -- t represents a time at UTC+8
 --
--- Should be between -11H and +14H
+-- Should be between @(-12 * 60)@ and @(+14 * 60)@.
 --
--- Example:
---
---    In AUSEDT (UTC+1000 with daylight = UTC+1100), local time is 15:47;
---    Thus, UTC time is 04:47, and TimezoneOffset is +660 (minutes)
+-- For example, in timezone AEDT (Australian Eastern Daylight Time) (UTC+11),
+-- local time is 15:47. Consequently, UTC time is 04:47 and the timezone offset
+-- is v'TimezoneOffset' @660@ (in minutes).
 newtype TimezoneOffset = TimezoneOffset
-  { timezoneOffsetToMinutes :: Int -- ^ Return the number of minutes.
+  { timezoneOffsetToMinutes :: Int -- ^ The number of minutes.
   }
   deriving (Data, Eq, NFData, Ord)
 
--- | Return the number of seconds associated with a timezone.
+-- | For the given timezone offset, yield the corresponding number of seconds.
 timezoneOffsetToSeconds :: TimezoneOffset -> Seconds
 timezoneOffsetToSeconds (TimezoneOffset ofs) = Seconds (fromIntegral ofs * 60)
 
@@ -216,16 +222,21 @@ instance Show TimezoneOffset where
    where
     (tzH, tzM) = abs tz `divMod` 60
 
--- | The UTC timezone. Offset of 0.
+-- | The UTC timezone.
+--
+-- > timezoneOffsetToMinutes timezone_UTC == 0 -- True
 timezone_UTC :: TimezoneOffset
 timezone_UTC = TimezoneOffset 0
 
 -- | Type representing dates in the proleptic Gregorian calendar (the common
 -- calendar).
 data Date = Date
-  { dateYear  :: {-# UNPACK #-} !Int   -- ^ Year of the Common Era.
-  , dateMonth :: !Month                -- ^ Month of the year.
-  , dateDay   :: {-# UNPACK #-} !Int   -- ^ Day of the month, between 1 to 31.
+  { dateYear  :: {-# UNPACK #-} !Int
+    -- ^ Year of the Common Era.
+  , dateMonth :: !Month
+    -- ^ Month of the year.
+  , dateDay   :: {-# UNPACK #-} !Int
+    -- ^ Day of the month, between 1 to 31.
   }
   deriving (Data, Eq, Ord, Read, Show)
 

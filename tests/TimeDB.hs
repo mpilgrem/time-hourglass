@@ -4,9 +4,12 @@ module TimeDB
   ( parseTimeConv
   ) where
 
-import Data.Char ( isDigit )
-import Data.Hourglass
-import Data.Int
+import           Data.Char ( isDigit )
+import           Data.Hourglass
+                   ( Date (..), DateTime (..), Elapsed, TimeOfDay (..)
+                   , WeekDay
+                   )
+import           Data.Int ( Int64 )
 
 r :: (Read a, Num a) => String -> a
 r !s
