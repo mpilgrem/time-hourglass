@@ -39,9 +39,9 @@ module Time.Types
 
 import           Control.DeepSeq ( NFData (..) )
 import           Data.Data ( Data )
-import           Data.Hourglass.Utils ( pad2 )
 import           Data.Int ( Int64 )
 import           Data.Ratio ( (%) )
+import           Time.Utils ( pad2 )
 
 -- | Represent any time interval that has an equivalent value to a number of
 -- seconds.

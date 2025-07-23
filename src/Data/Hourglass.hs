@@ -98,10 +98,10 @@ module Data.Hourglass
   , localTimeParseE
   ) where
 
-import           Data.Hourglass.Calendar
+import           Time.Calendar
                    ( daysInMonth, getDayOfTheYear, getWeekDay, isLeapYear )
-import           Data.Hourglass.Format
-import           Data.Hourglass.Local
-import           Data.Hourglass.Time
+import           Time.Format
+import           Time.LocalTime
+import           Time.Time
+import           Time.Timezone
 import           Time.Types
-import           Data.Hourglass.Zone

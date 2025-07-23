@@ -21,11 +21,11 @@ module Time.System
   , timezoneCurrent
   ) where
 
-import           Data.Hourglass.Internal
+import           Time.Internal
                    ( systemGetElapsed, systemGetElapsedP, systemGetTimezone )
-import           Data.Hourglass.Local
+import           Time.LocalTime
                    ( LocalTime, localTimeFromGlobal, localTimeSetTimezone )
-import           Data.Hourglass.Time ( timeGetDateTimeOfDay )
+import           Time.Time ( timeGetDateTimeOfDay )
 import           Time.Types ( DateTime, Elapsed, ElapsedP, TimezoneOffset )
 
 -- | Get the current number of seconds elapsed since the start of the Unix

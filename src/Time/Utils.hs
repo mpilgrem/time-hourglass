@@ -1,5 +1,5 @@
 {- |
-Module      : Data.Hourglass.Utils
+Module      : Time.Utils
 License     : BSD-style
 Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
@@ -8,7 +8,7 @@ Portability : unknown
 Some padding / formatting functions.
 -}
 
-module Data.Hourglass.Utils where
+module Time.Utils where
 
 -- | Pad a number to 2 digits.
 pad2 :: (Show a, Ord a, Num a, Integral a) => a -> String

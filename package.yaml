@@ -33,14 +33,14 @@ ghc-options:
 library:
   source-dirs: src
   exposed-modules:
-  - Time.Types
-  - Time.System
-  - Time.Compat
   - Data.Hourglass
-  - Data.Hourglass.Types
-  - Data.Hourglass.Epoch
   - Data.Hourglass.Compat
+  - Data.Hourglass.Epoch
+  - Data.Hourglass.Types
   - System.Hourglass
+  - Time.Compat
+  - Time.System
+  - Time.Types
   when:
   - condition: os(windows)
     then:

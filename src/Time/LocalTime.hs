@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 
 {- |
-Module      : Data.Hourglass.Local
+Module      : Time.LocalTime
 License     : BSD-style
 Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
@@ -10,7 +10,7 @@ Portability : unknown
 A local time is a global time together with a timezone.
 -}
 
-module Data.Hourglass.Local
+module Time.LocalTime
   ( -- * Local time
     -- ** Local time type
     LocalTime
@@ -24,8 +24,8 @@ module Data.Hourglass.Local
   , localTimeConvert
   ) where
 
-import           Data.Hourglass.Diff ( elapsedTimeAddSecondsP )
-import           Data.Hourglass.Time ( Time, Timeable (..), timeConvert )
+import           Time.Diff ( elapsedTimeAddSecondsP )
+import           Time.Time ( Time, Timeable (..), timeConvert )
 import           Time.Types ( TimezoneOffset (..), timezoneOffsetToSeconds )
 
 -- | Type representing local times.

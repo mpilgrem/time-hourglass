@@ -1,7 +1,7 @@
 {-# LANGUAGE ExistentialQuantification #-}
 
 {- |
-Module      : Data.Hourglass.Zone
+Module      : Time.Timezone
 License     : BSD-style
 Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
@@ -10,7 +10,7 @@ Portability : unknown
 Timezone utilities.
 -}
 
-module Data.Hourglass.Zone
+module Time.Timezone
   ( Timezone (..)
   , UTC (..)
   , TimezoneMinutes (..)

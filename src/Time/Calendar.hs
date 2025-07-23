@@ -1,5 +1,5 @@
 {- |
-Module      : Data.Hourglass.Calendar
+Module      : Time.Calendar
 License     : BSD-style
 Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
@@ -8,7 +8,7 @@ Portability : unknown
 Miscellaneous calendar functions.
 -}
 
-module Data.Hourglass.Calendar
+module Time.Calendar
   ( isLeapYear
   , getWeekDay
   , getDayOfTheYear
@@ -21,7 +21,7 @@ module Data.Hourglass.Calendar
   , dateTimeFromUnixEpochP
   ) where
 
-import           Data.Hourglass.Internal
+import           Time.Internal
                    ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
 import           Time.Types
                    ( Date (..), DateTime (..), Elapsed (..), Month (..)

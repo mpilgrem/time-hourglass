@@ -12,6 +12,7 @@ and this project adheres to the
 * Move library modules to directory `src` and benchmark module to directory
   `benchmarks`.
 * Move module `Example.Time.Compat` to directory `examples`.
+* Renamed non-exposed library modules under the `Time.*` hierarchy.
 * Use `LANGUAGE PackageImports` in module `Example.Time.Compat`, allowing
   `stack ghci examples/Example/Time/Compat.hs`.
 * Eliminate the use of CPP to vary source code for different operating systems.

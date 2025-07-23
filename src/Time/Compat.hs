@@ -39,7 +39,7 @@ module Time.Compat
   , dateFromTAIEpoch
   ) where
 
-import           Data.Hourglass.Time ( timeConvert )
+import           Time.Time ( timeConvert )
 import           Time.Types ( Date, Elapsed (..), TimeOfDay (..) )
 
 -- | Given an integer which represents the number of days since the start of the

@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 
 {- |
-Module      : Data.Hourglass.Format
+Module      : Time.Format
 License     : BSD-style
 Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
@@ -12,7 +12,7 @@ Time formatting : printing and parsing
 Built-in format strings
 -}
 
-module Data.Hourglass.Format
+module Time.Format
   ( -- * Parsing and Printing
     -- ** Format strings
     TimeFormatElem (..)
@@ -32,12 +32,12 @@ module Data.Hourglass.Format
   ) where
 
 import           Data.Char ( isDigit, ord )
-import           Data.Hourglass.Internal ( dateTimeFromUnixEpochP )
-import           Data.Hourglass.Local
-                   ( LocalTime (..), localTime, localTimeToGlobal )
-import           Data.Hourglass.Time ( Timeable (..), timeGetDateTimeOfDay )
-import           Data.Hourglass.Utils ( pad2, pad4, padN )
 import           Data.Int ( Int64 )
+import           Time.Internal ( dateTimeFromUnixEpochP )
+import           Time.LocalTime
+                   ( LocalTime (..), localTime, localTimeToGlobal )
+import           Time.Time ( Timeable (..), timeGetDateTimeOfDay )
+import           Time.Utils ( pad2, pad4, padN )
 import           Time.Types
                    ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
                    , Hours (..), Minutes (..), Month (..), NanoSeconds (..)

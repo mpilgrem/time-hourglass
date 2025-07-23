@@ -1,7 +1,7 @@
 {-# LANGUAGE ExistentialQuantification #-}
 
 {- |
-Module      : Data.Hourglass.Time
+Module      : Time.Time
 License     : BSD-style
 Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
@@ -11,7 +11,7 @@ Types representing points in time, and associated type classes, and durations
 of time, and associated functions.
 -}
 
-module Data.Hourglass.Time
+module Time.Time
   ( -- * Classes for conversion
     Time (..)
   , Timeable (..)
@@ -30,14 +30,13 @@ module Data.Hourglass.Time
   , dateAddPeriod
   ) where
 
-import           Data.Hourglass.Calendar ( dateTimeToUnixEpoch )
-import           Data.Hourglass.Diff
+import           Foreign.C.Types ( CTime (..) )
+import           Time.Calendar ( dateTimeToUnixEpoch )
+import           Time.Diff
                    ( Duration (..), Period (..), dateAddPeriod
                    , elapsedTimeAddSecondsP
                    )
-import           Data.Hourglass.Internal
-                   ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
-import           Foreign.C.Types ( CTime (..) )
+import           Time.Internal ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
 import           Time.Types
                    ( Date, DateTime (..), Elapsed (..), ElapsedP (..)
                    , NanoSeconds (..), Seconds (..), TimeInterval (..)

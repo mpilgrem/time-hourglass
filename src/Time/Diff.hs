@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 
 {- |
-Module      : Data.Hourglass.Diff
+Module      : Time.Diff
 License     : BSD-style
 Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
@@ -10,7 +10,7 @@ Portability : unknown
 Time arithmetic methods.
 -}
 
-module Data.Hourglass.Diff
+module Time.Diff
   ( Duration (..)
   , Period (..)
   , durationNormalize
@@ -22,7 +22,7 @@ module Data.Hourglass.Diff
 
 import           Control.DeepSeq ( NFData (..) )
 import           Data.Data ( Data )
-import           Data.Hourglass.Calendar ( daysInMonth )
+import           Time.Calendar ( daysInMonth )
 import           Time.Types
                    ( Date (..), Elapsed (..), ElapsedP (..), Hours (..)
                    , Minutes (..), NanoSeconds (..), Seconds (..)

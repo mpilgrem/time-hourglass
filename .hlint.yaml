@@ -1,5 +1,5 @@
 - ignore:
     name: Use camelCase
     within:
-    - Data.Hourglass.Format
+    - Time.Format
     - Time.Types

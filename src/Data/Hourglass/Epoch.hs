@@ -24,7 +24,7 @@ module Data.Hourglass.Epoch
 
 import           Control.DeepSeq ( NFData (..) )
 import           Data.Data ( Data )
-import           Data.Hourglass.Time ( Time (..), Timeable (..) )
+import           Time.Time ( Time (..), Timeable (..) )
 import           Time.Types
                    ( Elapsed (..), ElapsedP (..), NanoSeconds (..)
                    , Seconds (..)
