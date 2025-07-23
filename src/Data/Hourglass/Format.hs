@@ -72,7 +72,8 @@ data TimeFormatElem =
   | Format_Second
     -- ^ sSeconds (0 to 59, 60 for leap seconds).
   | Format_UnixSecond
-    -- ^ Number of seconds since the start of the Unix epoch.
+    -- ^ Number of seconds since the start of the Unix epoch
+    -- (1970-01-01 00:00:00 UTC).
   | Format_MilliSecond
     -- ^ Milliseconds padded to 3 characters (000 to 999).
   | Format_MicroSecond

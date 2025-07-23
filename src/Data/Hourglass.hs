@@ -5,35 +5,97 @@ Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
 Portability : unknown
 
-Types and functions for time manipulation.
+Time-related types and functions.
 
-The most basic type for time representation is t'Elapsed', which represent a
-number seconds elapsed since the start of the Unix epoch.
+Basic types for representing points in time are t'Elapsed' and t'ElapsedP`. The
+\'P\' is short for \'precise\'. t'Elapsed' represents numbers of seconds elapsed
+since the start of the Unix epoch (1970-01-01 00:00:00 UTC). t'ElapsedP'
+represents numbers of seconds and nanoseconds elapsed.
 
-Values of other typess can be converted to and from value of the t'Elapsed'
-type:
+Values of other types representing points in time can be converted to and from
+values of the t'Elapsed' and t'ElapsedP' types. For example:
 
-> timeGetElapsed (Date 1 2 3) :: Elapsed
-> timeFromElapsed 123         :: DateTime
+> d = timeGetElapsed (Date 1955 April 18) :: Elapsed
+> timeFromElapsed d :: DateTime
 
-Local time is represented by any other time type
-(t'Elapsed', t'Date', t'DateTime', ..), but augmented by a timezone offset in
-minutes.
+Local time is represented by t'LocalTime' @t@, parameterised by any other type
+representing time (for example, t'Elapsed', t'Date' or t'DateTime'). A local
+time value is augmented by a timezone offset in minutes. For example:
 
-> localTime (Date 2014 May 4) 600 -- local time at UTC+10 of May 4th 2014
+> localTime (Date 2014 May 4) 600 -- local time at UTC+10 of 4th May 2014
 -}
 
 module Data.Hourglass
-  ( module Data.Hourglass.Time
-  , module Time.Types
-  , module Data.Hourglass.Format
-  , module Data.Hourglass.Local
-  , module Data.Hourglass.Zone
-    -- * Calendar miscellaneous functions
+  ( -- * Time units
+    NanoSeconds (..)
+  , Seconds (..)
+  , Minutes (..)
+  , Hours (..)
+    -- * Calendar enumerations
+  , Month (..)
+  , WeekDay (..)
+    -- * Points in time
+    -- ** Elapsed time since the start of the Unix epoch
+  , Elapsed (..)
+  , ElapsedP (..)
+    -- ** Date, time, and date and time
+  , Date (..)
+  , TimeOfDay (..)
+  , DateTime (..)
+    -- ** Local time and timezone-related
+  , LocalTime
+  , Timezone (..)
+  , TimezoneOffset (..)
+  , timezoneOffsetToSeconds
+  , UTC (..)
+  , timezone_UTC
+  , TimezoneMinutes (..)
+    -- *** Constructors
+  , localTime
+  , localTimeFromGlobal
+  , localTimeSetTimezone
+    -- *** Accessors
+  , localTimeUnwrap
+  , localTimeGetTimezone
+    -- ** Miscellaneous calandar functions
   , isLeapYear
   , getWeekDay
   , getDayOfTheYear
   , daysInMonth
+    -- * Periods of time
+  , Duration (..)
+  , Period (..)
+  , timeAdd
+  , timeDiff
+  , timeDiffP
+  , dateAddPeriod
+    -- * Conversion of points in time
+  , Time (..)
+  , Timeable (..)
+  , timeConvert
+  , timeGetDate
+  , timeGetDateTimeOfDay
+  , timeGetTimeOfDay
+  , localTimeConvert
+  , localTimeToGlobal
+    -- * Conversion of periods of time
+  , TimeInterval (..)
+    -- * Parsing and Printing
+    -- ** Format strings
+  , TimeFormatElem (..)
+  , TimeFormatFct (..)
+  , TimeFormatString (..)
+  , TimeFormat (..)
+    -- ** Common built-in formats
+  , ISO8601_Date (..)
+  , ISO8601_DateAndTime (..)
+    -- ** Format methods
+  , timePrint
+  , timeParse
+  , timeParseE
+  , localTimePrint
+  , localTimeParse
+  , localTimeParseE
   ) where
 
 import           Data.Hourglass.Calendar

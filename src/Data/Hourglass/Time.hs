@@ -7,26 +7,23 @@ Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
 Portability : unknown
 
-Types representing time.
+Types representing points in time, and associated type classes, and durations
+of time, and associated functions.
 -}
 
 module Data.Hourglass.Time
-  ( -- * Generic time classes
+  ( -- * Classes for conversion
     Time (..)
   , Timeable (..)
-    -- * Elapsed time
-  , Elapsed (..)
-  , ElapsedP (..)
-    -- * Generic conversion
+    -- * Conversion
   , timeConvert
-    -- * Date and Time
+    -- * Date and time
   , timeGetDate
   , timeGetDateTimeOfDay
   , timeGetTimeOfDay
     -- * Arithmetic
   , Duration (..)
   , Period (..)
-  , TimeInterval (..)
   , timeAdd
   , timeDiff
   , timeDiffP
@@ -47,19 +44,21 @@ import           Time.Types
                    , TimeOfDay (..)
                    )
 
--- | A type class promising functionality for types that represent time values:
+-- | A type class promising functionality for:
 --
--- * conversion to t'ElapsedP' and t'Elapsed'; and
+-- * converting a value of the type in question to a t'Elapsed' value or
+--   a t'ElapsedP' value; and
 --
--- * return nanoseconds (@0@ when the type is not more precise than seconds).
+-- * yielding separately a nanoseconds component of the value of the type in
+--   question (should yield @0@ when the type is less precise than seconds).
 --
 class Timeable t where
-  -- | Convert a time representation to the number of elapsed seconds and
-  -- nanoseconds since the start of the Unix epoch.
+  -- | Convert the given value to the number of elapsed seconds and nanoseconds
+  -- since the start of the Unix epoch (1970-01-01 00:00:00 UTC).
   timeGetElapsedP :: t -> ElapsedP
 
-  -- | Convert a time representation to the number of elapsed seconds since the
-  -- start of the Unix epoch.
+  -- | Convert the given value to the number of elapsed seconds since the start
+  -- of the Unix epoch (1970-01-01 00:00:00 UTC).
   --
   -- Defaults to 'timeGetElapsedP'.
   timeGetElapsed :: t -> Elapsed
@@ -67,26 +66,27 @@ class Timeable t where
    where
     ElapsedP e _ = timeGetElapsedP t
 
-  -- | Optionally, return the number of nanoseconds.
+  -- | Optionally, for the given value, yield the number of nanoseconds
+  -- component.
   --
-  -- If the underlaying type does not provide sub-second precision, @0@ should be
-  -- returned.
+  -- If the type in question does not provide sub-second precision, should yield
+  -- @0@.
   --
-  -- Defaults to 'timeGetElapsedP'. For efficiency, if the underlaying type does
+  -- Defaults to 'timeGetElapsedP'. For efficiency, if the type in question does
   -- not provide sub-second precision, it is a good idea to override this
   -- method.
   timeGetNanoSeconds :: t -> NanoSeconds
   timeGetNanoSeconds t = ns where ElapsedP _ ns = timeGetElapsedP t
 
--- | A type class for types that represent time values promising conversion
--- from t'ElapsedP' values and t'Elapsed' values.
+-- | A type class promising functionality for converting t'ElapsedP' values
+-- and t'Elapsed' values to values of the type in question.
 class Timeable t => Time t where
   -- | Convert from a number of elapsed seconds and nanoseconds since the start
-  -- of the Unix epoch.
+  -- of the Unix epoch (1970-01-01 00:00:00 UTC).
   timeFromElapsedP :: ElapsedP -> t
 
   -- | Convert from a number of elapsed seconds since the start of the Unix
-  -- epoch.
+  -- epoch (1970-01-01 00:00:00 UTC).
   --
   -- Defaults to 'timeFromElapsedP'.
   timeFromElapsed :: Elapsed -> t
@@ -158,7 +158,7 @@ timeConvert t1 = timeFromElapsedP (timeGetElapsedP t1)
 {-# RULES "timeConvert/ElapsedP" timeConvert = timeGetElapsedP #-}
 {-# RULES "timeConvert/Elapsed" timeConvert = timeGetElapsed #-}
 
--- | Get the date (year-month-day) from a time representation (a
+-- | For the given value of a point in time, yield the corresponding date (a
 -- specialization of 'timeConvert').
 timeGetDate :: Timeable t => t -> Date
 timeGetDate t = d where (DateTime d _) = timeGetDateTimeOfDay t
@@ -166,24 +166,23 @@ timeGetDate t = d where (DateTime d _) = timeGetDateTimeOfDay t
 {-# RULES "timeGetDate/ID" timeGetDate = id #-}
 {-# RULES "timeGetDate/DateTime" timeGetDate = dtDate #-}
 
--- | Get the time (hours:minutes:seconds) from a time representation (a
--- specialization of 'timeConvert').
+-- | For the given value for a point in time, yield the corresponding time
+-- (a specialization of 'timeConvert').
 timeGetTimeOfDay :: Timeable t => t -> TimeOfDay
 timeGetTimeOfDay t = tod where (DateTime _ tod) = timeGetDateTimeOfDay t
 {-# INLINE[2] timeGetTimeOfDay #-}
 {-# RULES "timeGetTimeOfDay/Date" timeGetTimeOfDay = const (TimeOfDay 0 0 0 0) #-}
 {-# RULES "timeGetTimeOfDay/DateTime" timeGetTimeOfDay = dtTime #-}
 
--- | Get the date and time from a time representation (a specialization of
--- 'timeConvert').
+-- | For the given value for a point in time, yield the corresponding date and
+-- time (a specialization of 'timeConvert').
 timeGetDateTimeOfDay :: Timeable t => t -> DateTime
 timeGetDateTimeOfDay t = dateTimeFromUnixEpochP $ timeGetElapsedP t
 {-# INLINE[2] timeGetDateTimeOfDay #-}
 {-# RULES "timeGetDateTimeOfDay/ID" timeGetDateTimeOfDay = id #-}
 {-# RULES "timeGetDateTimeOfDay/Date" timeGetDateTimeOfDay = flip DateTime (TimeOfDay 0 0 0 0) #-}
 
--- | Add some time interval to a time representation and returns this new time
--- representation.
+-- | Add the given period of time to the given value for a point time.
 --
 -- Example:
 --
@@ -192,7 +191,8 @@ timeAdd :: (Time t, TimeInterval ti) => t -> ti -> t
 timeAdd t ti =
   timeFromElapsedP $ elapsedTimeAddSecondsP (timeGetElapsedP t) (toSeconds ti)
 
--- | Get the difference in seconds between two time representations.
+-- | For the two given points in time, yields the difference in seconds
+-- between them.
 --
 -- Effectively:
 --
@@ -200,8 +200,8 @@ timeAdd t ti =
 timeDiff :: (Timeable t1, Timeable t2) => t1 -> t2 -> Seconds
 timeDiff t1 t2 = sec where (Elapsed sec) = timeGetElapsed t1 - timeGetElapsed t2
 
--- | Get the difference in seconds and nanoseconds between two time
--- representations.
+-- | For the two given points in time, yields the difference in seconds and
+-- nanoseconds between them.
 --
 -- Effectively:
 --

@@ -91,7 +91,7 @@ durationNormalize (Duration (Hours h) (Minutes mi) (Seconds s) (NanoSeconds ns))
   (miacc, s') = (s+sacc) `divMod` 60
   (sacc, ns') = ns `divMod` 1000000000
 
--- | Add the give period of time to the given date.
+-- | Add the given period of time to the given date.
 dateAddPeriod :: Date -> Period -> Date
 dateAddPeriod (Date yOrig mOrig dOrig) (Period yDiff mDiff dDiff) =
   loop (yOrig + yDiff + yDiffAcc) mStartPos (dOrig + dDiff)

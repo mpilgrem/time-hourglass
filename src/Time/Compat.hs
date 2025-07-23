@@ -43,10 +43,12 @@ import           Data.Hourglass.Time ( timeConvert )
 import           Time.Types ( Date, Elapsed (..), TimeOfDay (..) )
 
 -- | Given an integer which represents the number of days since the start of the
--- Unix epoch, yield the corresponding date in the proleptic Gregorian calendar.
+-- Unix epoch (1970-01-01 00:00:00 UTC), yield the corresponding date in the
+-- proleptic Gregorian calendar.
 dateFromUnixEpoch ::
      Integer
-     -- ^ Number of days since the start of the Unix epoch.
+     -- ^ Number of days since the start of the Unix epoch
+     -- (1970-01-01 00:00:00 UTC).
   -> Date
 dateFromUnixEpoch day = do
   let sec = Elapsed $ fromIntegral $ day * 86400
@@ -55,7 +57,8 @@ dateFromUnixEpoch day = do
 -- | Same as 'dateFromUnixEpoch'.
 dateFromPOSIXEpoch ::
      Integer
-     -- ^ Number of days since the start of the Unix epoch.
+     -- ^ Number of days since the start of the Unix epoch
+     -- (1970-01-01 00:00:00 UTC).
   -> Date
 dateFromPOSIXEpoch = dateFromUnixEpoch
 {-# DEPRECATED dateFromPOSIXEpoch "Will be removed from future versions of this package. Use dateFromUnixEpoch" #-}

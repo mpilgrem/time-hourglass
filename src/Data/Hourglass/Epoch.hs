@@ -72,11 +72,12 @@ class Epoch epoch where
   epochName :: epoch -> String
 
   -- | The start of the epoch relative to the start of the Unix epoch
-  -- (1970-01-01 00:00 UTC), in seconds. A negative number means the epoch
+  -- (1970-01-01 00:00:00 UTC), in seconds. A negative number means the epoch
   -- starts before the starts of the Unix epoch.
   epochDiffToUnix :: epoch -> Seconds
 
--- | A type representing the Unix epoch, which started on 1970-01-01 00:00 UTC.
+-- | A type representing the Unix epoch, which started on
+-- 1970-01-01 00:00:00 UTC.
 data UnixEpoch = UnixEpoch
   deriving (Eq, Show)
 
@@ -86,7 +87,7 @@ instance Epoch UnixEpoch where
 
 -- | A type representing the
 -- [Windows epoch](https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times),
--- which started on 1601-01-01 00:00 UTC.
+-- which started on 1601-01-01 00:00:00 UTC.
 data WindowsEpoch = WindowsEpoch
   deriving (Eq, Show)
 

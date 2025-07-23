@@ -60,7 +60,7 @@ The library has the same limitations as your operating system, namely:
 Comparaison with the `time` package
 -----------------------------------
 
-*   Getting the elapsed time since 1970-01-01 00:00 UTC (POSIX time) from the
+*   Getting the elapsed time since 1970-01-01 00:00:00 UTC (POSIX time) from the
     system clock:
 
     ~~~haskell

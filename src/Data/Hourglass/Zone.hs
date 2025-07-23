@@ -22,7 +22,9 @@ class Timezone tz where
   -- @+14 * 60@.
   timezoneOffset :: tz -> Int
 
-  -- | The name of the timezone. By default will be +-HH:MM encoding.
+  -- | The name of the timezone.
+  --
+  -- Default implementation is an +-HH:MM encoding of the 'timezoneOffset'.
   timezoneName :: tz -> String
   timezoneName = tzMinutesPrint . timezoneOffset
 

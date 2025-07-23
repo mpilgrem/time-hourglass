@@ -18,22 +18,23 @@ module Time.Types
   , Seconds (..)
   , Minutes (..)
   , Hours (..)
-  , TimeInterval (..)
     -- * Calendar enumerations
   , Month (..)
   , WeekDay (..)
-    -- * Timezone
-  , TimezoneOffset (..)
-  , timezoneOffsetToSeconds
-  , timezone_UTC
-    -- * Elapsed time from start of an epoch
-    -- ** The Unix epoch
+    -- * Points in time
+    -- ** Elapsed time since the start of the Unix epoch
   , Elapsed (..)
   , ElapsedP (..)
-    -- * Date, time, and date and time
+    -- ** Date, time, and date and time
   , Date (..)
   , TimeOfDay (..)
   , DateTime (..)
+    -- ** Local time and timezone-related
+  , TimezoneOffset (..)
+  , timezoneOffsetToSeconds
+  , timezone_UTC
+    -- * Conversion of periods of time
+  , TimeInterval (..)
   ) where
 
 import           Control.DeepSeq ( NFData (..) )
@@ -97,7 +98,7 @@ instance TimeInterval Hours where
     (h, s') = s `divMod` 3600
 
 -- | Type representing numbers of seconds elapsed since the start of the Unix
--- epoch.
+-- epoch (1970-01-01 00:00:00 UTC).
 newtype Elapsed = Elapsed Seconds
   deriving (Data, Eq, NFData, Num, Ord, Read)
 
@@ -105,7 +106,7 @@ instance Show Elapsed where
   show (Elapsed s) = show s
 
 -- | Type representing numbers of seconds and nanoseconds elapsed since the
--- start of the Unix epoch.
+-- start of the Unix epoch (1970-01-01 00:00:00 UTC).
 data ElapsedP = ElapsedP {-# UNPACK #-} !Elapsed {-# UNPACK #-} !NanoSeconds
   deriving (Data, Eq, Ord, Read)
 

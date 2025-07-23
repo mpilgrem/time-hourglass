@@ -81,7 +81,7 @@ foreign import ccall unsafe "localtime_r"
   c_localtime_r :: Ptr CTime -> Ptr CTm -> IO (Ptr CTm)
 
 -- | Return a global time's struct tm based on the number of elapsed second
--- since Unix epoch.
+-- since the start of the Unix epoch (1970-01-01 00:00:00 UTC).
 rawGmTime :: Elapsed -> CTm
 rawGmTime (Elapsed (Seconds s)) = unsafePerformIO callTime
  where

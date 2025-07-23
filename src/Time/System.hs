@@ -10,10 +10,10 @@ Get the system timezone and current time value in multiple formats.
 
 module Time.System
   (
-    -- * Current time in computer friendly format
+    -- * Current time, in computer-friendly format
     timeCurrent
   , timeCurrentP
-    -- * Current time in human friendly DateTime format
+    -- * Current time, in human-friendly format
   , dateCurrent
   , localDateCurrent
   , localDateCurrentAt
@@ -34,7 +34,7 @@ timeCurrent :: IO Elapsed
 timeCurrent = systemGetElapsed
 
 -- | Get the current number of seconds and nanoseconds since the start of the
--- Unix epoch.
+-- Unix epoch (1970-01-01 00:00:00 UTC).
 timeCurrentP :: IO ElapsedP
 timeCurrentP = systemGetElapsedP
 
