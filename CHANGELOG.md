@@ -9,7 +9,10 @@ and this project adheres to the
 ## UNRELEASED
 
 * Drop deprecated modules `Data.Hourglass.Compat`, `Data.Hourglass.Epoch`,
-  `Data.Hourglass.Types` and `System.Hourglass`.
+  `Data.Hourglass.Types` and `System.Hourglass`. Use modules `Time.Compat`,
+  `Time.Epoch` and `Time.Types`.
+* Drop deprecated function `dateFromPOSIXEpoch`. Use `dataFromUnixEpoch`.
+* Drop deprecated function `dateFromTAIEpoch`. Use `dateFromMJDEpoch`.
 
 ## 0.2.14
 

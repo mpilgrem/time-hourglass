@@ -34,9 +34,6 @@ module Time.Compat
   ( dateFromUnixEpoch
   , dateFromMJDEpoch
   , diffTimeToTimeOfDay
-    -- * Deprecated
-  , dateFromPOSIXEpoch
-  , dateFromTAIEpoch
   ) where
 
 import           Time.Time ( timeConvert )
@@ -53,15 +50,6 @@ dateFromUnixEpoch ::
 dateFromUnixEpoch day = do
   let sec = Elapsed $ fromIntegral $ day * 86400
   timeConvert sec
-
--- | Same as 'dateFromUnixEpoch'.
-dateFromPOSIXEpoch ::
-     Integer
-     -- ^ Number of days since the start of the Unix epoch
-     -- (1970-01-01 00:00:00 UTC).
-  -> Date
-dateFromPOSIXEpoch = dateFromUnixEpoch
-{-# DEPRECATED dateFromPOSIXEpoch "Will be removed from future versions of this package. Use dateFromUnixEpoch" #-}
 
 -- | The number of days between the start of the Modified Julian Date (MJD)
 -- epoch (1858-11-17 00:00:00 UTC) and the start of the Unix epoch
@@ -87,17 +75,6 @@ dateFromMJDEpoch ::
   -> Date
 dateFromMJDEpoch dtai =
   dateFromUnixEpoch (dtai - daysMJDtoUnix)
-
--- | Same as 'dateFromMJDEpoch'.
---
--- The name of this function is a misnomer, as the International Atomic Time
--- (TAI) epoch starts on 1958-01-01 00:00:00 UTC.
-dateFromTAIEpoch ::
-     Integer
-     -- ^ Number of days since 1858-11-17 00:00:00 UTC.
-  -> Date
-dateFromTAIEpoch = dateFromMJDEpoch
-{-# DEPRECATED dateFromTAIEpoch "Will be removed from future versions of this package. Use dateFromMJDEpoch" #-}
 
 -- | Given a real number representing the number of seconds since the start of
 -- the day, yield a t'TimeOfDay' value.
