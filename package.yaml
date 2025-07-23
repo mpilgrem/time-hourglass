@@ -39,6 +39,7 @@ library:
   - Data.Hourglass.Types
   - System.Hourglass
   - Time.Compat
+  - Time.Epoch
   - Time.System
   - Time.Types
   when:

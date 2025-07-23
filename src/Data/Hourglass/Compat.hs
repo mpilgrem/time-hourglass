@@ -28,11 +28,10 @@ Example of use (extracted from file Example/Time/Compat.hs):
 >   timeofday = C.diffTimeToTimeOfDay $ toRational $ T.timeOfDayToTime tod
 >
 >   offsetTime = H.TimezoneOffset $ fromIntegral tzmin
-
-This module will be depreciated in favor of "Time.Compat".
 -}
 
 module Data.Hourglass.Compat
+{-# DEPRECATED "Use Time.Compat instead. Will be removed from future versions of this package." #-}
   ( module Time.Compat
   ) where
 

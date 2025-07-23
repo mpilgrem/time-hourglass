@@ -11,11 +11,10 @@ years.
 
 Most units use the Unix epoch referential, but by no means reduce portability.
 The Unix referential works under the Windows platform or any other platforms.
-
-This module will be depreciated in favor of Time.Types
 -}
 
 module Data.Hourglass.Types
+  {-# DEPRECATED "Use Time.Types instead. Will be removed from future versions of this package." #-}
   ( module Time.Types
   ) where
 

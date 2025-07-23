@@ -12,6 +12,8 @@ and this project adheres to the
 * Move library modules to directory `src` and benchmark module to directory
   `benchmarks`.
 * Move module `Example.Time.Compat` to directory `examples`.
+* Expose module `Time.Epoch` and deprecate equivalent module
+  `Data.Hourglass.Epoch`.
 * Renamed non-exposed library modules under the `Time.*` hierarchy.
 * Use `LANGUAGE PackageImports` in module `Example.Time.Compat`, allowing
   `stack ghci examples/Example/Time/Compat.hs`.

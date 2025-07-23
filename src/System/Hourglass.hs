@@ -6,12 +6,11 @@ Stability   : experimental
 Portability : unknown
 
 Get the system timezone and current time value in multiple formats.
-
-This module will be depreciated in favor of "Time.System".
 -}
 
 module System.Hourglass
+  {-# DEPRECATED "Use Time.System instead. Will be removed from future versions of this package." #-}
   ( module Time.System
   ) where
 
-import           Time.System
+import Time.System
