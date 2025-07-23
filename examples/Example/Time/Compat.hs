@@ -15,7 +15,7 @@ module Example.Time.Compat
   ) where
 
 import           "time-hourglass" Data.Hourglass as H
-import           "time-hourglass" Data.Hourglass.Compat as C
+import           "time-hourglass" Time.Compat as C
 import           Data.Time as T
 
 transpose :: T.ZonedTime -> H.LocalTime H.DateTime

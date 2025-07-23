@@ -11,7 +11,7 @@ from the @time-hourglass@ package.
 An example of use (taken from file examples/Example/Time/Compat.hs):
 
 > import Data.Hourglass as H
-> import Data.Hourglass.Compat as C
+> import Time.Compat as C
 > import Data.Time as T
 >
 > transpose :: T.ZonedTime -> H.LocalTime H.DateTime
