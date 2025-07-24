@@ -36,8 +36,6 @@ data LocalTime t = LocalTime
     -- ^ The timezone offset.
   }
 
--- FIXME add instance Read too.
-
 instance Show t => Show (LocalTime t) where
   show (LocalTime t tz) = show t ++ show tz
 

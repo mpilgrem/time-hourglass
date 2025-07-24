@@ -63,8 +63,6 @@ instance Num (ElapsedSinceP e) where
 
   fromInteger i = ElapsedSinceP (ElapsedSince (fromIntegral i)) 0
 
--- FIXME instance Real (ElapsedSinceP e)
-
 -- | A type class promising epoch-related functionality.
 --
 class Epoch epoch where
