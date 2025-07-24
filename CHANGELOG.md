@@ -13,6 +13,7 @@ and this project adheres to the
   `Time.Epoch` and `Time.Types`.
 * Drop deprecated function `dateFromPOSIXEpoch`. Use `dataFromUnixEpoch`.
 * Drop deprecated function `dateFromTAIEpoch`. Use `dateFromMJDEpoch`.
+* Add `Real` instance for `ElapsedSinceP`.
 
 ## 0.2.14
 

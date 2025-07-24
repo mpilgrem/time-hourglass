@@ -24,6 +24,7 @@ module Time.Epoch
 
 import           Control.DeepSeq ( NFData (..) )
 import           Data.Data ( Data )
+import           Data.Ratio ( (%) )
 import           Time.Time ( Time (..), Timeable (..) )
 import           Time.Types
                    ( Elapsed (..), ElapsedP (..), NanoSeconds (..)
@@ -62,6 +63,13 @@ instance Num (ElapsedSinceP e) where
   signum (ElapsedSinceP e ns) = ElapsedSinceP (signum e) ns
 
   fromInteger i = ElapsedSinceP (ElapsedSince (fromIntegral i)) 0
+
+instance Real (ElapsedSinceP e) where
+  toRational (ElapsedSinceP (ElapsedSince (Seconds s)) (NanoSeconds 0)) =
+    fromIntegral s
+
+  toRational (ElapsedSinceP (ElapsedSince (Seconds s)) (NanoSeconds ns)) =
+    fromIntegral s + (fromIntegral ns % 1000000000)
 
 -- | A type class promising epoch-related functionality.
 --
