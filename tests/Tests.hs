@@ -20,7 +20,6 @@ import           Data.Hourglass
                    , localTimeSetTimezone, localTimeToGlobal, timeConvert
                    , timeGetDateTimeOfDay, timeGetElapsed, timeParseE, timePrint
                    )
-import           Data.Hourglass.Epoch ( ElapsedSince, WindowsEpoch )
 import           Data.Int ( Int64 )
 import           Data.Ratio ( (%) )
 import qualified Data.Time.Calendar as T
@@ -32,6 +31,7 @@ import           Test.Tasty.HUnit
                    ( Assertion, (@=?), assertEqual, assertFailure, testCase )
 import           Test.Tasty.QuickCheck
                    ( Arbitrary (..), choose, elements, testProperty )
+import           Time.Epoch ( ElapsedSince, WindowsEpoch )
 import           TimeDB ( parseTimeConv )
 import           TimeRange ( dateRange, hiElapsed, loElapsed )
 

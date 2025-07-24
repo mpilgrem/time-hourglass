@@ -12,8 +12,8 @@ import           Data.List ( intercalate )
 import qualified Data.Time.Calendar as T
 import qualified Data.Time.Clock as T
 import qualified Data.Time.Clock.POSIX as T
-import           System.Hourglass ( timeCurrent, timeCurrentP )
 import           Test.Tasty.Bench ( bench, bgroup, defaultMain, nf, nfIO )
+import           Time.System ( timeCurrent, timeCurrentP )
 
 timeToTuple :: T.UTCTime -> (Int, Int, Int, Int, Int, Int)
 timeToTuple utcTime = (fromIntegral y, m, d, h, mi, sec)

@@ -1,7 +1,7 @@
 spec-version: 0.36.0 # Avoid legacy Hpack behaviour.
 
 name: time-hourglass
-version: 0.2.13
+version: 0.2.14
 synopsis: A simple and efficient time library
 description: |
   A simple and efficient time library.
@@ -61,7 +61,7 @@ tests:
     - tasty
     - tasty-quickcheck
     - tasty-hunit
-    - hourglass
+    - time-hourglass
     # To test against some other references:
     - time
     when:
@@ -76,7 +76,7 @@ benchmarks:
     source-dirs: benchmarks
     main: Bench.hs
     dependencies:
-    - hourglass
+    - time-hourglass
     - tasty-bench
     # To benchmark against other references:
     - time

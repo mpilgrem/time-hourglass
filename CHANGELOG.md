@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to the
 [Haskell Package Versioning Policy](https://pvp.haskell.org/).
 
+## 0.2.14
+
+* In test-suite and benchmark, depend on main library, drop dependency on
+  package `hourglass`.
+
 ## 0.2.13
 
 * Drop support for GHC < 8.4.
