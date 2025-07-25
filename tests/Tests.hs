@@ -31,7 +31,10 @@ import           Test.Tasty.HUnit
                    ( Assertion, (@=?), assertEqual, assertFailure, testCase )
 import           Test.Tasty.QuickCheck
                    ( Arbitrary (..), choose, elements, testProperty )
-import           Time.Epoch ( ElapsedSince, WindowsEpoch )
+import           Time.Epoch
+                   ( ElapsedSince (..), ElapsedSinceP (..), UnixEpoch
+                   , WindowsEpoch
+                   )
 import           TimeDB ( parseTimeConv )
 import           TimeRange ( dateRange, hiElapsed, loElapsed )
 
@@ -255,13 +258,25 @@ tests knowns = testGroup "hourglass"
           test_property_format ("Mon DD\\t\\h YYYY at HH\\hMI\\mS\\s.p9\\n\\s" :: String)
       ]
   , testGroup "Regression Tests"
-      [ testCase  "Real instance of ElapsedP (#33)" $
+      [ testCase "Real instance of ElapsedP (#33)" $
           let res = toRational (ElapsedP (Elapsed $ Seconds 0) (NanoSeconds 0))
               ref = toRational (0 :: Int) :: Rational
           in  assertEqual "failed equality" ref res
-      , testCase  "Real instance of ElapsedP (#33) (2)" $
+      , testCase "Real instance of ElapsedP (#33) (2)" $
           let res = toRational
                 (ElapsedP (Elapsed $ Seconds 100) (NanoSeconds 1000000))
+              ref = toRational (100 :: Int) + (1 % 1000) :: Rational
+          in  assertEqual "failed equality" ref res
+      , testCase "Real instance of ElapsedSinceP, zero ns" $
+          let start = ElapsedSince (Seconds 0) :: ElapsedSince UnixEpoch
+              startP = ElapsedSinceP start (NanoSeconds 0) :: ElapsedSinceP UnixEpoch
+              res = toRational startP
+              ref = toRational (0 :: Int) :: Rational
+          in  assertEqual "failed equality" ref res
+      , testCase "Real instance of ElapsedSinceP, non zero ns" $
+          let later = ElapsedSince (Seconds 100) :: ElapsedSince UnixEpoch
+              laterP = ElapsedSinceP later (NanoSeconds 1000000) :: ElapsedSinceP UnixEpoch
+              res = toRational laterP
               ref = toRational (100 :: Int) + (1 % 1000) :: Rational
           in  assertEqual "failed equality" ref res
       ]
