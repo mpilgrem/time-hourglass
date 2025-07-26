@@ -112,12 +112,18 @@ data TimeFormatElem =
 data TimeFormatFct = TimeFormatFct
   { timeFormatFctName :: String
     -- ^ The name of the format function.
-  , timeFormatParse   :: String -> Either String (LocalTime DateTime, String)
-    -- ^ A parser of a given 'String'. If it fails, the 'Left' value provides an
-    -- error message. If it succeeds, the 'Right' value provides a pair of the
-    -- 'LocalTime DateTime' value and any input not consumed by the parser.
-  , timeFormatPrint   :: LocalTime DateTime -> String
-    -- A printer of a given 'LocalTime DateTime'.
+  , timeFormatParse ::
+         (DateTime, TimezoneOffset)
+      -> String
+      -> Either String ((DateTime, TimezoneOffset), String)
+    -- ^ A parser of a given 'String'. The first argument is the
+    -- @(@v'DateTime'@,@ v'TimezoneOffset'@)@ value before the parser is
+    -- applied. If the parser fails, the 'Left' value provides an error message.
+    -- If it succeeds, the 'Right' value provides a pair of a
+    -- @(@v'DateTime'@,@ v'TimezoneOffset'@)@ value and any input not consumed
+    -- by the parser.
+  , timeFormatPrint :: DateTime -> TimezoneOffset -> String
+    -- ^ A printer of a given v'DateTime' value and v'TimezoneOffset' value.
   }
 
 instance Show TimeFormatFct where
@@ -294,10 +300,10 @@ monthFromShort str =
 printWith ::
      (TimeFormat format, Timeable t)
   => format
-  -> TimezoneOffset
   -> t
+  -> TimezoneOffset
   -> String
-printWith fmt tzOfs@(TimezoneOffset tz) t = concatMap fmtToString fmtElems
+printWith fmt t tzOfs@(TimezoneOffset tz) = concatMap fmtToString fmtElems
  where
   fmtToString Format_Year     = show (dateYear date)
   fmtToString Format_Year4    = pad4 (dateYear date)
@@ -344,7 +350,7 @@ localTimePrint ::
   -> LocalTime t -- ^ The local time to print.
   -> String
 localTimePrint fmt lt =
-  localTimeUnwrap $ fmap (printWith fmt (localTimeGetTimezone lt)) lt
+  printWith fmt (localTimeUnwrap lt) (localTimeGetTimezone lt)
 
 -- | Given the specified format, pretty print the given time.
 timePrint ::
@@ -352,7 +358,7 @@ timePrint ::
   => format -- ^ The format to use for printing.
   -> t      -- ^ The time to print.
   -> String
-timePrint fmt = printWith fmt timezone_UTC
+timePrint fmt t = printWith fmt t timezone_UTC
 
 -- | Given the specified format, try to parse the given string as time value.
 --
