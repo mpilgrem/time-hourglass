@@ -19,6 +19,7 @@ and this project adheres to the
 * Fix Haddock documentaton for `Format_Millisecond`, `Format_MicroSecond` and
   `Format_NanoSecond`; they parse and print components only, and all pad to 3
   characters.
+* Fix error message if a `Format_Text` parse fails.
 * Add Haddock documentation for the `String` instance of `TimeFormat`.
 
 ## 0.2.14
