@@ -75,6 +75,7 @@ test-suite test-hourglass
   main-is: Tests.hs
   other-modules:
       TimeDB
+      CustomTimeFormatFct
   hs-source-dirs:
       tests
   ghc-options: -Wall

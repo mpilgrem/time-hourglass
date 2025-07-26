@@ -90,12 +90,12 @@ module Data.Hourglass
   , ISO8601_Date (..)
   , ISO8601_DateAndTime (..)
     -- ** Format methods
-  , timePrint
-  , timeParse
-  , timeParseE
   , localTimePrint
-  , localTimeParse
+  , timePrint
   , localTimeParseE
+  , localTimeParse
+  , timeParseE
+  , timeParse
   ) where
 
 import           Time.Calendar

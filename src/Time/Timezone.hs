@@ -24,7 +24,8 @@ class Timezone tz where
 
   -- | The name of the timezone.
   --
-  -- Default implementation is an +-HH:MM encoding of the 'timezoneOffset'.
+  -- The default implementation is an ±HH:MM encoding of the 'timezoneOffset',
+  -- with an offset of @0@ encoded as @-00:00@.
   timezoneName :: tz -> String
   timezoneName = tzMinutesPrint . timezoneOffset
 
@@ -45,13 +46,26 @@ instance Timezone UTC where
 instance Timezone TimezoneMinutes where
   timezoneOffset (TimezoneMinutes minutes) = minutes
 
--- | Print a minute offset in format: (+-)HH:MM.
+-- | Print a minute offset in format: ±HH:MM. An offset of @0@ is encoded as
+-- @-00:00@.
 tzMinutesPrint :: Int -> String
 tzMinutesPrint offset =
-      (if offset > 0 then '+' else '-')
-    : (pad0 h ++ ":" ++ pad0 m)
+  sign : (pad0 h ++ ":" ++ pad0 m)
  where
   (h, m) = abs offset `divMod` 60
   pad0 v
     | v < 10    = '0':show v
     | otherwise = show v
+  sign = if offset > 0
+    then
+      '+'
+    else
+      -- This may be following the 'Unknown Local Offset Convention' in section
+      -- 4.3 of RFC 3339 'Date and Time on the Internet: Timestamps', namely:
+      --
+      --     If the time in UTC is known, but the offset to local time is
+      --     unknown, this can be represented with an offset of "-00:00". This
+      --     differs semantically from an offset of "Z" or "+00:00", which imply
+      --     that UTC is the preferred reference point for the specified time.
+      --     RFC2822 describes a similar convention for email.
+      '-'

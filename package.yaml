@@ -53,6 +53,7 @@ tests:
     main: Tests.hs
     other-modules:
     - TimeDB
+    - CustomTimeFormatFct
     dependencies:
     - tasty
     - tasty-quickcheck

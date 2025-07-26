@@ -10,6 +10,13 @@ and this project adheres to the
 
 * Change the types of fields of `TimeFormatFct`: the parser and printer are in
   terms of `DateTime` and `TimezoneOffset` (rather than just `DateTime`).
+* In `localTimePrint` etc, implement `Format_TimezoneName` and `Format_Fct`.
+* In `localTimeParseE` etc, implement `Format_Month`, `Format_DayYear`,
+  `Format_Day`, `Format_TimezoneName`, `Format_Tz_Offset` and `Format_Fct`.
+* Test added to test suite for `Format_Fct` parsing and printing.
+* In `localTimeParseE` etc, `Format_Spaces` now parses one or more space-like
+  characters (as previously documented), rather than one space character (as
+  previously implemented).
 * Drop deprecated modules `Data.Hourglass.Compat`, `Data.Hourglass.Epoch`,
   `Data.Hourglass.Types` and `System.Hourglass`. Use modules `Time.Compat`,
   `Time.Epoch` and `Time.Types`.
