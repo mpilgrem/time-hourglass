@@ -75,11 +75,17 @@ data TimeFormatElem =
     -- ^ Number of seconds since the start of the Unix epoch
     -- (1970-01-01 00:00:00 UTC).
   | Format_MilliSecond
-    -- ^ Milliseconds padded to 3 characters (@000@ to @999@).
+    -- ^ The millisecond component only, padded to 3 characters (@000@ to
+    -- @999@). See 'Format_MircoSecond' and 'Format_NanoSecond' for other
+    -- named sub-second components.
   | Format_MicroSecond
-    -- ^ MicroSeconds padded to 6 characters (@000000@ to @999999@).
+    -- ^ The microseconds component only, padded to 3 characters (@000@ to
+    -- @999@). See 'Format_MilliSecond' and 'Format_NanoSecond' for other
+    -- named sub-second components.
   | Format_NanoSecond
-    -- ^ NanoSeconds padded to 9 characters (@000000000@ to @999999999@).
+    -- ^ The nanoseconds component only, padded to 3 characters (@000@ to
+    -- @999@). See 'Format_MilliSecond' and 'Format_MicroSecond' for other
+    -- named sub-second components.
   | Format_Precision Int
     -- ^ Sub-second display with a precision of n digits, with n between @1@
     -- and @9@.
@@ -144,13 +150,16 @@ newtype TimeFormatString = TimeFormatString [TimeFormatElem]
 --            @60@ for leap seconds).
 -- [@EPOCH@]: 'Format_UnixSecond'. Number of seconds since the start of the Unix
 --            epoch (1970-01-01 00:00:00 UTC).
--- [@ms@]:    'Format_MilliSecond'. Milliseconds padded to 3 characters (@000@
---            to @999@).
--- [@us@]:    'Format_MicroSecond'. MicroSeconds padded to 6 characters
---            (@000000@ to @999999@).
+-- [@ms@]:    'Format_MilliSecond'. The millisecond component only, padded to 3
+--            characters (@000@ to @999@). See @us@/@μ@ and @ns@ for other named
+--            sub-second components.
+-- [@us@]:    'Format_MicroSecond'. The microseconds component only, padded to 3
+--            characters (@000@ to @999@). See @ms@ and @ns@ for other named
+--            sub-second components.
 -- [@μ@]:     'Format_MicroSecond'. As above.
--- [@ns@]:    'Format_NanoSecond'. NanoSeconds padded to 9 characters
---            (@000000000@ to @999999999@).
+-- [@ns@]:    'Format_NanoSecond'. The nanoseconds component only, padded to 3
+--            characters (@000@ to @999@). See @ms@ and @us@/@μ@ for other named
+--            sub-second components.
 -- [@p1@]:    'Format_Precision' @1@. Sub-second display with a precision of 1
 --            digit.
 -- [@p2@]:    'Format_Precision' @2@. Sub-second display with a precision of 2
@@ -177,6 +186,15 @@ newtype TimeFormatString = TimeFormatString [TimeFormatElem]
 -- [@\<space\>@]: 'Format_Spaces'. One or more space-like characters.
 -- [@\\\\\<character\>@]: 'Format_Text' @\<character\>@. A verbatim character.
 -- [@\<character\>@]:     'Format_Text' @\<character\>@. A verbatim character.
+--
+-- For example:
+--
+-- >>> let mDateTime = timeParse (toFormat "ms \\ms us \\us ns \\ns") "123 ms 456 us 789 ns"
+-- >>> timeGetNanoSeconds <$> mDateTime
+-- Just 123456789ns
+--
+-- >>> timePrint "ms \\ms us \\us ns \\ns" <$> mDateTime
+-- Just "123 ms 456 us 789 ns"
 class TimeFormat format where
   toFormat :: format -> TimeFormatString
 
