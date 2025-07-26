@@ -14,6 +14,8 @@ and this project adheres to the
 * Drop deprecated function `dateFromPOSIXEpoch`. Use `dataFromUnixEpoch`.
 * Drop deprecated function `dateFromTAIEpoch`. Use `dateFromMJDEpoch`.
 * Add `Real` instance for `ElapsedSinceP`.
+* Fix Haddock documentaton for `Format_Hours`, `Format_Minutes` and
+  `Format_Seconds`; they all pad to 2 characters.
 * Add Haddock documentation for the `String` instance of `TimeFormat`.
 
 ## 0.2.14
