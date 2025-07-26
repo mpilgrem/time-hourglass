@@ -66,11 +66,11 @@ data TimeFormatElem =
   | Format_Day2
     -- ^ Day of the month padded to 2 characters (@01@ to @31@).
   | Format_Hour
-    -- ^ Hours (@0@ to @23@).
+    -- ^ Hours padded to 2 characters (@00@ to @23@).
   | Format_Minute
-    -- ^ Minutes (@0@ to @59@).
+    -- ^ Minutes padded to 2 characters (@00@ to @59@).
   | Format_Second
-    -- ^ Seconds (@0@ to @59@, @60@ for leap seconds).
+    -- ^ Seconds padded to 2 characters (@00@ to @59@, @60@ for leap seconds).
   | Format_UnixSecond
     -- ^ Number of seconds since the start of the Unix epoch
     -- (1970-01-01 00:00:00 UTC).
@@ -138,9 +138,10 @@ newtype TimeFormatString = TimeFormatString [TimeFormatElem]
 --            ..).
 -- [@DD@]:    'Format_Day2'. Day of the month padded to 2 characters (@01@ to
 --            @31@).
--- [@H@]:     'Format_Hour'. Hours (@0@ to @23@).
--- [@MI@]:    'Format_Minute'. Minutes (@0@ to @59@).
--- [@S@]:     'Format_Second'. Seconds (@0@ to @59@, @60@ for leap seconds).
+-- [@H@]:     'Format_Hour'. Hours padded to 2 characters (@00@ to @23@).
+-- [@MI@]:    'Format_Minute'. Minutes padded to 2 characters (@00@ to @59@).
+-- [@S@]:     'Format_Second'. Seconds padded to 2 characters (@00@ to @59@,
+--            @60@ for leap seconds).
 -- [@EPOCH@]: 'Format_UnixSecond'. Number of seconds since the start of the Unix
 --            epoch (1970-01-01 00:00:00 UTC).
 -- [@ms@]:    'Format_MilliSecond'. Milliseconds padded to 3 characters (@000@
