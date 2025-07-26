@@ -147,6 +147,38 @@ instance TimeFormat [TimeFormatElem] where
 instance TimeFormat TimeFormatString where
   toFormat = id
 
+-- | Sequences of characters are interpreted as follows (case-sensitive). The
+-- longest valid sequence is parsed first:
+--
+-- [@YY@]:    'Format_Year2'
+-- [@YYYY@]:  'Format_Year4'
+-- [@M@]:     'Format_Month'
+-- [@MM@]:    'Format_Month2'
+-- [@Mon@]:   'Format_MonthName_Short'
+-- [@DD@]:    'Format_Day2'
+-- [@H@]:     'Format_Hour'
+-- [@MI@]:    'Format_Minute'
+-- [@S@]:     'Format_Second'
+-- [@EPOCH@]: 'Format_UnixSecond'
+-- [@ms@]:    'Format_MilliSecond'
+-- [@us@]:    'Format_MicroSecond'
+-- [@μ@]:     'Format_MicroSecond'
+-- [@ns@]:    'Format_NanoSecond'
+-- [@p1@]:    'Format_Precision' @1@
+-- [@p2@]:    'Format_Precision' @2@
+-- [@p3@]:    'Format_Precision' @3@
+-- [@p4@]:    'Format_Precision' @4@
+-- [@p5@]:    'Format_Precision' @5@
+-- [@p6@]:    'Format_Precision' @6@
+-- [@p7@]:    'Format_Precision' @7@
+-- [@p8@]:    'Format_Precision' @8@
+-- [@p9@]:    'Format_Precision' @9@
+-- [@TZH:M@]: 'Format_TzHM_Colon'
+-- [@TZHM@]:  'Format_TzHM'
+-- [@TZOFS@]: 'Format_Tz_Offset'
+-- [@\<space\>@]: 'Format_Spaces'
+-- [@\\\\\<character\>@]: 'Format_Text' @\<character\>@
+-- [@\<character\>@]:     'Format_Text' @\<character\>@
 instance TimeFormat String where
   toFormat = TimeFormatString . toFormatElem
    where
