@@ -378,7 +378,7 @@ localTimeParseE fmt = loop ini fmtElems
   processOne _   _               []     = Left "empty"
   processOne acc (Format_Text c) (x:xs)
     | c == x    = Right (acc, xs)
-    | otherwise = Left ("unexpected char, got: " ++ show c)
+    | otherwise = Left ("unexpected char, got: " ++ show x)
 
   processOne acc Format_Year s =
     onSuccess (\y -> modDate (setYear y) acc) $ isNumber s
@@ -437,11 +437,11 @@ localTimeParseE fmt = loop ini fmtElems
   parseHM isNeg True (h1:h2:':':m1:m2:xs) acc
     | allDigits [h1,h2,m1,m2] = let tz = toTZ isNeg h1 h2 m1 m2
                                 in  Right (modTZ (const tz) acc, xs)
-    | otherwise = Left ("not digits chars: " ++ show [h1,h2,m1,m2])
+    | otherwise = Left ("non-digit char(s) in: " ++ show [h1,h2,m1,m2])
   parseHM isNeg False (h1:h2:m1:m2:xs) acc
     | allDigits [h1,h2,m1,m2] = let tz = toTZ isNeg h1 h2 m1 m2
                                 in  Right (modTZ (const tz) acc, xs)
-    | otherwise = Left ("not digits chars: " ++ show [h1,h2,m1,m2])
+    | otherwise = Left ("non-digit char(s) in: " ++ show [h1,h2,m1,m2])
   parseHM _ _    _ _ = Left "invalid timezone format"
 
   toTZ isNeg h1 h2 m1 m2 = TimezoneOffset ((if isNeg then negate else id) minutes)
@@ -454,7 +454,7 @@ localTimeParseE fmt = loop ini fmtElems
   isNumber :: Num a => String -> Either String (a, String)
   isNumber s =
     case span isDigit s of
-      ("", s2) -> Left ("no digits chars:" ++ s2)
+      ("", s2) -> Left ("no digits at start of:" ++ s2)
       (s1, s2) -> Right (toInt s1, s2)
 
   getNDigitNum :: Int -> String -> Either String (Int64, String)
@@ -462,7 +462,7 @@ localTimeParseE fmt = loop ini fmtElems
     case getNChar n s of
       Left err                            -> Left err
       Right (s1, s2)
-        | not (allDigits s1) -> Left ("not a digit chars in " ++ show s1)
+        | not (allDigits s1) -> Left ("non-digit char(s) in " ++ show s1)
         | otherwise          -> Right (toInt s1, s2)
 
   getMonth :: String -> Either String (Month, String)
