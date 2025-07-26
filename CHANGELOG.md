@@ -8,6 +8,9 @@ and this project adheres to the
 
 ## UNRELEASED
 
+* Change the types of fields of `TimeFormatFct`: the parser and printer are in
+  terms of `LocalTime DateTime` (rather than `DateTime`) and the parser no
+  longer has an initial, contextual, `DateTime` argument.
 * Drop deprecated modules `Data.Hourglass.Compat`, `Data.Hourglass.Epoch`,
   `Data.Hourglass.Types` and `System.Hourglass`. Use modules `Time.Compat`,
   `Time.Epoch` and `Time.Types`.

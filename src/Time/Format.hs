@@ -112,10 +112,12 @@ data TimeFormatElem =
 data TimeFormatFct = TimeFormatFct
   { timeFormatFctName :: String
     -- ^ The name of the format function.
-  , timeFormatParse   :: DateTime -> String -> Either String (DateTime, String)
-    -- ^ A parser.
-  , timeFormatPrint   :: DateTime -> String
-    -- A printer.
+  , timeFormatParse   :: String -> Either String (LocalTime DateTime, String)
+    -- ^ A parser of a given 'String'. If it fails, the 'Left' value provides an
+    -- error message. If it succeeds, the 'Right' value provides a pair of the
+    -- 'LocalTime DateTime' value and any input not consumed by the parser.
+  , timeFormatPrint   :: LocalTime DateTime -> String
+    -- A printer of a given 'LocalTime DateTime'.
   }
 
 instance Show TimeFormatFct where
