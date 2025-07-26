@@ -82,10 +82,10 @@ module Data.Hourglass
   , TimeInterval (..)
     -- * Parsing and Printing
     -- ** Format strings
+  , TimeFormat (..)
+  , TimeFormatString (..)
   , TimeFormatElem (..)
   , TimeFormatFct (..)
-  , TimeFormatString (..)
-  , TimeFormat (..)
     -- ** Common built-in formats
   , ISO8601_Date (..)
   , ISO8601_DateAndTime (..)

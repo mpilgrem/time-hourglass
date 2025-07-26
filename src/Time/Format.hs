@@ -15,10 +15,10 @@ Built-in format strings
 module Time.Format
   ( -- * Parsing and Printing
     -- ** Format strings
-    TimeFormatElem (..)
-  , TimeFormatFct (..)
+    TimeFormat (..)
   , TimeFormatString (..)
-  , TimeFormat (..)
+  , TimeFormatElem (..)
+  , TimeFormatFct (..)
     -- ** Common built-in formats
   , ISO8601_Date (..)
   , ISO8601_DateAndTime (..)
@@ -48,55 +48,54 @@ import           Time.Types
 -- | Type representing formatters that can be part of a time format string.
 data TimeFormatElem =
     Format_Year2
-    -- ^ 2 digit years (70 is 1970, 69 is 2069).
+    -- ^ 2-digit years (@70@ is 1970, @69@ is 2069).
   | Format_Year4
-    -- ^ 4 digits years.
+    -- ^ 4-digit years.
   | Format_Year
     -- ^ Any digits years.
   | Format_Month
-    -- ^ Months (1 to 12).
+    -- ^ Months (@1@ to @12@).
   | Format_Month2
-    -- ^ Months padded to 2 characters (01 to 12).
+    -- ^ Months padded to 2 characters (@01@ to @12@).
   | Format_MonthName_Short
-    -- ^ Short name of nthe month (\'Jan\', \'Feb\' ..).
+    -- ^ Short name of the month (@Jan@, @Feb@, ..).
   | Format_DayYear
-    -- ^ Day of the year (1 to 365, 366 for leap years).
+    -- ^ Day of the year (@1@ to @365@, @366@ for leap years).
   | Format_Day
-    -- ^ Day of the month (1 to 31).
+    -- ^ Day of the month (@1@ to @31@).
   | Format_Day2
-    -- ^ Day of the month padded to 2 characters (01 to 31).
+    -- ^ Day of the month padded to 2 characters (@01@ to @31@).
   | Format_Hour
-    -- ^ Hours (0 to 23).
+    -- ^ Hours (@0@ to @23@).
   | Format_Minute
-    -- ^ Minutes (0 to 59).
+    -- ^ Minutes (@0@ to @59@).
   | Format_Second
-    -- ^ sSeconds (0 to 59, 60 for leap seconds).
+    -- ^ Seconds (@0@ to @59@, @60@ for leap seconds).
   | Format_UnixSecond
     -- ^ Number of seconds since the start of the Unix epoch
     -- (1970-01-01 00:00:00 UTC).
   | Format_MilliSecond
-    -- ^ Milliseconds padded to 3 characters (000 to 999).
+    -- ^ Milliseconds padded to 3 characters (@000@ to @999@).
   | Format_MicroSecond
-    -- ^ MicroSeconds padded to 6 characters (000000 to 999999).
+    -- ^ MicroSeconds padded to 6 characters (@000000@ to @999999@).
   | Format_NanoSecond
-    -- ^ NanoSeconds padded to 9 characters (000000000 to 999999999).
+    -- ^ NanoSeconds padded to 9 characters (@000000000@ to @999999999@).
   | Format_Precision Int
-    -- ^ Sub seconds display with a precision of n digits, with n between @1@
+    -- ^ Sub-second display with a precision of n digits, with n between @1@
     -- and @9@.
   | Format_TimezoneName
     -- ^ Timezone name (e.g. GMT, PST). Not yet implemented.
---  Format_TimezoneOffset
-    -- ^ Timezone offset offset (+02:00).
   | Format_TzHM_Colon_Z
-    -- ^ Zero UTC offset (Z) or timezone offset with colon (+02:00).
+    -- ^ Zero UTC offset (@Z@) or timezone offset with colon (for example,
+    -- @+02:00@).
   | Format_TzHM_Colon
-    -- ^ Timezone offset with colon (+02:00).
+    -- ^ Timezone offset with colon (for example, @+02:00@).
   | Format_TzHM
-    -- ^ Timezone offset without colon (+0200).
+    -- ^ Timezone offset without colon (for example, @+0200@).
   | Format_Tz_Offset
     -- ^ Timezone offset in minutes.
   | Format_Spaces
-    -- ^ One or more space-like chars.
+    -- ^ One or more space-like characters.
   | Format_Text Char
     -- ^ A verbatim character.
   | Format_Fct TimeFormatFct
@@ -126,6 +125,57 @@ newtype TimeFormatString = TimeFormatString [TimeFormatElem]
 
 -- | A type class promising the ability to convert values to
 -- a t'TimeFormatString'.
+--
+-- 'String' is an instance of 'TimeFormat'. Sequences of characters are
+-- interpreted as follows (case-sensitive). The longest valid sequence is parsed
+-- first:
+--
+-- [@YY@]:    'Format_Year2'. 2-digit years (@70@ is 1970, @69@ is 2069).
+-- [@YYYY@]:  'Format_Year4'. 4-digit years.
+-- [@M@]:     'Format_Month'. Months (@1@ to @12@).
+-- [@MM@]:    'Format_Month2'. Months padded to 2 characters (@01@ to @12@).
+-- [@Mon@]:   'Format_MonthName_Short'. Short name of the month (@Jan@, @Feb@,
+--            ..).
+-- [@DD@]:    'Format_Day2'. Day of the month padded to 2 characters (@01@ to
+--            @31@).
+-- [@H@]:     'Format_Hour'. Hours (@0@ to @23@).
+-- [@MI@]:    'Format_Minute'. Minutes (@0@ to @59@).
+-- [@S@]:     'Format_Second'. Seconds (@0@ to @59@, @60@ for leap seconds).
+-- [@EPOCH@]: 'Format_UnixSecond'. Number of seconds since the start of the Unix
+--            epoch (1970-01-01 00:00:00 UTC).
+-- [@ms@]:    'Format_MilliSecond'. Milliseconds padded to 3 characters (@000@
+--            to @999@).
+-- [@us@]:    'Format_MicroSecond'. MicroSeconds padded to 6 characters
+--            (@000000@ to @999999@).
+-- [@μ@]:     'Format_MicroSecond'. As above.
+-- [@ns@]:    'Format_NanoSecond'. NanoSeconds padded to 9 characters
+--            (@000000000@ to @999999999@).
+-- [@p1@]:    'Format_Precision' @1@. Sub-second display with a precision of 1
+--            digit.
+-- [@p2@]:    'Format_Precision' @2@. Sub-second display with a precision of 2
+--            digits.
+-- [@p3@]:    'Format_Precision' @3@. Sub-second display with a precision of 3
+--            digits.
+-- [@p4@]:    'Format_Precision' @4@. Sub-second display with a precision of 4
+--            digits.
+-- [@p5@]:    'Format_Precision' @5@. Sub-second display with a precision of 5
+--            digits.
+-- [@p6@]:    'Format_Precision' @6@. Sub-second display with a precision of 6
+--            digits.
+-- [@p7@]:    'Format_Precision' @7@. Sub-second display with a precision of 7
+--            digits.
+-- [@p8@]:    'Format_Precision' @8@. Sub-second display with a precision of 8
+--            digits.
+-- [@p9@]:    'Format_Precision' @9@. Sub-second display with a precision of 9
+--            digits.
+-- [@TZH:M@]: 'Format_TzHM_Colon'. Timezone offset with colon (for example,
+--            @+02:00@).
+-- [@TZHM@]:  'Format_TzHM'. Timezone offset without colon (for example,
+--            @+0200@).
+-- [@TZOFS@]: 'Format_Tz_Offset'. Timezone offset in minutes.
+-- [@\<space\>@]: 'Format_Spaces'. One or more space-like characters.
+-- [@\\\\\<character\>@]: 'Format_Text' @\<character\>@. A verbatim character.
+-- [@\<character\>@]:     'Format_Text' @\<character\>@. A verbatim character.
 class TimeFormat format where
   toFormat :: format -> TimeFormatString
 
@@ -147,38 +197,8 @@ instance TimeFormat [TimeFormatElem] where
 instance TimeFormat TimeFormatString where
   toFormat = id
 
--- | Sequences of characters are interpreted as follows (case-sensitive). The
--- longest valid sequence is parsed first:
---
--- [@YY@]:    'Format_Year2'
--- [@YYYY@]:  'Format_Year4'
--- [@M@]:     'Format_Month'
--- [@MM@]:    'Format_Month2'
--- [@Mon@]:   'Format_MonthName_Short'
--- [@DD@]:    'Format_Day2'
--- [@H@]:     'Format_Hour'
--- [@MI@]:    'Format_Minute'
--- [@S@]:     'Format_Second'
--- [@EPOCH@]: 'Format_UnixSecond'
--- [@ms@]:    'Format_MilliSecond'
--- [@us@]:    'Format_MicroSecond'
--- [@μ@]:     'Format_MicroSecond'
--- [@ns@]:    'Format_NanoSecond'
--- [@p1@]:    'Format_Precision' @1@
--- [@p2@]:    'Format_Precision' @2@
--- [@p3@]:    'Format_Precision' @3@
--- [@p4@]:    'Format_Precision' @4@
--- [@p5@]:    'Format_Precision' @5@
--- [@p6@]:    'Format_Precision' @6@
--- [@p7@]:    'Format_Precision' @7@
--- [@p8@]:    'Format_Precision' @8@
--- [@p9@]:    'Format_Precision' @9@
--- [@TZH:M@]: 'Format_TzHM_Colon'
--- [@TZHM@]:  'Format_TzHM'
--- [@TZOFS@]: 'Format_Tz_Offset'
--- [@\<space\>@]: 'Format_Spaces'
--- [@\\\\\<character\>@]: 'Format_Text' @\<character\>@
--- [@\<character\>@]:     'Format_Text' @\<character\>@
+-- | For information about this instance, see the documentation for
+-- 'TimeFormat'.
 instance TimeFormat String where
   toFormat = TimeFormatString . toFormatElem
    where
