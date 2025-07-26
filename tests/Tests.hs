@@ -9,16 +9,18 @@ module Main
 
 import qualified Control.Exception as E
 import           Control.Monad ( when )
+import           CustomTimeFormatFct ( customTimeFormatFct )
 import           Data.Hourglass
                    ( Date (..), DateTime (..), Duration (..), Elapsed (..)
                    , ElapsedP (..), Hours (..), ISO8601_Date (..)
                    , ISO8601_DateAndTime (..), LocalTime, Minutes (..)
                    , Month (..), NanoSeconds (..), Period (..), Seconds (..)
-                   , Time, TimeFormat (..), TimeOfDay (..), TimezoneOffset (..)
-                   , WeekDay, dateAddPeriod, daysInMonth, getWeekDay, localTime
-                   , localTimeFromGlobal, localTimeGetTimezone, localTimeParseE
-                   , localTimeSetTimezone, localTimeToGlobal, timeConvert
-                   , timeGetDateTimeOfDay, timeGetElapsed, timeParseE, timePrint
+                   , Time, TimeFormat (..), TimeFormatElem (..), TimeOfDay (..)
+                   , TimezoneOffset (..), WeekDay, dateAddPeriod, daysInMonth
+                   , getWeekDay, localTime, localTimeFromGlobal
+                   , localTimeGetTimezone, localTimeParseE, localTimeSetTimezone
+                   , localTimeToGlobal, timeConvert, timeGetDateTimeOfDay
+                   , timeGetElapsed, timeParseE, timePrint
                    )
 import           Data.Int ( Int64 )
 import           Data.Ratio ( (%) )
@@ -256,6 +258,20 @@ tests knowns = testGroup "hourglass"
           test_property_format ("YYYY-MM-DDTH:MI:S.msusns" :: String)
       , testProperty "custom-2" $
           test_property_format ("Mon DD\\t\\h YYYY at HH\\hMI\\mS\\s.p9\\n\\s" :: String)
+      , testProperty "customTimeFormatFct" $
+          test_property_format
+            [ Format_Year4
+            , Format_Spaces
+            , Format_Fct customTimeFormatFct
+            , Format_Spaces
+            , Format_Hour
+            , Format_Spaces
+            , Format_Minute
+            , Format_Spaces
+            , Format_Second
+            , Format_Spaces
+            , Format_Precision 9
+            ]
       ]
   , testGroup "Regression Tests"
       [ testCase "Real instance of ElapsedP (#33)" $

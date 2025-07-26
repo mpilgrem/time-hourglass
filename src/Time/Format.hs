@@ -31,12 +31,17 @@ module Time.Format
   , localTimeParseE
   ) where
 
-import           Data.Char ( isDigit, ord )
+import           Data.Char ( isDigit, isSpace, ord )
 import           Data.Int ( Int64 )
+import           Time.Calendar ( getDayOfTheYear )
 import           Time.Internal ( dateTimeFromUnixEpochP )
 import           Time.LocalTime
                    ( LocalTime (..), localTime, localTimeToGlobal )
-import           Time.Time ( Timeable (..), timeGetDateTimeOfDay )
+import           Time.Time
+                   ( Period (..), Timeable (..), dateAddPeriod
+                   , timeGetDateTimeOfDay
+                   )
+import           Time.Timezone ( Timezone (..), TimezoneMinutes (..) )
 import           Time.Utils ( pad2, pad4, padN )
 import           Time.Types
                    ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
@@ -311,6 +316,7 @@ printWith fmt t tzOfs@(TimezoneOffset tz) = concatMap fmtToString fmtElems
   fmtToString Format_Month2   = pad2 (fromEnum (dateMonth date) + 1)
   fmtToString Format_Month    = show (fromEnum (dateMonth date) + 1)
   fmtToString Format_MonthName_Short = take 3 $ show (dateMonth date)
+  fmtToString Format_DayYear  = show (getDayOfTheYear date)
   fmtToString Format_Day2     = pad2 (dateDay date)
   fmtToString Format_Day      = show (dateDay date)
   fmtToString Format_Hour     = pad2 (fromIntegral (todHour tm) :: Int)
@@ -323,7 +329,7 @@ printWith fmt t tzOfs@(TimezoneOffset tz) = concatMap fmtToString fmtElems
       | n >= 1 && n <= 9 = padN n (ns `div` (10 ^ (9 - n)))
       | otherwise        = error "invalid precision format"
   fmtToString Format_UnixSecond = show unixSecs
-  fmtToString Format_TimezoneName   = "" --
+  fmtToString Format_TimezoneName = timezoneName $ TimezoneMinutes tz
   fmtToString Format_Tz_Offset = show tz
   fmtToString Format_TzHM = show tzOfs
   fmtToString Format_TzHM_Colon_Z
@@ -335,12 +341,12 @@ printWith fmt t tzOfs@(TimezoneOffset tz) = concatMap fmtToString fmtElems
        in sign ++ pad2 tzH ++ ":" ++ pad2 tzM
   fmtToString Format_Spaces   = " "
   fmtToString (Format_Text c) = [c]
-  fmtToString f = error ("unimplemented printing format: " ++ show f)
+  fmtToString (Format_Fct tff) = timeFormatPrint tff dateTime tzOfs
 
   (TimeFormatString fmtElems) = toFormat fmt
 
   (Elapsed (Seconds unixSecs)) = timeGetElapsed t
-  (DateTime date tm) = timeGetDateTimeOfDay t
+  dateTime@(DateTime date tm) = timeGetDateTimeOfDay t
   (NanoSeconds ns) = timeGetNanoSeconds t
 
 -- | Given the specified format, pretty print the given local time.
@@ -383,6 +389,11 @@ localTimeParseE fmt = loop ini fmtElems
       Left err         -> Left (x, err)
       Right (nacc, s') -> loop nacc xs s'
 
+  processOne ::
+       (DateTime, TimezoneOffset)
+    -> TimeFormatElem
+    -> [Char]
+    -> Either String ((DateTime, TimezoneOffset), [Char])
   processOne _   _               []     = Left "empty"
   processOne acc (Format_Text c) (x:xs)
     | c == x    = Right (acc, xs)
@@ -397,12 +408,42 @@ localTimeParseE fmt = loop ini fmtElems
             in  modDate (setYear year) acc
     )
     $ getNDigitNum 2 s
+  processOne acc Format_Month s =
+    let result = isNumber s :: Either String (Int, String)
+    in  case result of
+          Left err -> Left err
+          Right (m, s')
+            | m > 0 && m <= 12 ->
+                Right (modDate (setMonth (toEnum (m - 1))) acc, s')
+            | otherwise -> Left ("month invalid, got: " <> show m)
   processOne acc Format_Month2 s = onSuccess
     ( \m -> modDate (setMonth $ toEnum ((fromIntegral m - 1) `mod` 12)) acc
     )
     $ getNDigitNum 2 s
   processOne acc Format_MonthName_Short s =
     onSuccess (\m -> modDate (setMonth m) acc) $ getMonth s
+  processOne acc Format_DayYear s =
+    let y = (dateYear . dtDate . fst) acc
+        result = isNumber s :: Either String (Int, String)
+    in  case result of
+          Left err -> Left err
+          Right (d, s')
+              -- We can't be more helpful because we may not yet know the
+              -- intended year
+            | d > 0 && d <= 366 ->
+                let p = Period 0 0 (d - 1)
+                    startOfYear = Date y January 1
+                in  Right (modDate (const (dateAddPeriod startOfYear p)) acc, s')
+            | otherwise -> Left ("day of year invalid, got: " <> show d)
+  processOne acc Format_Day s =
+    let result = isNumber s :: Either String (Int, String)
+    in  case result of
+          Left err -> Left err
+          Right (d, s')
+              -- We can't be more helpful because we may not yet know the
+              -- intended month and year
+            | d > 0 && d <= 31 -> Right (modDate (setDay d) acc, s')
+            | otherwise -> Left ("day of month invalid, got: " <> show d)
   processOne acc Format_Day2 s =
     onSuccess (\d -> modDate (setDay d) acc) $ getNDigitNum 2 s
   processOne acc Format_Hour s =
@@ -419,6 +460,9 @@ localTimeParseE fmt = loop ini fmtElems
     onSuccess (\ns -> modTime (setNsMask (0,3) ns) acc) $ getNDigitNum 3 s
   processOne acc (Format_Precision p) s =
     onSuccess (\num -> modTime (setNS num) acc) $ getNDigitNum p s
+  processOne acc Format_TimezoneName s = case span (not . isSpace) s of
+    ("", _) -> Left ("no non-white space at start of: " <> s)
+    (_, s2) -> Right (acc, s2)
   processOne acc Format_UnixSecond s =
     onSuccess (\sec ->
       let newDate =
@@ -431,10 +475,19 @@ localTimeParseE fmt = loop ini fmtElems
     parseHMSign True acc c s
   processOne acc Format_TzHM (c:s) =
     parseHMSign False acc c s
-
-  processOne acc Format_Spaces (' ':s) = Right (acc, s)
-  -- catch all for unimplemented format.
-  processOne _ f _ = error ("unimplemented parsing format: " ++ show f)
+  processOne acc Format_Tz_Offset s =
+    let result = isNumber s :: Either String (Int, String)
+        (dt, _) = acc
+    in  case result of
+          Left err -> Left err
+          Right (mins, s')
+            | mins >= -12 * 60 && mins <= 14 * 60 ->
+                Right ((dt, TimezoneOffset mins), s')
+            | otherwise -> Left ("offset invalid, got: " <> show mins)
+  processOne acc Format_Spaces s = case span isSpace s of
+    ("", _) -> Left ("no white space at start of: " <> s)
+    (_, s2) -> Right (acc, s2)
+  processOne acc (Format_Fct tff) s = timeFormatParse tff acc s
 
   parseHMSign expectColon acc signChar afterSign =
     case signChar of
