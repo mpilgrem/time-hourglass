@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-unused-imports    #-}
 {-# LANGUAGE ExistentialQuantification #-}
 
 {- |
@@ -38,9 +39,9 @@ import           Time.Diff
                    )
 import           Time.Internal ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
 import           Time.Types
-                   ( Date, DateTime (..), Elapsed (..), ElapsedP (..)
-                   , NanoSeconds (..), Seconds (..), TimeInterval (..)
-                   , TimeOfDay (..)
+                   ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
+                   , Month (..), NanoSeconds (..), Seconds (..)
+                   , TimeInterval (..), TimeOfDay (..)
                    )
 
 -- | A type class promising functionality for:
@@ -132,7 +133,9 @@ instance Time Date where
 
 instance Timeable DateTime where
   timeGetElapsedP d = ElapsedP (dateTimeToUnixEpoch d) (timeGetNanoSeconds d)
+
   timeGetElapsed = dateTimeToUnixEpoch
+
   timeGetNanoSeconds (DateTime _ (TimeOfDay _ _ _ ns)) = ns
 
 instance Time DateTime where
@@ -181,16 +184,30 @@ timeGetDateTimeOfDay t = dateTimeFromUnixEpochP $ timeGetElapsedP t
 {-# RULES "timeGetDateTimeOfDay/ID" timeGetDateTimeOfDay = id #-}
 {-# RULES "timeGetDateTimeOfDay/Date" timeGetDateTimeOfDay = flip DateTime (TimeOfDay 0 0 0 0) #-}
 
--- | Add the given period of time to the given value for a point time.
+-- | Add the given period of time to the given value for a point in time,
+-- assuming that the period of time is equated with a number of non-leap
+-- seconds.
 --
 -- Example:
 --
 -- > t1 `timeAdd` mempty { durationHours = 12 }
+--
+-- Example:
+--
+-- >>> startDate = Date 2016 December 31 -- Date of last leap second
+-- >>> preLeapSecond = TimeOfDay 23 59 59 0
+-- >>> startDateTime = DateTime startDate preLeapSecond
+-- >>> oneNonleapSecond = Duration 0 0 1 0 -- Assume non-leap seconds
+-- >>> nextDate = Date 2017 January 1
+-- >>> firstSecond = TimeOfDay 0 0 0 0
+-- >>> endDateTime = DateTime nextDate firstSecond
+-- >>> timeAdd startDateTime oneNonleapSecond == endDateTime
+-- True
 timeAdd :: (Time t, TimeInterval ti) => t -> ti -> t
 timeAdd t ti =
   timeFromElapsedP $ elapsedTimeAddSecondsP (timeGetElapsedP t) (toSeconds ti)
 
--- | For the two given points in time, yields the difference in seconds
+-- | For the two given points in time, yields the difference in non-leap seconds
 -- between them.
 --
 -- Effectively:
@@ -199,8 +216,8 @@ timeAdd t ti =
 timeDiff :: (Timeable t1, Timeable t2) => t1 -> t2 -> Seconds
 timeDiff t1 t2 = sec where (Elapsed sec) = timeGetElapsed t1 - timeGetElapsed t2
 
--- | For the two given points in time, yields the difference in seconds and
--- nanoseconds between them.
+-- | For the two given points in time, yields the difference in non-leap seconds
+-- and nanoseconds between them.
 --
 -- Effectively:
 --
