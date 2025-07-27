@@ -77,7 +77,7 @@ data TimeFormatElem =
   | Format_Second
     -- ^ Seconds padded to 2 characters (@00@ to @59@, @60@ for leap seconds).
   | Format_UnixSecond
-    -- ^ Number of seconds since the start of the Unix epoch
+    -- ^ Number of non-leap seconds since the Unix epoch
     -- (1970-01-01 00:00:00 UTC).
   | Format_MilliSecond
     -- ^ The millisecond component only, padded to 3 characters (@000@ to
@@ -163,7 +163,7 @@ newtype TimeFormatString = TimeFormatString [TimeFormatElem]
 -- [@MI@]:    'Format_Minute'. Minutes padded to 2 characters (@00@ to @59@).
 -- [@S@]:     'Format_Second'. Seconds padded to 2 characters (@00@ to @59@,
 --            @60@ for leap seconds).
--- [@EPOCH@]: 'Format_UnixSecond'. Number of seconds since the start of the Unix
+-- [@EPOCH@]: 'Format_UnixSecond'. Number of non-leap seconds since the Unix
 --            epoch (1970-01-01 00:00:00 UTC).
 -- [@ms@]:    'Format_MilliSecond'. The millisecond component only, padded to 3
 --            characters (@000@ to @999@). See @us@/@μ@ and @ns@ for other named

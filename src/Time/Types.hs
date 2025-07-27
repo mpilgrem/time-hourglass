@@ -22,7 +22,7 @@ module Time.Types
   , Month (..)
   , WeekDay (..)
     -- * Points in time
-    -- ** Elapsed time since the start of the Unix epoch
+    -- ** Elapsed time since the Unix epoch
   , Elapsed (..)
   , ElapsedP (..)
     -- ** Date, time, and date and time
@@ -50,11 +50,13 @@ import           Time.Utils ( pad2 )
 -- * converting a t'Seconds' value to a pair of a value of the type in question
 --   and a remaining number of seconds.
 class TimeInterval i where
-  -- | For the given value, yield a corresponding number of seconds.
+  -- | For the given value, yield a corresponding number of seconds (non-leap or
+  -- all).
   toSeconds   :: i -> Seconds
 
-  -- | For the given number of seconds, yield a pair of the corresponding value
-  -- of the type in queston and a remaining number of seconds.
+  -- | For the given number of seconds (non-leap or all), yield a pair of the
+  -- corresponding value of the type in queston and a remaining number of
+  -- seconds.
   fromSeconds :: Seconds -> (i, Seconds)
 
 -- | Type representing numbers of nanoseconds.
@@ -68,7 +70,7 @@ instance TimeInterval NanoSeconds where
   toSeconds (NanoSeconds ns) = Seconds (ns `div` 1000000000)
   fromSeconds (Seconds s) = (NanoSeconds (s * 1000000000), 0)
 
--- | Type representing numbers of seconds.
+-- | Type representing numbers of seconds (non-leap or all).
 newtype Seconds = Seconds Int64
   deriving (Data, Eq, Enum, Integral, NFData, Num, Ord, Read, Real)
 
@@ -105,16 +107,16 @@ instance TimeInterval Hours where
    where
     (h, s') = s `divMod` 3600
 
--- | Type representing numbers of seconds elapsed since the start of the Unix
--- epoch (1970-01-01 00:00:00 UTC).
+-- | Type representing numbers of non-leap seconds elapsed since the Unix epoch
+-- (1970-01-01 00:00:00 UTC).
 newtype Elapsed = Elapsed Seconds
   deriving (Data, Eq, NFData, Num, Ord, Read)
 
 instance Show Elapsed where
   show (Elapsed s) = show s
 
--- | Type representing numbers of seconds and nanoseconds elapsed since the
--- start of the Unix epoch (1970-01-01 00:00:00 UTC).
+-- | Type representing numbers of non-leap seconds and nanoseconds elapsed since
+-- the Unix epoch (1970-01-01 00:00:00 UTC).
 data ElapsedP = ElapsedP {-# UNPACK #-} !Elapsed {-# UNPACK #-} !NanoSeconds
   deriving (Data, Eq, Ord, Read)
 
@@ -250,9 +252,9 @@ data TimeOfDay = TimeOfDay
   , todMin  :: {-# UNPACK #-} !Minutes
     -- ^ Minutes, between 0 and 59.
   , todSec  :: {-# UNPACK #-} !Seconds
-    -- ^ Seconds, between 0 and 59. 60 when having leap second.
+    -- ^ Seconds, between 0 and 59. A leap second is represented by 60.
   , todNSec :: {-# UNPACK #-} !NanoSeconds
-    -- ^ Nanoseconds, between 0 and 999999999.
+    -- ^ Nanoseconds, between 0 and 999,999,999.
   }
   deriving (Data, Eq, Ord, Read, Show)
 

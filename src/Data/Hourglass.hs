@@ -8,9 +8,10 @@ Portability : unknown
 Time-related types and functions.
 
 Basic types for representing points in time are t'Elapsed' and t'ElapsedP`. The
-\'P\' is short for \'precise\'. t'Elapsed' represents numbers of seconds elapsed
-since the start of the Unix epoch (1970-01-01 00:00:00 UTC). t'ElapsedP'
-represents numbers of seconds and nanoseconds elapsed.
+\'P\' is short for \'precise\'. t'Elapsed' represents numbers of non-leap
+seconds elapsed since the Unix epoch (that is, the point of time
+represented by 1970-01-01 00:00:00 UTC). t'ElapsedP' represents numbers of
+non-leap seconds and nanoseconds elapsed since that point in time.
 
 Values of other types representing points in time can be converted to and from
 values of the t'Elapsed' and t'ElapsedP' types. For example:
@@ -35,7 +36,7 @@ module Data.Hourglass
   , Month (..)
   , WeekDay (..)
     -- * Points in time
-    -- ** Elapsed time since the start of the Unix epoch
+    -- ** Elapsed time since the Unix epoch
   , Elapsed (..)
   , ElapsedP (..)
     -- ** Date, time, and date and time

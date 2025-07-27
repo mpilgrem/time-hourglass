@@ -41,27 +41,25 @@ module Time.Compat
 import           Time.Time ( timeConvert )
 import           Time.Types ( Date, Elapsed (..), TimeOfDay (..) )
 
--- | Given an integer which represents the number of days since the start of the
--- Unix epoch (1970-01-01 00:00:00 UTC), yield the corresponding date in the
+-- | Given an integer which represents the number of days since the Unix epoch
+-- (1970-01-01 00:00:00 UTC), yield the corresponding date in the
 -- proleptic Gregorian calendar.
 dateFromUnixEpoch ::
      Integer
-     -- ^ Number of days since the start of the Unix epoch
-     -- (1970-01-01 00:00:00 UTC).
+     -- ^ Number of days since the Unix epoch (1970-01-01 00:00:00 UTC).
   -> Date
 dateFromUnixEpoch day = do
   let sec = Elapsed $ fromIntegral $ day * 86_400
   timeConvert sec
 
--- | The number of days between the start of the Modified Julian Date (MJD)
--- epoch (1858-11-17 00:00:00 UTC) and the start of the Unix epoch
--- (1970-01-01 00:00:00 UTC).
+-- | The number of days between the Modified Julian Date (MJD) epoch
+-- (1858-11-17 00:00:00 UTC) and the Unix epoch (1970-01-01 00:00:00 UTC).
 daysMJDtoUnix :: Integer
 daysMJDtoUnix = 40_587
 
--- | Given an integer which represents the number of days since the start of the
--- Modified Julian Date (MJD) epoch (1858-11-17 00:00:00 UTC), yields the
--- corresponding date in the proleptic Gregorian calendar.
+-- | Given an integer which represents the number of days since the Modified
+-- Julian Date (MJD) epoch (1858-11-17 00:00:00 UTC), yields the corresponding
+-- date in the proleptic Gregorian calendar.
 --
 -- This function allows a user to convert a t'Data.Time.Calendar.Day'
 -- into t'Date'.
@@ -78,8 +76,8 @@ dateFromMJDEpoch ::
 dateFromMJDEpoch dtai =
   dateFromUnixEpoch (dtai - daysMJDtoUnix)
 
--- | Given a real number representing the number of seconds since the start of
--- the day, yield a t'TimeOfDay' value.
+-- | Given a real number representing the number of non-leap seconds since the
+-- start of the day, yield a t'TimeOfDay' value (assuming no leap seconds).
 --
 -- Example with t'Data.Time.Clock.DiffTime' type from package @time@:
 --
@@ -99,7 +97,7 @@ dateFromMJDEpoch dtai =
 diffTimeToTimeOfDay ::
     Real t
   => t
-     -- ^ Number of seconds of the time of the day.
+     -- ^ Number of non-leap seconds of the time of the day.
   -> TimeOfDay
 diffTimeToTimeOfDay dt = do
   TimeOfDay
