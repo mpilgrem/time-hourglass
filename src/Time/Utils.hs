@@ -8,7 +8,11 @@ Portability : unknown
 Some padding / formatting functions.
 -}
 
-module Time.Utils where
+module Time.Utils
+  ( pad2
+  , pad4
+  , padN
+  ) where
 
 -- | Pad a number to 2 digits.
 pad2 :: (Show a, Ord a, Num a, Integral a) => a -> String
