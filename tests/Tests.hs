@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wno-orphans            #-}
 
 {-# LANGUAGE FlexibleInstances   #-}
+{-# LANGUAGE NumericUnderscores  #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Main
@@ -71,13 +72,13 @@ instance Arbitrary Seconds where
       | otherwise = error "internal error"
 
 instance Arbitrary Minutes where
-  arbitrary = Minutes <$> choose (-1125899906842624, 1125899906842624)
+  arbitrary = Minutes <$> choose (-1_125_899_906_842_624, 1_125_899_906_842_624)
 
 instance Arbitrary Hours where
-  arbitrary = Hours <$> choose (-1125899906842, 1125899906842)
+  arbitrary = Hours <$> choose (-1_125_899_906_842, 1_125_899_906_842)
 
 instance Arbitrary NanoSeconds where
-  arbitrary = NanoSeconds <$> choose (0, 100000000)
+  arbitrary = NanoSeconds <$> choose (0, 100_000_000)
 
 instance Arbitrary Elapsed where
   arbitrary = Elapsed <$> arbitrary
@@ -90,9 +91,9 @@ instance Arbitrary Duration where
 
 instance Arbitrary Period where
   arbitrary = Period
-    <$> choose (-29,29)
-    <*> choose (-27,27)
-    <*> choose (-400,400)
+    <$> choose (-29, 29)
+    <*> choose (-27, 27)
+    <*> choose (-400, 400)
 
 instance Arbitrary Month where
   arbitrary = elements [January ..]
@@ -108,8 +109,8 @@ instance Arbitrary Date where
 
 instance Arbitrary TimeOfDay where
   arbitrary = (TimeOfDay . Hours <$> choose (0, 23))
-    <*> (Minutes <$> choose (0,59))
-    <*> (Seconds <$> choose (0,59))
+    <*> (Minutes <$> choose (0, 59))
+    <*> (Seconds <$> choose (0, 59))
     <*> arbitrary
 
 instance (Time t, Arbitrary t) => Arbitrary (LocalTime t) where
@@ -138,9 +139,9 @@ testCaseWith what fun (x, y, ref) = testCase
 
 arithmeticTestAddRef :: [(ElapsedP, ElapsedP, ElapsedP)]
 arithmeticTestAddRef = map testRefToElapsedP
-  [ ((1, 090000000), (2, 090000000), (3, 180000000))
-  , ((1, 900000000), (1, 200000000), (3, 100000000))
-  , ((1, 000000001), (0, 999999999), (2, 000000000))
+  [ ((1, 090_000_000), (2, 090_000_000), (3, 180_000_000))
+  , ((1, 900_000_000), (1, 200_000_000), (3, 100_000_000))
+  , ((1, 000_000_001), (0, 999_999_999), (2, 000_000_000))
   ]
 
 arithmeticTestSubRef :: [(ElapsedP, ElapsedP, ElapsedP)]
@@ -151,7 +152,7 @@ arithmeticTestSubRef = map testRefToElapsedP
   , ((1, ms 100), (2, ms 400), (-2, ms 700))
   ]
  where
-  ms v = v * 1000000
+  ms v = v * 1_000_000
 
 testRefToElapsedP ::
      ((Int64, Int64), (Int64, Int64), (Int64, Int64))
@@ -280,8 +281,8 @@ tests knowns = testGroup "hourglass"
           in  assertEqual "failed equality" ref res
       , testCase "Real instance of ElapsedP (#33) (2)" $
           let res = toRational
-                (ElapsedP (Elapsed $ Seconds 100) (NanoSeconds 1000000))
-              ref = toRational (100 :: Int) + (1 % 1000) :: Rational
+                (ElapsedP (Elapsed $ Seconds 100) (NanoSeconds 1_000_000))
+              ref = toRational (100 :: Int) + (1 % 1_000) :: Rational
           in  assertEqual "failed equality" ref res
       , testCase "Real instance of ElapsedSinceP, zero ns" $
           let start = ElapsedSince (Seconds 0) :: ElapsedSince UnixEpoch
@@ -291,9 +292,9 @@ tests knowns = testGroup "hourglass"
           in  assertEqual "failed equality" ref res
       , testCase "Real instance of ElapsedSinceP, non zero ns" $
           let later = ElapsedSince (Seconds 100) :: ElapsedSince UnixEpoch
-              laterP = ElapsedSinceP later (NanoSeconds 1000000) :: ElapsedSinceP UnixEpoch
+              laterP = ElapsedSinceP later (NanoSeconds 1_000_000) :: ElapsedSinceP UnixEpoch
               res = toRational laterP
-              ref = toRational (100 :: Int) + (1 % 1000) :: Rational
+              ref = toRational (100 :: Int) + (1 % 1_000) :: Rational
           in  assertEqual "failed equality" ref res
       ]
   ]

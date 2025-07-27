@@ -8,6 +8,7 @@ and this project adheres to the
 
 ## UNRELEASED
 
+* Drop support for GHC < 8.6.
 * Change the types of fields of `TimeFormatFct`: the parser and printer are in
   terms of `DateTime` and `TimezoneOffset` (rather than just `DateTime`).
 * In `localTimePrint` etc, implement `Format_TimezoneName` and `Format_Fct`.

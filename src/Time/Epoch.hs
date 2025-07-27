@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable         #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE NumericUnderscores         #-}
 
 {- |
 Module      : Time.Epoch
@@ -70,7 +71,7 @@ instance Real (ElapsedSinceP e) where
     fromIntegral s
 
   toRational (ElapsedSinceP (ElapsedSince (Seconds s)) (NanoSeconds ns)) =
-    fromIntegral s + (fromIntegral ns % 1000000000)
+    fromIntegral s + (fromIntegral ns % 1_000_000_000)
 
 -- | A type class promising epoch-related functionality.
 --
@@ -100,7 +101,7 @@ data WindowsEpoch = WindowsEpoch
 
 instance Epoch WindowsEpoch where
   epochName _ = "windows"
-  epochDiffToUnix _ = -11644473600
+  epochDiffToUnix _ = -11_644_473_600
 
 -- | A type representing the Modified Julian Date (MJD) (a point in time
 -- represented by 1858-11-17 00:00:00 UTC).
@@ -109,7 +110,7 @@ data MJDEpoch = MJDEpoch
 
 instance Epoch MJDEpoch where
   epochName _ = "Modified Julian Date"
-  epochDiffToUnix _ = -3506716800
+  epochDiffToUnix _ = -3_506_716_800
 
 instance Epoch epoch => Timeable (ElapsedSince epoch) where
   timeGetElapsedP es = ElapsedP (Elapsed e) 0
