@@ -24,7 +24,7 @@ extra-source-files:
 - tests/TimeDB.hs
 
 dependencies:
-- base >= 4.11 && < 5
+- base >= 4.12 && < 5
 - deepseq
 
 ghc-options:
@@ -46,6 +46,14 @@ library:
     else:
       source-dirs: src/unix
       c-sources: cbits/unix.c
+      other-extensions:
+      - ForeignFunctionInterface
+  other-extensions:
+  - DeriveDataTypeable
+  - ExistentialQuantification
+  - FlexibleInstances
+  - GeneralizedNewtypeDeriving
+  - NumericUnderscores
 
 tests:
   test-hourglass:
@@ -67,6 +75,11 @@ tests:
         source-dirs: tests/win
       else:
         source-dirs: tests/unix
+    other-extensions:
+    - BangPatterns
+    - FlexibleInstances
+    - NumericUnderscores
+    - ScopedTypeVariables
 
 benchmarks:
   bench-hourglass:
@@ -77,3 +90,5 @@ benchmarks:
     - tasty-bench
     # To benchmark against other references:
     - time
+    other-extensions:
+    - BangPatterns

@@ -1,3 +1,5 @@
+{-# LANGUAGE NumericUnderscores #-}
+
 {- |
 Module      : Time.Compat
 License     : BSD-style
@@ -48,14 +50,14 @@ dateFromUnixEpoch ::
      -- (1970-01-01 00:00:00 UTC).
   -> Date
 dateFromUnixEpoch day = do
-  let sec = Elapsed $ fromIntegral $ day * 86400
+  let sec = Elapsed $ fromIntegral $ day * 86_400
   timeConvert sec
 
 -- | The number of days between the start of the Modified Julian Date (MJD)
 -- epoch (1858-11-17 00:00:00 UTC) and the start of the Unix epoch
 -- (1970-01-01 00:00:00 UTC).
 daysMJDtoUnix :: Integer
-daysMJDtoUnix = 40587
+daysMJDtoUnix = 40_587
 
 -- | Given an integer which represents the number of days since the start of the
 -- Modified Julian Date (MJD) epoch (1858-11-17 00:00:00 UTC), yields the
@@ -111,6 +113,6 @@ diffTimeToTimeOfDay dt = do
   r = toRational dt
   (secs, nR) = properFraction r :: (Integer, Rational)
   nsecs :: Integer
-  nsecs = round (nR * 1000000000)
+  nsecs = round (nR * 1_000_000_000)
   (minsofday, seconds) = secs `divMod` 60 :: (Integer, Integer)
   (hours, minutes) = minsofday `divMod` 60 :: (Integer, Integer)

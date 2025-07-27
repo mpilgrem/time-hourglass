@@ -1,3 +1,5 @@
+{-# LANGUAGE NumericUnderscores #-}
+
 {- |
 Module      : Time.Calendar
 License     : BSD-style
@@ -99,8 +101,8 @@ dateToUnixEpoch :: Date -> Elapsed
 dateToUnixEpoch date =
   Elapsed $ Seconds (fromIntegral (daysOfDate date - epochDays) * secondsPerDay)
  where
-  epochDays     = 719163
-  secondsPerDay = 86400 -- Julian day is 24h
+  epochDays     = 719_163
+  secondsPerDay = 86_400 -- Julian day is 24h
 
 -- | For the given period of time since the start of the Unix epoch
 -- (1970-01-01 00:00:00 UTC), yield the corresponding date.

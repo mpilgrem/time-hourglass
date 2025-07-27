@@ -50,9 +50,15 @@ library
       Time.Utils
   hs-source-dirs:
       src
+  other-extensions:
+      DeriveDataTypeable
+      ExistentialQuantification
+      FlexibleInstances
+      GeneralizedNewtypeDeriving
+      NumericUnderscores
   ghc-options: -Wall
   build-depends:
-      base >=4.11 && <5
+      base >=4.12 && <5
     , deepseq
   default-language: Haskell2010
   if os(windows)
@@ -67,6 +73,8 @@ library
         Time.Internal
     hs-source-dirs:
         src/unix
+    other-extensions:
+        ForeignFunctionInterface
     c-sources:
         cbits/unix.c
 
@@ -78,9 +86,14 @@ test-suite test-hourglass
       CustomTimeFormatFct
   hs-source-dirs:
       tests
+  other-extensions:
+      BangPatterns
+      FlexibleInstances
+      NumericUnderscores
+      ScopedTypeVariables
   ghc-options: -Wall
   build-depends:
-      base >=4.11 && <5
+      base >=4.12 && <5
     , deepseq
     , tasty
     , tasty-hunit
@@ -104,9 +117,11 @@ benchmark bench-hourglass
   main-is: Bench.hs
   hs-source-dirs:
       benchmarks
+  other-extensions:
+      BangPatterns
   ghc-options: -Wall
   build-depends:
-      base >=4.11 && <5
+      base >=4.12 && <5
     , deepseq
     , tasty-bench
     , time

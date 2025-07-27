@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE NumericUnderscores #-}
 
 {- |
 Module      : Time.Diff
@@ -78,7 +79,7 @@ durationFlatten :: Duration -> (Seconds, NanoSeconds)
 durationFlatten (Duration h m s (NanoSeconds ns)) =
   (toSeconds h + toSeconds m + s + Seconds sacc, NanoSeconds ns')
  where
-  (sacc, ns') = ns `divMod` 1000000000
+  (sacc, ns') = ns `divMod` 1_000_000_000
 
 -- | Normalize a t'Duration' to represent the same period of time with the
 -- biggest units possible. For example, 62 minutes is normalized as
@@ -89,7 +90,7 @@ durationNormalize (Duration (Hours h) (Minutes mi) (Seconds s) (NanoSeconds ns))
  where
   (hacc, mi') = (mi+miacc) `divMod` 60
   (miacc, s') = (s+sacc) `divMod` 60
-  (sacc, ns') = ns `divMod` 1000000000
+  (sacc, ns') = ns `divMod` 1_000_000_000
 
 -- | Add the given period of time to the given date.
 dateAddPeriod :: Date -> Period -> Date

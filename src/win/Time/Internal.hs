@@ -1,3 +1,5 @@
+{-# LANGUAGE NumericUnderscores #-}
+
 {- |
 Module      : Time.Internal
 License     : BSD-style
@@ -33,24 +35,24 @@ import           Time.Types
                    )
 
 unixDiff :: Int64
-unixDiff = 11644473600
+unixDiff = 11_644_473_600
 
 toFileTime :: Elapsed -> FILETIME
 toFileTime (Elapsed (Seconds s)) = FILETIME val
  where
-  val = fromIntegral (s + unixDiff) * 10000000
+  val = fromIntegral (s + unixDiff) * 10_000_000
 
 toElapsedP :: FILETIME -> ElapsedP
 toElapsedP (FILETIME w) = ElapsedP (Elapsed $ Seconds s) (NanoSeconds ns)
  where
-  (sWin, hundredNs) = w `divMod` 10000000
+  (sWin, hundredNs) = w `divMod` 10_000_000
   ns = fromIntegral (hundredNs * 100)
   s = fromIntegral sWin - unixDiff
 
 toElapsed :: FILETIME -> Elapsed
 toElapsed (FILETIME w) = Elapsed (Seconds s)
  where
-  s = fromIntegral (fst (w `divMod` 10000000)) - unixDiff
+  s = fromIntegral (fst (w `divMod` 10_000_000)) - unixDiff
 
 callSystemTime :: Elapsed -> SYSTEMTIME
 callSystemTime e = unsafePerformIO (fileTimeToSystemTime (toFileTime e))
