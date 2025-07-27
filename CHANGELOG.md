@@ -17,6 +17,7 @@ and this project adheres to the
 * In `localTimeParseE` etc, `Format_Spaces` now parses one or more space-like
   characters (as previously documented), rather than one space character (as
   previously implemented).
+* Export `MJDEpoch`, representing the Modified Julian Date (MJD) epoch.
 * Drop deprecated modules `Data.Hourglass.Compat`, `Data.Hourglass.Epoch`,
   `Data.Hourglass.Types` and `System.Hourglass`. Use modules `Time.Compat`,
   `Time.Epoch` and `Time.Types`.

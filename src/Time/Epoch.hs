@@ -20,6 +20,7 @@ module Time.Epoch
     -- * Commonly-encountered epochs
   , UnixEpoch (..)
   , WindowsEpoch (..)
+  , MJDEpoch (..)
   ) where
 
 import           Control.DeepSeq ( NFData (..) )
@@ -100,6 +101,15 @@ data WindowsEpoch = WindowsEpoch
 instance Epoch WindowsEpoch where
   epochName _ = "windows"
   epochDiffToUnix _ = -11644473600
+
+-- | A type representing the Modified Julian Date (MJD) (a point in time
+-- represented by 1858-11-17 00:00:00 UTC).
+data MJDEpoch = MJDEpoch
+  deriving (Eq, Show)
+
+instance Epoch MJDEpoch where
+  epochName _ = "Modified Julian Date"
+  epochDiffToUnix _ = -3506716800
 
 instance Epoch epoch => Timeable (ElapsedSince epoch) where
   timeGetElapsedP es = ElapsedP (Elapsed e) 0
