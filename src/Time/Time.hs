@@ -52,12 +52,12 @@ import           Time.Types
 --   question (should yield @0@ when the type is less precise than seconds).
 --
 class Timeable t where
-  -- | Convert the given value to the number of elapsed seconds and nanoseconds
-  -- since the start of the Unix epoch (1970-01-01 00:00:00 UTC).
+  -- | Convert the given value to the number of non-leap seconds and
+  -- nanoseconds elapsed since the Unix epoch (1970-01-01 00:00:00 UTC).
   timeGetElapsedP :: t -> ElapsedP
 
-  -- | Convert the given value to the number of elapsed seconds since the start
-  -- of the Unix epoch (1970-01-01 00:00:00 UTC).
+  -- | Convert the given value to the number of non-leap seconds elapsed since
+  -- the Unix epoch (1970-01-01 00:00:00 UTC).
   --
   -- Defaults to 'timeGetElapsedP'.
   timeGetElapsed :: t -> Elapsed
@@ -80,12 +80,12 @@ class Timeable t where
 -- | A type class promising functionality for converting t'ElapsedP' values
 -- and t'Elapsed' values to values of the type in question.
 class Timeable t => Time t where
-  -- | Convert from a number of elapsed seconds and nanoseconds since the start
-  -- of the Unix epoch (1970-01-01 00:00:00 UTC).
+  -- | Convert from a number of non-leap seconds and nanoseconds elapsed since
+  -- the Unix epoch (1970-01-01 00:00:00 UTC).
   timeFromElapsedP :: ElapsedP -> t
 
-  -- | Convert from a number of elapsed seconds since the start of the Unix
-  -- epoch (1970-01-01 00:00:00 UTC).
+  -- | Convert from a number of non-leap seconds elapsed since the Unix epoch
+  -- (1970-01-01 00:00:00 UTC).
   --
   -- Defaults to 'timeFromElapsedP'.
   timeFromElapsed :: Elapsed -> t

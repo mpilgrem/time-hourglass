@@ -31,7 +31,8 @@ import           Time.Types
                    )
 
 -- | Type representing periods of time in years, months and days.
--- See t'Duration' for periods of time hours, minutes, seconds and nanoseconds.
+-- See t'Duration' for periods of time in hours, minutes, seconds (non-leap or
+-- all) and nanoseconds.
 data Period = Period
   { periodYears  :: !Int
   , periodMonths :: !Int
@@ -49,13 +50,18 @@ instance Semigroup Period where
 instance Monoid Period where
   mempty = Period 0 0 0
 
--- | Type represeting periods of time in hours, minutes, seconds and
--- nanoseconds. See t'Period' for periods of time in years, months and days.
+-- | Type represeting periods of time in hours, minutes, seconds (non-leap or
+-- all) and nanoseconds. See t'Period' for periods of time in years, months and
+-- days.
 data Duration = Duration
-  { durationHours   :: !Hours       -- ^ number of hours
-  , durationMinutes :: !Minutes     -- ^ number of minutes
-  , durationSeconds :: !Seconds     -- ^ number of seconds
-  , durationNs      :: !NanoSeconds -- ^ number of nanoseconds
+  { durationHours   :: !Hours
+    -- ^ Number of hours.
+  , durationMinutes :: !Minutes
+    -- ^ Number of minutes.
+  , durationSeconds :: !Seconds
+    -- ^ Number of seconds (non-leap or all).
+  , durationNs      :: !NanoSeconds
+    -- ^ Number of nanoseconds.
   }
   deriving (Data, Eq, Ord, Read, Show)
 
@@ -113,11 +119,11 @@ dateAddPeriod (Date yOrig mOrig dOrig) (Period yDiff mDiff dDiff) =
    where
     dMonth = daysInMonth y (toEnum m)
 
--- | Add the given number of seconds to the given t'Elapsed' value.
+-- | Add the given number of non-leap seconds to the given t'Elapsed' value.
 elapsedTimeAddSeconds :: Elapsed -> Seconds -> Elapsed
 elapsedTimeAddSeconds (Elapsed s1) s2 = Elapsed (s1 + s2)
 
--- | Add the given number of seconds to the given t'ElapsedP' value.
+-- | Add the given number of non-leap seconds to the given t'ElapsedP' value.
 elapsedTimeAddSecondsP :: ElapsedP -> Seconds -> ElapsedP
 elapsedTimeAddSecondsP (ElapsedP (Elapsed s1) ns1) s2 =
   ElapsedP (Elapsed (s1 + s2)) ns1

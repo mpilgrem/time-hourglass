@@ -9,11 +9,11 @@ Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
 Portability : unknown
 
-Types and functions related to epochs.
+Types, type classes and functions related to epochs.
 -}
 
 module Time.Epoch
-  ( -- * Elapsed time from the start of epochs
+  ( -- * Elapsed time from epochs
     ElapsedSince (..)
   , ElapsedSinceP (..)
     -- * Epoch
@@ -33,13 +33,13 @@ import           Time.Types
                    , Seconds (..)
                    )
 
--- | A type representing the number of seconds that have elapsed since the start
--- of a specified epoch.
+-- | A type representing the number of non-leap seconds that have elapsed since
+-- the specified epoch.
 newtype ElapsedSince epoch = ElapsedSince Seconds
   deriving (Data, Eq, NFData, Num, Ord,  Read, Show)
 
--- | A type representing the number of seconds and nanoseconds that have elapsed
--- since the start of a specified epoch. The \'P\' is short for \'precise\'.
+-- | A type representing the number of non-leap seconds and nanoseconds that
+-- have elapsed since the specified epoch. The \'P\' is short for \'precise\'.
 data ElapsedSinceP epoch = ElapsedSinceP
   {-# UNPACK #-} !(ElapsedSince epoch)
   {-# UNPACK #-} !NanoSeconds
@@ -73,19 +73,19 @@ instance Real (ElapsedSinceP e) where
   toRational (ElapsedSinceP (ElapsedSince (Seconds s)) (NanoSeconds ns)) =
     fromIntegral s + (fromIntegral ns % 1_000_000_000)
 
--- | A type class promising epoch-related functionality.
---
+-- | A type class promising epoch-related functionality. (Epochs, in this
+-- context, are fixed points in time.)
 class Epoch epoch where
   -- | The name of the epoch.
   epochName :: epoch -> String
 
-  -- | The start of the epoch relative to the start of the Unix epoch
-  -- (1970-01-01 00:00:00 UTC), in seconds. A negative number means the epoch
-  -- starts before the starts of the Unix epoch.
+  -- | The epoch relative to the Unix epoch (1970-01-01 00:00:00 UTC), in
+  -- non-leap seconds. A negative number means the epoch is before the Unix
+  -- epoch.
   epochDiffToUnix :: epoch -> Seconds
 
--- | A type representing the Unix epoch, which started on
--- 1970-01-01 00:00:00 UTC.
+-- | A type representing the Unix epoch (the point in time represented by
+-- 1970-01-01 00:00:00 UTC).
 data UnixEpoch = UnixEpoch
   deriving (Eq, Show)
 
@@ -95,7 +95,7 @@ instance Epoch UnixEpoch where
 
 -- | A type representing the
 -- [Windows epoch](https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times),
--- which started on 1601-01-01 00:00:00 UTC.
+-- (the point in time represented by 1601-01-01 00:00:00 UTC).
 data WindowsEpoch = WindowsEpoch
   deriving (Eq, Show)
 
@@ -103,7 +103,7 @@ instance Epoch WindowsEpoch where
   epochName _ = "windows"
   epochDiffToUnix _ = -11_644_473_600
 
--- | A type representing the Modified Julian Date (MJD) (a point in time
+-- | A type representing the Modified Julian Date (MJD) epoch (the point in time
 -- represented by 1858-11-17 00:00:00 UTC).
 data MJDEpoch = MJDEpoch
   deriving (Eq, Show)

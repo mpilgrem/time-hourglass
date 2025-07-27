@@ -95,8 +95,8 @@ daysOfDate :: Date -> Int
 daysOfDate (Date y m d) = daysBeforeYear y + daysUntilMonth y m + d
 
 -- | For the given date in the proleptic Gregorian calendar, and assuming a time
--- of 00:00:00 UTC, yield the number of seconds since the start of the Unix
--- epoch (1970-01-01 00:00:00 UTC). This assumes each day is 24 hours long.
+-- of 00:00:00 UTC, yield the number of non-leap seconds since the Unix epoch
+-- (1970-01-01 00:00:00 UTC).
 dateToUnixEpoch :: Date -> Elapsed
 dateToUnixEpoch date =
   Elapsed $ Seconds (fromIntegral (daysOfDate date - epochDays) * secondsPerDay)
@@ -104,8 +104,9 @@ dateToUnixEpoch date =
   epochDays     = 719_163
   secondsPerDay = 86_400 -- Julian day is 24h
 
--- | For the given period of time since the start of the Unix epoch
--- (1970-01-01 00:00:00 UTC), yield the corresponding date.
+-- | For the given period of time since the Unix epoch
+-- (1970-01-01 00:00:00 UTC), yield the corresponding date in the proleptic
+-- Gregorian calendar.
 dateFromUnixEpoch :: Elapsed -> Date
 dateFromUnixEpoch e = dtDate $ dateTimeFromUnixEpoch e
 
@@ -115,8 +116,8 @@ todToSeconds :: TimeOfDay -> Seconds
 todToSeconds (TimeOfDay h m s _) = toSeconds h + toSeconds m + s
 
 -- | For the given date (in the proleptic Gregorian calendar) and time (in UTC),
--- yield the number of seconds that have elapsed since the start of the Unix
--- epoch.
+-- yield the number of non-leap seconds that have elapsed since the Unix epoch
+-- (1970-01-01 00:00:00 UTC).
 dateTimeToUnixEpoch :: DateTime -> Elapsed
 dateTimeToUnixEpoch (DateTime d t) =
   dateToUnixEpoch d + Elapsed (todToSeconds t)

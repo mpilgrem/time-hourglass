@@ -28,13 +28,12 @@ import           Time.LocalTime
 import           Time.Time ( timeGetDateTimeOfDay )
 import           Time.Types ( DateTime, Elapsed, ElapsedP, TimezoneOffset )
 
--- | Get the current number of seconds elapsed since the start of the Unix
--- epoch.
+-- | Get the current number of non-leap seconds elapsed since the Unix epoch.
 timeCurrent :: IO Elapsed
 timeCurrent = systemGetElapsed
 
--- | Get the current number of seconds and nanoseconds since the start of the
--- Unix epoch (1970-01-01 00:00:00 UTC).
+-- | Get the current number of non-leap seconds and nanoseconds since the Unix
+-- epoch (1970-01-01 00:00:00 UTC).
 timeCurrentP :: IO ElapsedP
 timeCurrentP = systemGetElapsedP
 
