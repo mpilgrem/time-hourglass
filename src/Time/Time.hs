@@ -32,12 +32,12 @@ module Time.Time
   ) where
 
 import           Foreign.C.Types ( CTime (..) )
-import           Time.Calendar ( dateTimeToUnixEpoch )
+import           Time.Calendar ( dateTimeFromUnixEpochP, dateTimeToUnixEpoch )
 import           Time.Diff
                    ( Duration (..), Period (..), dateAddPeriod
                    , elapsedTimeAddSecondsP
                    )
-import           Time.Internal ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
+import           Time.Internal ( dateTimeFromUnixEpoch )
 import           Time.Types
                    ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
                    , Month (..), NanoSeconds (..), Seconds (..)
