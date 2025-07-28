@@ -9,6 +9,12 @@ and this project adheres to the
 ## UNRELEASED
 
 * Drop support for GHC < 8.6.
+* Add `Real` instance for `ElapsedSinceP`.
+* Export `fromRationalSecondsP`, `mkElapsedP`, and `fromRationalElapsedP`, to
+  facilitate creation of `ElapsedP` values from precise amounts of seconds or
+  numbers of seconds and nanoseconds.
+* Test added to test suite for `toRational :: ElapsedSinceP -> Rational` and
+  `fromRationalElapsedP`.
 * Change the types of fields of `TimeFormatFct`: the parser and printer are in
   terms of `DateTime` and `TimezoneOffset` (rather than just `DateTime`).
 * In `localTimePrint` etc, implement `Format_TimezoneName` and `Format_Fct`.
@@ -24,7 +30,6 @@ and this project adheres to the
   `Time.Epoch` and `Time.Types`.
 * Drop deprecated function `dateFromPOSIXEpoch`. Use `dataFromUnixEpoch`.
 * Drop deprecated function `dateFromTAIEpoch`. Use `dateFromMJDEpoch`.
-* Add `Real` instance for `ElapsedSinceP`.
 * Fix Haddock documentaton for `Format_Hours`, `Format_Minutes` and
   `Format_Seconds`; they all pad to 2 characters.
 * Fix Haddock documentaton for `Format_Millisecond`, `Format_MicroSecond` and

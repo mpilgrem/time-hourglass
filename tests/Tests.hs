@@ -17,7 +17,7 @@ import           Data.Hourglass
                    , ISO8601_DateAndTime (..), LocalTime, Minutes (..)
                    , Month (..), NanoSeconds (..), Period (..), Seconds (..)
                    , Time, TimeFormat (..), TimeFormatElem (..), TimeOfDay (..)
-                   , TimezoneOffset (..), WeekDay, dateAddPeriod, daysInMonth
+                   , TimezoneOffset (..), WeekDay, dateAddPeriod, daysInMonth, fromRationalElapsedP
                    , getWeekDay, localTime, localTimeFromGlobal
                    , localTimeGetTimezone, localTimeParseE, localTimeSetTimezone
                    , localTimeToGlobal, timeConvert, timeGetDateTimeOfDay
@@ -82,6 +82,9 @@ instance Arbitrary NanoSeconds where
 
 instance Arbitrary Elapsed where
   arbitrary = Elapsed <$> arbitrary
+
+instance Arbitrary ElapsedP where
+  arbitrary = ElapsedP <$> arbitrary <*> arbitrary
 
 instance Arbitrary TimezoneOffset where
   arbitrary = TimezoneOffset <$> choose (-(11*60), 11*60)
@@ -180,6 +183,8 @@ tests knowns = testGroup "hourglass"
           let e2 = timeConvert e :: ElapsedSince WindowsEpoch
           in       timePrint ISO8601_DateAndTime e
               `eq` timePrint ISO8601_DateAndTime e2
+      , testProperty "precise seconds" $ \(ep :: ElapsedP) ->
+          fromRationalElapsedP (toRational ep) `eq` ep
       ]
   , testGroup "localtime"
       [ testProperty "eq" $ \(l :: LocalTime Elapsed) ->

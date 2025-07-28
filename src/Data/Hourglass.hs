@@ -36,9 +36,13 @@ module Data.Hourglass
   , Month (..)
   , WeekDay (..)
     -- * Points in time
+    -- ** Precise amounts of seconds
+  , fromRationalSecondsP
     -- ** Elapsed time since the Unix epoch
   , Elapsed (..)
   , ElapsedP (..)
+  , mkElapsedP
+  , fromRationalElapsedP
     -- ** Date, time, and date and time
   , Date (..)
   , TimeOfDay (..)

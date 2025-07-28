@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable         #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE NumericUnderscores         #-}
 
 {- |
 Module      : Time.Types
@@ -22,9 +23,13 @@ module Time.Types
   , Month (..)
   , WeekDay (..)
     -- * Points in time
+    -- ** Precise amounts of seconds
+  , fromRationalSecondsP
     -- ** Elapsed time since the Unix epoch
   , Elapsed (..)
   , ElapsedP (..)
+  , mkElapsedP
+  , fromRationalElapsedP
     -- ** Date, time, and date and time
   , Date (..)
   , TimeOfDay (..)
@@ -67,8 +72,8 @@ instance Show NanoSeconds where
   show (NanoSeconds v) = shows v "ns"
 
 instance TimeInterval NanoSeconds where
-  toSeconds (NanoSeconds ns) = Seconds (ns `div` 1000000000)
-  fromSeconds (Seconds s) = (NanoSeconds (s * 1000000000), 0)
+  toSeconds (NanoSeconds ns) = Seconds (ns `div` 1_000_000_000)
+  fromSeconds (Seconds s) = (NanoSeconds (s * 1_000_000_000), 0)
 
 -- | Type representing numbers of seconds (non-leap or all).
 newtype Seconds = Seconds Int64
@@ -80,6 +85,17 @@ instance Show Seconds where
 instance TimeInterval Seconds where
   toSeconds   = id
   fromSeconds s = (s, 0)
+
+-- | Given a precise amount of seconds yield a corresponding pair of
+-- t'Seconds' and t'NanoSeconds' values.
+--
+-- If the precise amount of seconds is negative the number of nanoseconds will
+-- not be positive. This can be contrasted with a normalised t'ElapsedP' value.
+fromRationalSecondsP :: Rational -> (Seconds, NanoSeconds)
+fromRationalSecondsP s =
+  let (sWhole, sFrac) = properFraction s
+      ns = truncate $ sFrac * 1_000_000_000
+  in  (Seconds sWhole, NanoSeconds ns)
 
 -- | Type representing numbers of minutes.
 newtype Minutes = Minutes Int64
@@ -109,6 +125,9 @@ instance TimeInterval Hours where
 
 -- | Type representing numbers of non-leap seconds elapsed since the Unix epoch
 -- (1970-01-01 00:00:00 UTC).
+--
+-- Points in time before the Unix epoch are represented by a negative number of
+-- seconds.
 newtype Elapsed = Elapsed Seconds
   deriving (Data, Eq, NFData, Num, Ord, Read)
 
@@ -117,7 +136,11 @@ instance Show Elapsed where
 
 -- | Type representing numbers of non-leap seconds and nanoseconds elapsed since
 -- the Unix epoch (1970-01-01 00:00:00 UTC).
-data ElapsedP = ElapsedP {-# UNPACK #-} !Elapsed {-# UNPACK #-} !NanoSeconds
+data ElapsedP = ElapsedP
+  {-# UNPACK #-} !Elapsed
+  {-# UNPACK #-} !NanoSeconds
+  -- ^ A normalised t'ElapsedP' value has a nanoseconds field that is
+  -- non-negative and fewer than 1,000,000,000 nanoseconds (being 1 second).
   deriving (Data, Eq, Ord, Read)
 
 instance Show ElapsedP where
@@ -141,10 +164,27 @@ instance Num ElapsedP where
 
   fromInteger i          = ElapsedP (Elapsed (fromIntegral i)) 0
 
+-- | A constructor of an t'ElapsedP' value.
+--
+-- The t'ElapsedP' value will be normalised. That is, the nanoseconds field will
+-- be non-negative and fewer than 1,000,000,000 nanoseconds (being 1 second).
+mkElapsedP :: Seconds -> NanoSeconds -> ElapsedP
+mkElapsedP (Seconds notNormalizedS) (NanoSeconds notNormalizedNS) =
+  let (s, ns) = notNormalizedNS `divMod` 1_000_000_000
+  in  ElapsedP (Elapsed $ Seconds $ notNormalizedS + s) (NanoSeconds ns)
+
+-- | Given a precise amount of non-leap seconds elapsed since the Unix epoch,
+-- yield the corresponding t'ElapsedP' value.
+--
+-- The t'ElapsedP' value will be normalised. That is, the nanoseconds field will
+-- be non-negative and fewer than 1,000,000,000 nanoseconds (being 1 second).
+fromRationalElapsedP :: Rational -> ElapsedP
+fromRationalElapsedP = uncurry mkElapsedP . fromRationalSecondsP
+
 addElapsedP :: ElapsedP -> ElapsedP -> ElapsedP
 addElapsedP (ElapsedP e1 (NanoSeconds ns1)) (ElapsedP e2 (NanoSeconds ns2)) =
   let notNormalizedNS = ns1 + ns2
-      (retainedNS, ns) = notNormalizedNS `divMod` 1000000000
+      (retainedNS, ns) = notNormalizedNS `divMod` 1_000_000_000
   in  ElapsedP (e1 + e2 + Elapsed (Seconds retainedNS)) (NanoSeconds ns)
 
 subElapsedP :: ElapsedP -> ElapsedP -> ElapsedP
@@ -155,7 +195,7 @@ subElapsedP (ElapsedP e1 (NanoSeconds ns1)) (ElapsedP e2 (NanoSeconds ns2)) =
         then
           ElapsedP
             (notNormalizedS - oneSecond)
-            (NanoSeconds (1000000000 + notNormalizedNS))
+            (NanoSeconds (1_000_000_000 + notNormalizedNS))
         else
           ElapsedP notNormalizedS (NanoSeconds notNormalizedNS)
  where
@@ -167,7 +207,7 @@ instance Real ElapsedP where
     fromIntegral s
 
   toRational (ElapsedP (Elapsed (Seconds s)) (NanoSeconds ns)) =
-    fromIntegral s + (fromIntegral ns % 1000000000)
+    fromIntegral s + (fromIntegral ns % 1_000_000_000)
 
 -- | Type representing months of the Julian or Gregorian year.
 data Month =
