@@ -42,7 +42,7 @@ import           Time.Time
                    , timeGetDateTimeOfDay
                    )
 import           Time.Timezone ( Timezone (..), TimezoneMinutes (..) )
-import           Time.Utils ( pad2, pad4, padN )
+import           Time.Utils ( pad2, pad3, pad4, padN )
 import           Time.Types
                    ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
                    , Hours (..), Minutes (..), Month (..), NanoSeconds (..)
@@ -66,6 +66,9 @@ data TimeFormatElem =
     -- ^ Short name of the month (@Jan@, @Feb@, ..).
   | Format_DayYear
     -- ^ Day of the year (@1@ to @365@, @366@ for leap years).
+  | Format_DayYear3
+    -- ^ Day of the year padded to 3 characters (@001@ to @365@, @366@ for leap
+    -- years).
   | Format_Day
     -- ^ Day of the month (@1@ to @31@).
   | Format_Day2
@@ -157,6 +160,8 @@ newtype TimeFormatString = TimeFormatString [TimeFormatElem]
 -- [@MM@]:    'Format_Month2'. Months padded to 2 characters (@01@ to @12@).
 -- [@Mon@]:   'Format_MonthName_Short'. Short name of the month (@Jan@, @Feb@,
 --            ..).
+-- [@JJJ@]:   'Format_DayYear3'. Day of the year padded to 3 characters (@001@
+--            to @365@, @366@ for leap years).
 -- [@DD@]:    'Format_Day2'. Day of the month padded to 2 characters (@01@ to
 --            @31@).
 -- [@H@]:     'Format_Hour'. Hours padded to 2 characters (@00@ to @23@).
@@ -228,6 +233,7 @@ instance TimeFormat String where
     toFormatElem ('M':'o':'n':r)     = Format_MonthName_Short : toFormatElem r
     toFormatElem ('M':'I':r)         = Format_Minute : toFormatElem r
     toFormatElem ('M':r)             = Format_Month  : toFormatElem r
+    toFormatElem ('J':'J':'J':r)     = Format_DayYear3 : toFormatElem r
     toFormatElem ('D':'D':r)         = Format_Day2   : toFormatElem r
     toFormatElem ('H':r)             = Format_Hour   : toFormatElem r
     toFormatElem ('S':r)             = Format_Second : toFormatElem r
@@ -305,6 +311,7 @@ printWith fmt t tzOfs@(TimezoneOffset tz) = concatMap fmtToString fmtElems
   fmtToString Format_Month    = show (fromEnum (dateMonth date) + 1)
   fmtToString Format_MonthName_Short = take 3 $ show (dateMonth date)
   fmtToString Format_DayYear  = show (getDayOfTheYear date)
+  fmtToString Format_DayYear3 = pad3 (getDayOfTheYear date)
   fmtToString Format_Day2     = pad2 (dateDay date)
   fmtToString Format_Day      = show (dateDay date)
   fmtToString Format_Hour     = pad2 (fromIntegral (todHour tm) :: Int)
@@ -397,8 +404,8 @@ timePrint fmt t = printWith fmt t timezone_UTC
 -- >>> toYear <$> (localTimeParseE "YYYY YYYY" "2025 2024")
 -- Right 2024
 --
--- A v'Format_DayYear' interprets the day of year based on the previously parsed
--- year or, by default, a leap year. For example:
+-- A v'Format_DayYear' or v'Format_DayYear3' value interprets the day of year
+-- based on the previously parsed year or, by default, a leap year. For example:
 --
 -- >>> let toMonth = dateMonth . dtDate . localTimeUnwrap . fst
 -- >>> let format1 = [Format_Year4, Format_Spaces, Format_DayYear]
@@ -411,10 +418,10 @@ timePrint fmt t = printWith fmt t timezone_UTC
 -- A v'Format_TimezoneName' will parse one or more non-white space characters
 -- but will not modify the previously parsed, or default, date and time.
 --
--- A v'Format_Month', v'Format_DayYear', v'Format_Day' and v'Format_Tz_Offset'
--- will check that the parsed number is within bounds. However,
--- 'localTimeParseE' does not check that any resulting date or time is a valid
--- one.
+-- A v'Format_Month', v'Format_DayYear', v'Format_DayYear3', v'Format_Day'
+-- and v'Format_Tz_Offset' will check that the parsed number is within bounds.
+-- However, 'localTimeParseE' does not check that any resulting date or time is
+-- a valid one.
 localTimeParseE ::
      TimeFormat format
   => format -- ^ The format to use for parsing.
@@ -476,6 +483,19 @@ localTimeParseE fmt = loop ini fmtElems
               -- intended year
             | d > 0 && d <= 366 ->
                 let p = Period 0 0 (d - 1)
+                    startOfYear = Date y January 1
+                in  Right (modDate (const (dateAddPeriod startOfYear p)) acc, s')
+            | otherwise -> Left ("day of year invalid, got: " <> show d)
+  processOne acc Format_DayYear3 s =
+    let y = (dateYear . dtDate . fst) acc
+        result = getNDigitNum 3 s :: Either String (Int64, String)
+    in  case result of
+          Left err -> Left err
+          Right (d, s')
+              -- We can't be more helpful because we may not yet know the
+              -- intended year
+            | d > 0 && d <= 366 ->
+                let p = Period 0 0 (fromIntegral d - 1)
                     startOfYear = Date y January 1
                 in  Right (modDate (const (dateAddPeriod startOfYear p)) acc, s')
             | otherwise -> Left ("day of year invalid, got: " <> show d)

@@ -15,6 +15,8 @@ and this project adheres to the
   numbers of seconds and nanoseconds.
 * Test added to test suite for `toRational :: ElapsedSinceP -> Rational` and
   `fromRationalElapsedP`.
+* Add `Format_DayYear3` for a day of the year padded to 3 characters,
+  represented by @"JJJ"@.
 * Change the types of fields of `TimeFormatFct`: the parser and printer are in
   terms of `DateTime` and `TimezoneOffset` (rather than just `DateTime`).
 * In `localTimePrint` etc, implement `Format_TimezoneName` and `Format_Fct`.
