@@ -17,8 +17,7 @@ them.
 -}
 
 module Time.Internal
-  ( dateTimeFromUnixEpochP
-  , dateTimeFromUnixEpoch
+  ( dateTimeFromUnixEpoch
   , systemGetTimezone
   , systemGetElapsed
   , systemGetElapsedP
@@ -34,11 +33,6 @@ import           Time.Types
                    , NanoSeconds (..), Seconds (..), TimeOfDay (..)
                    , TimezoneOffset (..)
                    )
-
--- | Given a number of non-leap seconds and nanoseconds elapsed since the Unix
--- epoch, yield the corresponding t'DateTime' value.
-dateTimeFromUnixEpochP :: ElapsedP -> DateTime
-dateTimeFromUnixEpochP (ElapsedP e ns) = fromCP ns $ rawGmTime e
 
 -- | Given a number of non-leap seconds elapsed since the Unix epoch, yield the
 -- corresponding t'DateTime' value.
@@ -179,9 +173,3 @@ fromC ctm = DateTime date time
     , todSec  = fromIntegral $ ctmSec ctm
     , todNSec = 0
     }
-
--- | Similar to 'fromC' except with nanosecond precision.
-fromCP :: NanoSeconds -> CTm -> DateTime
-fromCP ns ctm = DateTime d (t { todNSec = ns })
- where
-  (DateTime d t) = fromC ctm

@@ -13,8 +13,7 @@ Time lowlevel helpers binding to Windows.
 -}
 
 module Time.Internal
-  ( dateTimeFromUnixEpochP
-  , dateTimeFromUnixEpoch
+  ( dateTimeFromUnixEpoch
   , systemGetTimezone
   , systemGetElapsed
   , systemGetElapsedP
@@ -57,16 +56,6 @@ toElapsed (FILETIME w) = Elapsed (Seconds s)
 callSystemTime :: Elapsed -> SYSTEMTIME
 callSystemTime e = unsafePerformIO (fileTimeToSystemTime (toFileTime e))
 {-# NOINLINE callSystemTime #-}
-
-dateTimeFromUnixEpochP :: ElapsedP -> DateTime
-dateTimeFromUnixEpochP (ElapsedP e ns) = toDateTime $ callSystemTime e
- where
-  toDateTime (SYSTEMTIME wY wM _ wD wH wMin wS _) =
-    DateTime
-      (Date (fi wY) (toEnum $ fi $ wM - 1) (fi wD))
-      (TimeOfDay (fi wH) (fi wMin) (fi wS) ns)
-  fi :: (Integral a, Num b) => a -> b
-  fi = fromIntegral
 
 dateTimeFromUnixEpoch :: Elapsed -> DateTime
 dateTimeFromUnixEpoch e = toDateTime $ callSystemTime e
