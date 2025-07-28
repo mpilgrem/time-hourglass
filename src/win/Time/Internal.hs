@@ -13,33 +13,24 @@ Time lowlevel helpers binding to Windows.
 -}
 
 module Time.Internal
-  ( dateTimeFromUnixEpoch
-  , systemGetTimezone
+  ( systemGetTimezone
   , systemGetElapsed
   , systemGetElapsedP
   ) where
 
 import           Data.Int ( Int64 )
-import           System.IO.Unsafe ( unsafePerformIO )
 import           System.Win32.Time
-                   ( FILETIME (..), SYSTEMTIME (..), TimeZoneId (..)
-                   , fileTimeToSystemTime, getSystemTimeAsFileTime
+                   ( FILETIME (..), TimeZoneId (..), getSystemTimeAsFileTime
                    , getTimeZoneInformation, tziBias, tziDaylightBias
                    , tziStandardBias
                    )
 import           Time.Types
-                   ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
-                   , NanoSeconds (..), Seconds (..), TimeOfDay (..)
+                   ( Elapsed (..), ElapsedP (..), NanoSeconds (..), Seconds (..)
                    , TimezoneOffset (..)
                    )
 
 unixDiff :: Int64
 unixDiff = 11_644_473_600
-
-toFileTime :: Elapsed -> FILETIME
-toFileTime (Elapsed (Seconds s)) = FILETIME val
- where
-  val = fromIntegral (s + unixDiff) * 10_000_000
 
 toElapsedP :: FILETIME -> ElapsedP
 toElapsedP (FILETIME w) = ElapsedP (Elapsed $ Seconds s) (NanoSeconds ns)
@@ -52,20 +43,6 @@ toElapsed :: FILETIME -> Elapsed
 toElapsed (FILETIME w) = Elapsed (Seconds s)
  where
   s = fromIntegral (fst (w `divMod` 10_000_000)) - unixDiff
-
-callSystemTime :: Elapsed -> SYSTEMTIME
-callSystemTime e = unsafePerformIO (fileTimeToSystemTime (toFileTime e))
-{-# NOINLINE callSystemTime #-}
-
-dateTimeFromUnixEpoch :: Elapsed -> DateTime
-dateTimeFromUnixEpoch e = toDateTime $ callSystemTime e
- where
-  toDateTime (SYSTEMTIME wY wM _ wD wH wMin wS _) =
-    DateTime
-      (Date (fi wY) (toEnum $ fi $ wM - 1) (fi wD))
-      (TimeOfDay (fi wH) (fi wMin) (fi wS) 0)
-  fi :: (Integral a, Num b) => a -> b
-  fi = fromIntegral
 
 systemGetTimezone :: IO TimezoneOffset
 systemGetTimezone = do

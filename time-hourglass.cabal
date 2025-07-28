@@ -42,6 +42,7 @@ library
       Time.Types
   other-modules:
       Time.Calendar
+      Time.Calendar.FromElapsed
       Time.Diff
       Time.Format
       Time.LocalTime
