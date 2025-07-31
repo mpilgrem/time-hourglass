@@ -36,7 +36,7 @@ import           Time.Types
 -- | A type representing the number of non-leap seconds that have elapsed since
 -- the specified epoch.
 newtype ElapsedSince epoch = ElapsedSince Seconds
-  deriving (Data, Eq, NFData, Num, Ord,  Read, Show)
+  deriving (Data, Eq, NFData, Num, Ord, Read, Show)
 
 -- | A type representing the number of non-leap seconds and nanoseconds that
 -- have elapsed since the specified epoch. The \'P\' is short for \'precise\'.

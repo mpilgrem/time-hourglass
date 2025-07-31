@@ -68,6 +68,8 @@ class TimeInterval i where
 newtype NanoSeconds = NanoSeconds Int64
   deriving (Data, Eq, NFData, Num, Ord, Read)
 
+-- | Show the number of nanoseconds followed by @ns@. (Note: the 'Read' instance
+-- is derived.)
 instance Show NanoSeconds where
   show (NanoSeconds v) = shows v "ns"
 
@@ -79,6 +81,8 @@ instance TimeInterval NanoSeconds where
 newtype Seconds = Seconds Int64
   deriving (Data, Eq, Enum, Integral, NFData, Num, Ord, Read, Real)
 
+-- | Show the number of seconds followed by @s@. (Note: the 'Read' instance
+-- is derived.)
 instance Show Seconds where
   show (Seconds s) = shows s "s"
 
@@ -101,6 +105,8 @@ fromRationalSecondsP s =
 newtype Minutes = Minutes Int64
   deriving (Data, Eq, Enum, Integral, NFData, Num, Ord, Read, Real)
 
+-- | Show the number of minutes followed by @m@. (Note: the 'Read' instance is
+-- derived.)
 instance Show Minutes where
   show (Minutes s) = shows s "m"
 
@@ -114,6 +120,8 @@ instance TimeInterval Minutes where
 newtype Hours = Hours Int64
   deriving (Data, Eq, Enum, Integral, NFData, Num, Ord, Read, Real)
 
+-- | Show the number of hours followed by @h@. (Note: the 'Read' instance is
+-- derived.)
 instance Show Hours where
   show (Hours s) = shows s "h"
 
@@ -131,6 +139,8 @@ instance TimeInterval Hours where
 newtype Elapsed = Elapsed Seconds
   deriving (Data, Eq, NFData, Num, Ord, Read)
 
+-- | Show the number of seconds followed by @s@. (Note: the 'Read' instance
+-- is derived.)
 instance Show Elapsed where
   show (Elapsed s) = show s
 
@@ -143,6 +153,8 @@ data ElapsedP = ElapsedP
   -- non-negative and fewer than 1,000,000,000 nanoseconds (being 1 second).
   deriving (Data, Eq, Ord, Read)
 
+-- | Show the number of seconds followed by @s@, @.@, and the number of
+-- nanoseconds followed by @ns@. (Note: the 'Read' instance is derived.)
 instance Show ElapsedP where
   show (ElapsedP e ns) = shows e ('.' : show ns)
 
@@ -258,6 +270,7 @@ newtype TimezoneOffset = TimezoneOffset
 timezoneOffsetToSeconds :: TimezoneOffset -> Seconds
 timezoneOffsetToSeconds (TimezoneOffset ofs) = Seconds (fromIntegral ofs * 60)
 
+-- | Show the time zone offset in the format @±HHMM@.
 instance Show TimezoneOffset where
   show (TimezoneOffset tz) =
     concat [if tz < 0 then "-" else "+", pad2 tzH, pad2 tzM]

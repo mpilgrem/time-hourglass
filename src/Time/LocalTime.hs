@@ -36,6 +36,7 @@ data LocalTime t = LocalTime
     -- ^ The timezone offset.
   }
 
+-- | Show the 'localTimeUnwrap' field and then the 'localTimeGetTimezone' field.
 instance Show t => Show (LocalTime t) where
   show (LocalTime t tz) = show t ++ show tz
 

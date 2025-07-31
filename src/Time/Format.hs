@@ -136,6 +136,7 @@ data TimeFormatFct = TimeFormatFct
     -- ^ A printer of a given v'DateTime' value and v'TimezoneOffset' value.
   }
 
+-- | Show the 'timeFormatFctName' field.
 instance Show TimeFormatFct where
   show = timeFormatFctName
 
