@@ -24,6 +24,7 @@ module Time.LocalTime
   , localTimeConvert
   ) where
 
+import           Text.Read ( Read (..), readListPrecDefault )
 import           Time.Diff ( elapsedTimeAddSecondsP )
 import           Time.Time ( Time, Timeable (..), timeConvert )
 import           Time.Types ( TimezoneOffset (..), timezoneOffsetToSeconds )
@@ -39,6 +40,15 @@ data LocalTime t = LocalTime
 -- | Show the 'localTimeUnwrap' field and then the 'localTimeGetTimezone' field.
 instance Show t => Show (LocalTime t) where
   show (LocalTime t tz) = show t ++ show tz
+
+-- | Read a 'LocalTime'. Read the 'localTimeUnwrap' field and then the
+-- 'localTimeGetTimezone' field.
+instance Read t => Read (LocalTime t) where
+  readPrec = LocalTime
+    <$> readPrec
+    <*> readPrec
+
+  readListPrec = readListPrecDefault
 
 instance Eq t => Eq (LocalTime t) where
   LocalTime t1 tz1 == LocalTime t2 tz2 = tz1 == tz2 && t1 == t2
