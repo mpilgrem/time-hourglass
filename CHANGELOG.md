@@ -10,6 +10,7 @@ and this project adheres to the
 
 * Drop support for GHC < 8.6.
 * Add `Real` instance for `ElapsedSinceP`.
+* Add `Read` instances for `TimezoneOffset` and `Read t => LocalTime t`.
 * Export `fromRationalSecondsP`, `mkElapsedP`, and `fromRationalElapsedP`, to
   facilitate creation of `ElapsedP` values from precise amounts of seconds or
   numbers of seconds and nanoseconds.

@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable         #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE LambdaCase                 #-}
 {-# LANGUAGE NumericUnderscores         #-}
 
 {- |
@@ -43,9 +44,12 @@ module Time.Types
   ) where
 
 import           Control.DeepSeq ( NFData (..) )
+import           Data.Char ( digitToInt, isDigit )
 import           Data.Data ( Data )
 import           Data.Int ( Int64 )
 import           Data.Ratio ( (%) )
+import           Text.Read
+                   ( Read (..), ReadPrec, get, pfail, readListPrecDefault )
 import           Time.Utils ( pad2 )
 
 -- | Type class promising functionality for:
@@ -276,6 +280,39 @@ instance Show TimezoneOffset where
     concat [if tz < 0 then "-" else "+", pad2 tzH, pad2 tzM]
    where
     (tzH, tzM) = abs tz `divMod` 60
+
+-- | Read a time zone offset. Accepts the format @±HHMM@ and valid values
+-- between @-1200@ and @+1400@.
+instance Read TimezoneOffset where
+  readPrec = get >>= \case
+    '+' -> parseOffset 1
+    '-' -> parseOffset (-1)
+    _   -> pfail
+   where
+    parseOffset :: Int -> ReadPrec TimezoneOffset
+    parseOffset sign = do
+      d1 <- getDigit
+      d2 <- getDigit
+      d3 <- getDigit
+      d4 <- getDigit
+      let hours = d1 * 10 + d2
+          mins  = d3 * 10 + d4
+          offset = sign * (hours * 60 + mins)
+      if mins > 59 || offset > 14 * 60 || offset < -(12 * 60)
+        then
+          pfail
+        else
+          pure $ TimezoneOffset offset
+
+    getDigit = do
+      c <- get
+      if isDigit c
+        then
+          pure (digitToInt c)
+        else
+          pfail
+
+  readListPrec = readListPrecDefault
 
 -- | The UTC timezone.
 --
