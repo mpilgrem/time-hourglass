@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to the
 [Haskell Package Versioning Policy](https://pvp.haskell.org/).
 
-## UNRELEASED
+## 0.3.0 - 2025-08-01
 
 * Drop support for GHC < 8.6.
 * Add `Real` instance for `ElapsedSinceP`.
@@ -41,12 +41,12 @@ and this project adheres to the
 * Fix error message if a `Format_Text` parse fails.
 * Add Haddock documentation for the `String` instance of `TimeFormat`.
 
-## 0.2.14
+## 0.2.14 - 2025-07-24
 
 * In test-suite and benchmark, depend on main library, drop dependency on
   package `hourglass`.
 
-## 0.2.13
+## 0.2.13 - 2025-07-23
 
 * Drop support for GHC < 8.4.
 * Move library modules to directory `src` and benchmark module to directory
@@ -67,7 +67,7 @@ and this project adheres to the
 * Export new `dateFromMJDEpoch` and deprecate identical `dateFromTAIEpoch` to
   fix the latter being a misnomer.
 
-## 0.2.12
+## 0.2.12 - 2025-07-21
 
 * Rename `hourglass-0.2.12` package as `time-hourglass-0.2.12`.
 * Cabal file specifies `cabal-version: 1.12` (not `>= 1.10`).
