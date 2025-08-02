@@ -112,6 +112,39 @@ test-suite test-hourglass
     hs-source-dirs:
         tests/unix
 
+benchmark bench-fromEpoch
+  type: exitcode-stdio-1.0
+  main-is: FromEpoch.hs
+  other-modules:
+      Time.Calendar
+      Time.Internal
+      Time.Types
+      Time.Utils
+  hs-source-dirs:
+      benchmarks
+      src
+  other-extensions:
+      NumericUnderscores
+  ghc-options: -Wall
+  build-depends:
+      base >=4.12 && <5
+    , deepseq
+    , tasty-bench
+    , time-hourglass
+  default-language: Haskell2010
+  if os(windows)
+    hs-source-dirs:
+        src/win
+    build-depends:
+        Win32
+  else
+    hs-source-dirs:
+        src/unix
+    other-extensions:
+        ForeignFunctionInterface
+    c-sources:
+        cbits/unix.c
+
 benchmark bench-hourglass
   type: exitcode-stdio-1.0
   main-is: Bench.hs

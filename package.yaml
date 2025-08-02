@@ -85,6 +85,7 @@ benchmarks:
   bench-hourglass:
     source-dirs: benchmarks
     main: Bench.hs
+    other-modules: []
     dependencies:
     - time-hourglass
     - tasty-bench
@@ -92,3 +93,28 @@ benchmarks:
     - time
     other-extensions:
     - BangPatterns
+  bench-fromEpoch:
+    source-dirs:
+    - benchmarks
+    - src
+    main: FromEpoch.hs
+    other-modules:
+    - Time.Calendar
+    - Time.Internal
+    - Time.Types
+    - Time.Utils
+    dependencies:
+    - time-hourglass
+    - tasty-bench
+    other-extensions:
+    - NumericUnderscores
+    when:
+    - condition: os(windows)
+      then:
+        source-dirs: src/win
+        dependencies: Win32
+      else:
+        source-dirs: src/unix
+        c-sources: cbits/unix.c
+        other-extensions:
+        - ForeignFunctionInterface
