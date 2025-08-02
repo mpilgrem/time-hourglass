@@ -36,7 +36,8 @@ dateTimeFromGPEpoch secs =
       (!q1, !r1) = r4 `minDivMod` 365
       !y' = fromIntegral $ 400 * q400 + 100 * q100 + 4 * q4 + q1
       !d2 = fromIntegral r1
-      (!m', !d) = monthDays d2
+      !m' = (5 * d2 + 2) `quot` 153
+      !d = d2 - (153 * m' + 2) `quot` 5 + 1
       (!h, !s2) = s1 `quotRem` 3_600
       (!mi, !s) = s2 `quotRem` 60
       (y, m) = if m' > 9 then (y' + 1, m' - 10) else (y', m' + 2)
@@ -50,12 +51,3 @@ dateTimeFromGPEpoch secs =
     let (q, r) = n `quotRem` d
     in  if q == 4 then (3, r + d) else (q, r)
   {-# INLINE minDivMod #-}
-
-  monthDays :: Int -> (Int, Int)
-  monthDays !doy = go 0 [0, 31, 61, 92, 122, 153, 184, 214, 245, 275, 306, 337]
-   where
-    go !i (a : b : rest)
-      | doy < b   = (i, doy - a + 1)
-      | otherwise = go (i + 1) (b : rest)
-    go _ _ = (11, doy - 336) -- Fallback for February
-  {-# INLINE monthDays #-}
