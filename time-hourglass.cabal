@@ -118,6 +118,7 @@ benchmark bench-fromEpoch
   main-is: FromEpoch.hs
   other-modules:
       Time.Calendar
+      Time.Calendar.FromElapsed
       Time.Internal
       Time.Types
       Time.Utils
