@@ -23,7 +23,7 @@ module Time.Calendar
   , dateTimeFromUnixEpochP
   ) where
 
-import           Time.Internal
+import           Time.System.OS
                    ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
 import           Time.Types
                    ( Date (..), DateTime (..), Elapsed (..), Month (..)

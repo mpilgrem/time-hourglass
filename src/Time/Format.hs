@@ -34,7 +34,7 @@ module Time.Format
 import           Data.Char ( isDigit, isSpace, ord )
 import           Data.Int ( Int64 )
 import           Time.Calendar ( getDayOfTheYear )
-import           Time.Internal ( dateTimeFromUnixEpochP )
+import           Time.System.OS ( dateTimeFromUnixEpochP )
 import           Time.LocalTime
                    ( LocalTime (..), localTime, localTimeToGlobal )
 import           Time.Time

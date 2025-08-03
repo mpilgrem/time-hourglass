@@ -1,7 +1,7 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 
 {- |
-Module      : Time.Internal
+Module      : Time.System.OS
 License     : BSD-style
 Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
@@ -16,7 +16,7 @@ Depend on localtime_r and gmtime_r. Some obscure Unix system might not support
 them.
 -}
 
-module Time.Internal
+module Time.System.OS
   ( dateTimeFromUnixEpochP
   , dateTimeFromUnixEpoch
   , systemGetTimezone

@@ -1,7 +1,7 @@
 {-# LANGUAGE NumericUnderscores #-}
 
 {- |
-Module      : Time.Internal
+Module      : Time.System.OS
 License     : BSD-style
 Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
@@ -12,7 +12,7 @@ This module depends on the operating system. This is the version for Windows.
 Time lowlevel helpers binding to Windows.
 -}
 
-module Time.Internal
+module Time.System.OS
   ( dateTimeFromUnixEpochP
   , dateTimeFromUnixEpoch
   , systemGetTimezone
