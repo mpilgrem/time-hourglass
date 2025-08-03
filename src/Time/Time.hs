@@ -37,7 +37,8 @@ import           Time.Diff
                    ( Duration (..), Period (..), dateAddPeriod
                    , elapsedTimeAddSecondsP
                    )
-import           Time.System.OS ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
+import           Time.Calendar.FromUnixEpoch
+                   ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
 import           Time.Types
                    ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
                    , Month (..), NanoSeconds (..), Seconds (..)
