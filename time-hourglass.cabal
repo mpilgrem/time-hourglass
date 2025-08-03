@@ -61,9 +61,29 @@ library
       base >=4.12 && <5
     , deepseq
   default-language: Haskell2010
-  if os(windows)
+  if arch(i386) || arch(arm)
+    if os(windows)
+      other-modules:
+          Time.Calendar.FromUnixEpoch
+      hs-source-dirs:
+          src/32bit/win
+    else
+      other-modules:
+          Time.Calendar.FromUnixEpoch
+      hs-source-dirs:
+          src/32bit/unix
+  else
     other-modules:
         Time.Calendar.FromUnixEpoch
+    hs-source-dirs:
+        src/64bit
+    other-extensions:
+        BangPatterns
+        CPP
+        MagicHash
+        UnboxedTuples
+  if os(windows)
+    other-modules:
         Time.System.OS
     hs-source-dirs:
         src/win
@@ -71,7 +91,6 @@ library
         Win32
   else
     other-modules:
-        Time.Calendar.FromUnixEpoch
         Time.System.OS
         Time.System.Types
     hs-source-dirs:

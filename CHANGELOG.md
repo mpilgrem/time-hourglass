@@ -8,6 +8,10 @@ and this project adheres to the
 
 ## UNRELEASED
 
+* On 64-bit operating systems, uses a faster
+  `fromElapsed :: Elapsed -> DateTime` based on native Haskell code rather than
+  calling functions provided by the operating system.
+
 ## 0.3.0 - 2025-08-01
 
 * Drop support for GHC < 8.6.

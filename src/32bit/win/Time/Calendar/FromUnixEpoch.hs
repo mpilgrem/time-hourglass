@@ -7,7 +7,8 @@ Copyright   : (c) 2014 Vincent Hanquez <vincent@snarc.org>
 Stability   : experimental
 Portability : unknown
 
-This module depends on the operating system. This is the version for Windows.
+This module depends on the machine architecture and operating system. This is
+the version for 32-bit Windows.
 
 Seconds since the Unix epoch to date and time helper for Windows.
 -}

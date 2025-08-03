@@ -39,6 +39,21 @@ library:
   - Time.System
   - Time.Types
   when:
+  - condition: arch(i386) || arch(arm)
+    then:
+      when:
+      - condition: os(windows)
+        then:
+          source-dirs: src/32bit/win
+        else:
+          source-dirs: src/32bit/unix
+    else:
+      source-dirs: src/64bit
+      other-extensions:
+      - BangPatterns
+      - CPP
+      - MagicHash
+      - UnboxedTuples
   - condition: os(windows)
     then:
       source-dirs: src/win
