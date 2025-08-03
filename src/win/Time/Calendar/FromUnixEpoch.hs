@@ -13,8 +13,7 @@ Seconds since the Unix epoch to date and time helper for Windows.
 -}
 
 module Time.Calendar.FromUnixEpoch
-  ( dateTimeFromUnixEpochP
-  , dateTimeFromUnixEpoch
+  ( dateTimeFromUnixEpoch
   ) where
 
 import           Data.Int ( Int64 )
@@ -22,8 +21,8 @@ import           System.IO.Unsafe ( unsafePerformIO )
 import           System.Win32.Time
                    ( FILETIME (..), SYSTEMTIME (..), fileTimeToSystemTime )
 import           Time.Types
-                   ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
-                   , Seconds (..), TimeOfDay (..)
+                   ( Date (..), DateTime (..), Elapsed (..), Seconds (..)
+                   , TimeOfDay (..)
                    )
 
 unixDiff :: Int64
@@ -37,16 +36,6 @@ toFileTime (Elapsed (Seconds s)) = FILETIME val
 callSystemTime :: Elapsed -> SYSTEMTIME
 callSystemTime e = unsafePerformIO (fileTimeToSystemTime (toFileTime e))
 {-# NOINLINE callSystemTime #-}
-
-dateTimeFromUnixEpochP :: ElapsedP -> DateTime
-dateTimeFromUnixEpochP (ElapsedP e ns) = toDateTime $ callSystemTime e
- where
-  toDateTime (SYSTEMTIME wY wM _ wD wH wMin wS _) =
-    DateTime
-      (Date (fi wY) (toEnum $ fi $ wM - 1) (fi wD))
-      (TimeOfDay (fi wH) (fi wMin) (fi wS) ns)
-  fi :: (Integral a, Num b) => a -> b
-  fi = fromIntegral
 
 dateTimeFromUnixEpoch :: Elapsed -> DateTime
 dateTimeFromUnixEpoch e = toDateTime $ callSystemTime e

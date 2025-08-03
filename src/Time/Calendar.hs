@@ -23,11 +23,11 @@ module Time.Calendar
   , dateTimeFromUnixEpochP
   ) where
 
-import           Time.Calendar.FromUnixEpoch
-                   ( dateTimeFromUnixEpoch, dateTimeFromUnixEpochP )
+import           Time.Calendar.FromUnixEpoch ( dateTimeFromUnixEpoch )
 import           Time.Types
-                   ( Date (..), DateTime (..), Elapsed (..), Month (..)
-                   , Seconds (..), TimeInterval (..), TimeOfDay (..), WeekDay
+                   ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
+                   , Month (..), Seconds (..), TimeInterval (..), TimeOfDay (..)
+                   , WeekDay
                    )
 
 -- | For the given year in the Gregorian calendar, is it a leap year (366 days
@@ -109,6 +109,13 @@ dateToUnixEpoch date =
 -- Gregorian calendar.
 dateFromUnixEpoch :: Elapsed -> Date
 dateFromUnixEpoch e = dtDate $ dateTimeFromUnixEpoch e
+
+-- | Given a number of non-leap seconds and nanoseconds elapsed since the Unix
+-- epoch, yield the corresponding t'DateTime' value.
+dateTimeFromUnixEpochP :: ElapsedP -> DateTime
+dateTimeFromUnixEpochP (ElapsedP e ns) = DateTime d t { todNSec = ns}
+ where
+  DateTime d t = dateTimeFromUnixEpoch e
 
 -- | For the given time of day, yield the number of seconds since the start of
 -- the day.

@@ -17,8 +17,7 @@ Depends on gmtime_r. Some obscure Unix systems might not support it.
 -}
 
 module Time.Calendar.FromUnixEpoch
-  ( dateTimeFromUnixEpochP
-  , dateTimeFromUnixEpoch
+  ( dateTimeFromUnixEpoch
   ) where
 
 import           Foreign.C.Types ( CTime (..) )
@@ -28,14 +27,9 @@ import           Foreign.Storable ( Storable (..) )
 import           System.IO.Unsafe ( unsafePerformIO )
 import           Time.System.Types ( CTm (..) )
 import           Time.Types
-                   ( Date (..), DateTime (..), Elapsed (..), ElapsedP (..)
-                   , NanoSeconds (..), Seconds (..), TimeOfDay (..)
+                   ( Date (..), DateTime (..), Elapsed (..), Seconds (..)
+                   , TimeOfDay (..)
                    )
-
--- | Given a number of non-leap seconds and nanoseconds elapsed since the Unix
--- epoch, yield the corresponding t'DateTime' value.
-dateTimeFromUnixEpochP :: ElapsedP -> DateTime
-dateTimeFromUnixEpochP (ElapsedP e ns) = fromCP ns $ rawGmTime e
 
 -- | Given a number of non-leap seconds elapsed since the Unix epoch, yield the
 -- corresponding t'DateTime' value.
@@ -76,9 +70,3 @@ fromC ctm = DateTime date time
     , todSec  = fromIntegral $ ctmSec ctm
     , todNSec = 0
     }
-
--- | Similar to 'fromC' except with nanosecond precision.
-fromCP :: NanoSeconds -> CTm -> DateTime
-fromCP ns ctm = DateTime d (t { todNSec = ns })
- where
-  (DateTime d t) = fromC ctm
