@@ -21,7 +21,7 @@ module Time.System
   , timezoneCurrent
   ) where
 
-import           Time.Internal
+import           Time.System.OS
                    ( systemGetElapsed, systemGetElapsedP, systemGetTimezone )
 import           Time.LocalTime
                    ( LocalTime, localTimeFromGlobal, localTimeSetTimezone )
